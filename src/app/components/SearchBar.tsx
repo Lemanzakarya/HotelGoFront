@@ -36,11 +36,11 @@ const SearchBar: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     flexDirection: 'row',
-                    gap: 3,
+                    gap: 5,
                     background: '#fffefe',
                     p: 6,
                     borderRadius: 10,
-                    height: 180
+                    height: 160
                 }}
             >
                 <AutoCompleteInputBox width="200px" height="50px" />
