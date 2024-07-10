@@ -3,7 +3,7 @@ import {Box, TextField, Button, Divider, IconButton} from '@mui/material';
 import { Popper } from "@mui/base/Popper";
 import AutoCompleteInputBox from "@/app/components/shared/AutoCompleteInputBox";
 import Typography from "@mui/material/Typography";
-import {AddCircleOutlineSharp, RemoveCircleOutlineRounded} from "@mui/icons-material";
+import {AddCircleOutlineSharp, Height, RemoveCircleOutlineRounded} from "@mui/icons-material";
 import CountrySelect from "@/app/components/shared/CountrySelector";
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -101,6 +101,7 @@ const SearchBar: React.FC = () => {
                         height: '73%',
                     }}
                 >
+                    <Typography variant='h6' sx={{ color:"#6C6565"}}>Guests</Typography>
                 </Button>
                 <Popper
                     id={id}
@@ -119,23 +120,25 @@ const SearchBar: React.FC = () => {
                                 borderRadius: 3,
                                 border: '1px solid #ccc',
                                 boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
-                                p: 3,
-                                minWidth: 300,
-                                minHeight: 200,
+                                p: 2,
+                                pr:4,
+                                pl:4,
+                                minWidth: 200,
+                                minHeight: 100,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap:2
                             }}
                         >
                             <Box sx={{ display:'flex' , justifyContent:'space-between', gap:2 , alignItems:'center'}}> {/* NATIONALITY */}
-                                <Typography variant='h6' sx={{ color:"#000000"}}>Nationality</Typography>
-                                <CountrySelect/>
+                                <Typography variant='body1' sx={{ color:"#000000"}}>Nationality</Typography>
+                                <CountrySelect />
                             </Box>
 
                             <Divider orientation={'horizontal'} sx={{ backgroundColor: 'black'}} />
 
                             <Box sx={{ display:'flex' , justifyContent: 'space-between' , gap:2, alignItems: 'center'}}>{/* ADULTS */}
-                                <Typography variant='h6' sx={{color:"#000000"}}>
+                                <Typography variant='body1' sx={{color:"#000000"}}>
                                     Adults
                                 </Typography>
                                 <Box sx={{display:'flex' ,alignItems:'center', borderRadius:1 , border:'1px solid #ccc' , backgroundColor:'rgba(161,213,236,0.3)'}}>
@@ -145,7 +148,7 @@ const SearchBar: React.FC = () => {
                                     </IconButton>
 
                                     <IconButton aria-label="number of adults">
-                                        <Typography variant='h6' sx={{color:"#000000"}}>
+                                        <Typography variant='body1' sx={{color:"#000000"}}>
                                             {adults}
                                         </Typography>
                                     </IconButton>
@@ -159,7 +162,7 @@ const SearchBar: React.FC = () => {
                             <Divider orientation={'horizontal'} sx={{ backgroundColor: 'black'}} />
 
                             <Box sx={{ display:'flex' , justifyContent: 'space-between' , gap:2, alignItems: 'center'}}>{/* CHILDREN */}
-                                <Typography variant='h6' sx={{color:"#000000"}}>
+                                <Typography variant='body1' sx={{color:"#000000"}}>
                                     Children
                                 </Typography>
                                 <Box sx={{display:'flex' ,alignItems:'center', borderRadius:1 , border:'1px solid #ccc' , backgroundColor:'rgba(161,213,236,0.3)'}}>
@@ -169,7 +172,7 @@ const SearchBar: React.FC = () => {
                                     </IconButton>
 
                                     <IconButton aria-label="number of children">
-                                        <Typography variant='h6' sx={{color:"#000000"}}>
+                                        <Typography variant='body1' sx={{color:"#000000"}}>
                                             {children}
                                         </Typography>
                                     </IconButton>

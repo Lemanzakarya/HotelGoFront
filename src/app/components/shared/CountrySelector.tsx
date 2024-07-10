@@ -3,11 +3,12 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
+
 export default function CountrySelect() {
     return (
         <Autocomplete
             id="country-select-demo"
-            sx={{ width: 150 }}
+            sx={{ width: 100}}
             options={countries}
             autoHighlight
             getOptionLabel={(option) => option.label}
@@ -35,10 +36,12 @@ export default function CountrySelect() {
                 <TextField
                     {...params}
                     label="Choose a country"
+                    InputLabelProps={{
+                        sx: { fontSize: 14 } 
+                    }}
                     inputProps={{
                         ...params.inputProps,
                         autoComplete: 'new-password',
-
                     }}
                 />
             )}
