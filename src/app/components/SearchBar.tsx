@@ -1,7 +1,11 @@
 import * as React from 'react';
-import {Box, TextField, Button, Divider, ClickAwayListener} from '@mui/material';
+import { Box, TextField, Button, Divider, ClickAwayListener } from '@mui/material';
 import { Popper } from "@mui/base/Popper";
 import AutoCompleteInputBox from "@/app/components/shared/AutoCompleteInputBox";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 
 const SearchBar: React.FC = () => {
@@ -35,55 +39,52 @@ const SearchBar: React.FC = () => {
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    flexDirection: 'row',
-                    gap: 5,
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: { xs: 2, sm: 4 },
                     background: '#fffefe',
-                    p: 6,
-                    borderRadius: 10,
-                    height: 160
+                    p: { xs: 2, sm: 4 },
+                    borderRadius: 6,
+                    height: { xs: 'auto', sm: 140 },
+                    width: '100%',
+
                 }}
             >
-                <AutoCompleteInputBox width="200px" height="50px" />
-                <Divider orientation="vertical" flexItem sx={{ height: '100%', mx: -2 , backgroundColor : 'black'}} />
-                <TextField
-                    type="date"
-                    variant="outlined"
-                    inputProps={{
-                        style: {
-                            height: "20px"
-                        },
-                    }}
-                />
-                <Divider orientation="vertical" flexItem sx={{ height: '100%', mx: -2 , backgroundColor : 'black'}} />
-                <TextField
-                    type="date"
-                    variant="outlined"
-                    inputProps={{
-                        style: {
-                            height: "20px"
-                        },
-                    }}
-                />
-                <Divider orientation="vertical" flexItem sx={{ height: '100%', mx: -2 , backgroundColor : 'black'}} />
+                <AutoCompleteInputBox />
+                <Divider orientation="vertical" flexItem sx={{ height: { xs: 'auto', sm: '100%' }, mx: { xs: 0, sm: -2 }, backgroundColor: 'grey' }} />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker label="check-in" sx={{
+                            width:`200px`,
+                            fontSize :`10px`,
+                            padding :0
+                        }}/>
+                </LocalizationProvider>
+                <Divider orientation="vertical" flexItem sx={{ height: { xs: 'auto', sm: '100%' }, mx: { xs: 0, sm: -2 }, backgroundColor: 'grey' }} />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker label="check-out" sx={{
+                            width:`200px`,
+                            fontSize :`10px`,
+                            padding :0
+                        }}/>
+                </LocalizationProvider>
+                <Divider orientation="vertical" flexItem sx={{ height: { xs: 'auto', sm: '100%' }, mx: { xs: 0, sm: -2 }, backgroundColor: 'grey' }} />
                 <Button
                     aria-describedby={id}
                     variant="outlined"
                     onClick={handleClick}
                     sx={{
-                        '&:hover': { backgroundColor: 'rgba(117,207,215,0.56)' },
-                        borderRadius: 3,
+                        '&:hover': { backgroundColor: 'white', borderColor: '#1f1f1f' },
+                        borderRadius: 1.5,
                         p: 1,
                         textTransform: 'none',
                         fontSize: 20,
-                        borderColor: '#75CFD78E', // Adjust the border color as needed
-                        color: 'black', // Adjust the text color as needed
-                        backgroundColor: 'white', // Ensures background color is white
+                        borderColor: '#a2a2a2',
+                        color: '#363131',
+                        backgroundColor: 'white',
                         width: 140,
                         cursor: 'pointer',
-                        height: 50
+                        height: '73%',
                     }}
                 >
-                    Guests
                 </Button>
                 <Popper
                     id={id}
@@ -92,7 +93,8 @@ const SearchBar: React.FC = () => {
                     modifiers={[{
                         name: 'offset',
                         options: {
-                            offset: [0, 10] },
+                            offset: [0, 10]
+                        },
                     }]}
                 >
                     <ClickAwayListener onClickAway={handleClose}>
@@ -102,34 +104,32 @@ const SearchBar: React.FC = () => {
                                 borderRadius: 3,
                                 border: '1px solid #ccc',
                                 boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
-                                p: 14,
-                                minWidth: 350,
-                                minHeight: 350
+                                p: 3,
+                                minWidth: 300,
+                                minHeight: 200,
                             }}
                         >
-
-                            {/* guest seçenekleri burada olacak */}
-
                         </Box>
                     </ClickAwayListener>
                 </Popper>
                 <Button
-                    variant="contained" sx={{
-                    backgroundColor: 'orange',
-                    '&:hover': { backgroundColor: 'darkorange' },
-                    borderRadius: 3,
-                    p: 1,
-                    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-                    textTransform: 'none',
-                    fontSize: 26,
-                    marginLeft: 'auto' ,
-                    width: 120
-                }}
+                    variant="contained"
+                    sx={{
+                        backgroundColor: 'orange',
+                        '&:hover': { backgroundColor: 'darkorange' },
+                        borderRadius: 3,
+                        p: 1,
+                        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+                        textTransform: 'none',
+                        fontSize: 26,
+                        marginLeft: { xs: 0, sm: 'auto' },
+                        width: { xs: '100%', sm: 120 }
+                    }}
                 >
                     Search
                 </Button>
             </Box>
-        </Box>
+        </Box >
     );
 };
 

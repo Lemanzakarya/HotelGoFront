@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Popper } from '@mui/base/Popper';
+import {Popper as MuiPopper } from '@mui/base/Popper';
 import { styled, css } from '@mui/system';
 
 export default function Popper() {
@@ -17,9 +17,9 @@ export default function Popper() {
             <TriggerButton aria-describedby={id} type="button" onClick={handleClick}>
                 POPPER
             </TriggerButton>
-            <Popper id={id} open={open} anchorEl={anchorEl}>
+            <MuiPopper id={id} open={open} anchorEl={anchorEl}>
                 <StyledPopperDiv>INSIDE</StyledPopperDiv>
-            </Popper>
+            </MuiPopper>
         </div>
     );
 }
