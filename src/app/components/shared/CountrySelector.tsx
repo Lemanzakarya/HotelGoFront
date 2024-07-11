@@ -35,7 +35,7 @@ export default function CountrySelect() {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Choose a country"
+                    label="Country"
                     InputLabelProps={{
                         sx: { fontSize: 14 } 
                     }}
