@@ -1,12 +1,11 @@
+'use client'
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Image from 'next/image';
-import Link from 'next/link';
-import { Box } from '@mui/material';
-import logo from '../../../assets/logo.png';
+import logo from '../../assets/logo.png';
+import Currency from '../shared/Currency';
 
 export default function Navbar() {
     return (
@@ -15,14 +14,7 @@ export default function Navbar() {
                 <Image src={logo} alt="Logo" width={150} height={40} layout="fixed" objectFit="contain" />
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Link href="/" passHref>
-                        <Button color="primary">Home</Button>
-                    </Link>
-                    <Link href="/about" passHref>
-                        <Button color="primary">About</Button>
-                    </Link>
-                </Box>
+                <Currency />
                 <div style={{ width: 20, height: 60}} />
             </Toolbar>
         </AppBar>

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {Box, TextField, Button, Divider, IconButton} from '@mui/material';
 import { Popper } from "@mui/base/Popper";
-import AutoCompleteInputBox from "@/app/components/shared/AutoCompleteInputBox";
+import AutoCompleteInputBox from "../components/shared/AutoCompleteInputBox";
 import Typography from "@mui/material/Typography";
 import {AddCircleOutlineSharp, Height, RemoveCircleOutlineRounded} from "@mui/icons-material";
-import CountrySelect from "@/app/components/shared/CountrySelector";
+import CountrySelect from "../components/shared/CountrySelector";
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
