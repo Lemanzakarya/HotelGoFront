@@ -3,41 +3,46 @@ import React, { useEffect, useState } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 interface Hotel {
-  [x: string]: any;
+  id: string;
   title: string;
   location: string;
   price: string;
   tags?: string[];
 }
 
-const hotel: Hotel[]=[
+const hotel: Hotel[] = [
   {
+    id: "1",
     title: "Hotel 1",
     location: "Alanya, Antalya",
     price: "259,99",
     tags: ["Wifi", "Star", "2.4 km"],
   },
   {
-    title: "Hotel 1",
+    id: "2",
+    title: "Hotel 2",
     location: "Manavgat, Antalya",
-    price: "259,99",
+    price: "698,99",
     tags: ["Wifi", "Star", "2.4 km"],
   },
   {
-    title: "Hotel 1",
+    id: "3",
+    title: "Hotel 3",
     location: "Cankaya, Ankara",
-    price: "259,99",
+    price: "354,99",
     tags: ["Wifi", "Star", "2.4 km"],
   },
   {
-    title: "Hotel 1",
+    id: "4",
+    title: "Hotel 4",
     location: "Merkez, Adana",
-    price: "259,99",
+    price: "499,99",
     tags: ["Wifi", "Star", "2.4 km"],
   }
-]
+];
 
 const HotelDetail: React.FC = () => {
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
@@ -49,14 +54,8 @@ const HotelDetail: React.FC = () => {
   }, []);
 
   const fetchHotels = async () => {
-  //   try {
-  //     // Örnek API otel almak için endpoint
-  //     const response = await axios.get("/api/hotels");
-  //     setHotelData(response.data); // response.data otel dizisi olduğunu varsayalım
-  //   } catch (error) {
-  //     console.error("Otel alınırken hata oluştu:", error);
-  //   }
-       setHotelData(hotel);
+    // Simulated hotel data
+    setHotelData(hotel);
   };
 
   const handleLocationFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,10 +67,8 @@ const HotelDetail: React.FC = () => {
   };
 
   const handleFilterClick = () => {
-    const filteredData = hotelData.filter((hotel) => {
+    const filteredData = hotel.filter((hotel) => {
       const locationMatch = hotel.location.toLowerCase().includes(locationFilter.toLowerCase());
-      // Otellerin veri yapısına göre ayarlayın
-      // Etiketlerin bir dizi dizin olduğunu varsayalım
       const tagMatch = hotel.tags?.some(tag => tag.toLowerCase().includes(tagFilter.toLowerCase())) ?? false;
       return locationMatch && tagMatch;
     });
@@ -79,9 +76,8 @@ const HotelDetail: React.FC = () => {
   };
 
   return (
-    <div className="m-auto pt-4 items-center w-full max-w-3xl">
-      <div className="flex justify-between mb-4">
-        {/* Konum arama çubuğu */}
+    <Box mx="auto" pt={10} alignItems="center">
+      <Box display="flex" justifyContent="between">
         <TextField
           type="text"
           placeholder="Search"
@@ -89,27 +85,38 @@ const HotelDetail: React.FC = () => {
           size="small"
           value={locationFilter}
           onChange={handleLocationFilterChange}
+          className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
         />
-        {/* Filtreleme düğmesi */}
+        <TextField
+          type="text"
+          placeholder="Filter by tag"
+          variant="outlined"
+          size="small"
+          value={tagFilter}
+          onChange={handleTagFilterChange}
+          className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+        />
         <Button
           variant="contained"
           color="primary"
           onClick={handleFilterClick}
+          className="px-4 py-2 bg-primary-500 text-white rounded-md shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400"
         >
           Filter
         </Button>
-      </div>
+      </Box>
       {hotelData.map((hotel, index) => (
-        <div key={index} className="py-2">
+        <Box key={index}>
           <HotelCard
             title={hotel.title}
             location={hotel.location}
             price={hotel.price}
-            apiEndpoint={`/api/hotel/${hotel.id}`} // Örnek API endpoint'i
+            tags={hotel.tags}
+            apiEndpoint={`/api/hotel/${hotel.id}`}
           />
-        </div>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 };
 
