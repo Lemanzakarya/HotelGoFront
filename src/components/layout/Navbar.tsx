@@ -9,7 +9,7 @@ import Currency from '../shared/Currency';
 
 export default function Navbar() {
     return (
-        <AppBar position="static" sx={{ backgroundColor: 'white' }}>
+        <AppBar position="fixed" sx={{ backgroundColor: 'white' }}>
             <Toolbar>
                 <Image src={logo} alt="Logo" width={150} height={40} layout="fixed" objectFit="contain" />
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

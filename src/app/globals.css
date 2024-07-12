@@ -80,7 +80,7 @@
 }
 
 html, body {
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
   margin: 0;
 }
