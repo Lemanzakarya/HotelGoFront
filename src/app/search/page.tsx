@@ -4,6 +4,7 @@ import HotelCard from "../../components/card/HotelCard";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import SearchBar from "@/components/SearchBar";
 
 interface Hotel {
   id: string;
@@ -76,8 +77,13 @@ const HotelDetail: React.FC = () => {
   };
 
   return (
-    <Box mx="auto" pt={10} alignItems="center">
-      <Box display="flex" justifyContent="between">
+    <Box mx="auto" pt={10} alignItems="center" style={{marginTop:'80px'}}>
+        <SearchBar
+            sx={{marginTop:'40px' , marginLeft:'10%', marginRight:'10%'}}
+            backgroundColor={'#F5F5F5'}
+            height={'90px'}
+        />
+      <Box display="flex" justifyContent="between" style={ { marginTop: '80px',marginLeft:'37%'}}>
         <TextField
           type="text"
           placeholder="Search"
@@ -101,12 +107,13 @@ const HotelDetail: React.FC = () => {
           color="primary"
           onClick={handleFilterClick}
           className="px-4 py-2 bg-primary-500 text-white rounded-md shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400"
+          sx={{ ml: 1 , marginTop:'1px' , height: '38px'}}
         >
           Filter
         </Button>
       </Box>
       {hotelData.map((hotel, index) => (
-        <Box key={index}>
+        <Box key={index} style={{marginLeft:'35%'}}>
           <HotelCard
             title={hotel.title}
             location={hotel.location}
