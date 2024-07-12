@@ -79,8 +79,8 @@ const HotelDetail: React.FC = () => {
   };
 
   return (
-    <div className="m-auto pt-4 items-center w-full max-w-3xl">
-      <div className="flex justify-between mb-4">
+    <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginLeft:'35%'}}>
+      <div className="flex justify-between mb-4" style={ { marginTop: '80px',marginLeft:'3.86%'}}>
         {/* Konum arama çubuğu */}
         <TextField
           type="text"
@@ -95,6 +95,7 @@ const HotelDetail: React.FC = () => {
           variant="contained"
           color="primary"
           onClick={handleFilterClick}
+          sx={{ ml: 1 , marginTop:'1px' , height: '38px'}}
         >
           Filter
         </Button>
