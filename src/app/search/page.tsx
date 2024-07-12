@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import SearchBar from "@/components/SearchBar";
 
 interface Hotel {
   [x: string]: any;
@@ -79,8 +80,13 @@ const HotelDetail: React.FC = () => {
   };
 
   return (
-    <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginLeft:'35%'}}>
-      <div className="flex justify-between mb-4" style={ { marginTop: '80px',marginLeft:'3.86%'}}>
+    <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginTop:'80px'}}>
+        <SearchBar
+            sx={{marginTop:'40px' , marginLeft:'10%', marginRight:'10%'}}
+            backgroundColor={'#F5F5F5'}
+            height={'90px'}
+        />
+      <div className="flex justify-between mb-4" style={ { marginTop: '80px',marginLeft:'37%'}}>
         {/* Konum arama çubuğu */}
         <TextField
           type="text"
@@ -101,7 +107,7 @@ const HotelDetail: React.FC = () => {
         </Button>
       </div>
       {hotelData.map((hotel, index) => (
-        <div key={index} className="py-2">
+        <div key={index} className="py-2" style={{marginLeft:'35%'}}>
           <HotelCard
             title={hotel.title}
             location={hotel.location}
