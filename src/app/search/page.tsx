@@ -2,8 +2,11 @@
 import React, { useEffect, useState } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
+import FilterSidebar from "@/app/filtering/FilterSideBar";
+import {Box} from "@mui/material";
 
 interface Hotel {
   id: string;
@@ -57,26 +60,53 @@ const HotelDetail: React.FC = () => {
     setHotelData(hotel);
   };
 
+  const handleLocationFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLocationFilter(event.target.value);
+  };
+
+  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTagFilter(event.target.value);
+  };
+
+  const handleFilterClick = () => {
+    const filteredData = hotelData.filter((hotel) => {
+      const locationMatch = hotel.location.toLowerCase().includes(locationFilter.toLowerCase());
+      // Otellerin veri yapısına göre ayarlayın
+      // Etiketlerin bir dizi dizin olduğunu varsayalım
+      const tagMatch = hotel.tags?.some(tag => tag.toLowerCase().includes(tagFilter.toLowerCase())) ?? false;
+      return locationMatch && tagMatch;
+    });
+    setHotelData(filteredData);
+  };
+
   return (
-    <Box mx="auto" alignItems="center" style={{marginTop:'80px'}}>
-      <SearchBar
-        sx={{ marginLeft: isSmallScreen ? '5%':'4%', marginRight: isSmallScreen ? '5%':'4%' }}
-        backgroundColor={'#F5F5F5'}
-        height={isSmallScreen ? '100%' : 80}
-      />
-      {hotelData.map((hotel, index) => (
-        <Box key={index} style={{ marginLeft: isSmallScreen ? 0 : "30%" }}>
-          <HotelCard
-            title={hotel.title}
-            location={hotel.location}
-            price={hotel.price}
-            tags={hotel.tags}
-            apiEndpoint={`/api/hotel/${hotel.id}`}
-          />
+      <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginTop: '80px'}}>
+        <SearchBar
+            sx={{marginTop: '40px', marginLeft: '10%', marginRight: '10%'}}
+            backgroundColor={'#F5F5F5'}
+            height={'90px'}
+        />
+        <Box display="flex" marginTop="65px" marginLeft="10%">
+          <Box flex="1" marginRight="20px">
+            <FilterSidebar/>
+          </Box>
+          <Box flex="3" display="flex" flexDirection="column" gap="0px" >
+            {hotelData.map((hotel, index) => (
+                <Box key={index} >
+                  <HotelCard
+                      title={hotel.title}
+                      location={hotel.location}
+                      price={hotel.price}
+                      apiEndpoint={`/api/hotel/${hotel.id}`} // Örnek API endpoint'i
+                  />
+                </Box>
+            ))}
+          </Box>
         </Box>
-      ))}
-    </Box>
+      </div>
   );
 };
 
 export default HotelDetail;
+
+
