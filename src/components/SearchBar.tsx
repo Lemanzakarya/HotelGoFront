@@ -241,7 +241,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                 </IconButton>
                             </Box>
                         </Box>
-                        <Divider orientation={'horizontal'} sx={{ backgroundColor: 'black' }} />
+
                         {children > 0 && (
                                 <Box sx={{ mt: 2 }}>
                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, mb: 1 }}>

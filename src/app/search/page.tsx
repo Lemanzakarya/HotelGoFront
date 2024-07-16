@@ -2,11 +2,10 @@
 import React, { useEffect, useState } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "@/app/filtering/FilterSideBar";
-import {Box} from "@mui/material";
+
 
 interface Hotel {
   id: string;
@@ -60,24 +59,8 @@ const HotelDetail: React.FC = () => {
     setHotelData(hotel);
   };
 
-  const handleLocationFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLocationFilter(event.target.value);
-  };
 
-  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTagFilter(event.target.value);
-  };
 
-  const handleFilterClick = () => {
-    const filteredData = hotelData.filter((hotel) => {
-      const locationMatch = hotel.location.toLowerCase().includes(locationFilter.toLowerCase());
-      // Otellerin veri yapısına göre ayarlayın
-      // Etiketlerin bir dizi dizin olduğunu varsayalım
-      const tagMatch = hotel.tags?.some(tag => tag.toLowerCase().includes(tagFilter.toLowerCase())) ?? false;
-      return locationMatch && tagMatch;
-    });
-    setHotelData(filteredData);
-  };
 
   return (
       <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginTop: '80px'}}>
