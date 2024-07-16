@@ -7,7 +7,7 @@ import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
 import Button from '@mui/joy/Button';
 import { useMediaQuery } from '@mui/material';
-
+import { useRouter } from 'next/navigation';
 
 interface HotelCardProps {
   title: string;
@@ -25,7 +25,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
   tags,
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useMediaQuery('(max-width:650px)');
+  const router = useRouter();
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -42,6 +43,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
   //   };
   //   fetchData();
   // }, [apiEndpoint]);
+
+  const handleLookThrough = () => {
+    router.push('/hoteldetail');
+  };
 
   return (
     <Card
@@ -87,6 +92,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
           variant="solid"
           size="lg"
           sx={{ mt: 3, width: isSmallScreen ? '100%' : '40%', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
+          onClick={handleLookThrough}
         >
           Look Through
         </Button>

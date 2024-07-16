@@ -46,7 +46,7 @@ const hotel: Hotel[] = [
 
 const HotelDetail: React.FC = () => {
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useMediaQuery('(max-width:650px)');
 
   useEffect(() => {
     fetchHotels();
@@ -60,12 +60,12 @@ const HotelDetail: React.FC = () => {
   return (
     <Box mx="auto" alignItems="center" style={{marginTop:'80px'}}>
       <SearchBar
-        sx={{ marginLeft: isSmallScreen ? '8%':'4%', marginRight: isSmallScreen ? '8%':'4%' }}
+        sx={{ marginLeft: isSmallScreen ? '5%':'4%', marginRight: isSmallScreen ? '5%':'4%' }}
         backgroundColor={'#F5F5F5'}
         height={isSmallScreen ? '100%' : 80}
       />
       {hotelData.map((hotel, index) => (
-        <Box key={index} style={{ marginLeft: isSmallScreen ? "0%" : "28%" }}>
+        <Box key={index} style={{ marginLeft: isSmallScreen ? 0 : "30%" }}>
           <HotelCard
             title={hotel.title}
             location={hotel.location}
