@@ -27,21 +27,21 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const [price, setPrice] = useState<string>(initialPrice);
   const isSmallScreen = useMediaQuery('(max-width:600px)');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(apiEndpoint);
-        if (!response.ok) {
-          throw new Error('Data could not be fetched');
-        }
-        const data = await response.json();
-        setPrice(data.price); // Assuming 'price' field in the returned JSON object
-      } catch (error) {
-        console.error('Data fetch error', error);
-      }
-    };
-    fetchData();
-  }, [apiEndpoint]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(apiEndpoint);
+  //       if (!response.ok) {
+  //         throw new Error('Data could not be fetched');
+  //       }
+  //       const data = await response.json();
+  //       setPrice(data.price); 
+  //     } catch (error) {
+  //       console.error('Data fetch error', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [apiEndpoint]);
 
   return (
     <Card

@@ -1,10 +1,9 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import HotelCard from "../../components/card/HotelCard";
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import SearchBar from "@/components/SearchBar";
+import { useMediaQuery } from "@mui/material";
 
 interface Hotel {
   id: string;
@@ -47,8 +46,7 @@ const hotel: Hotel[] = [
 
 const HotelDetail: React.FC = () => {
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
-  const [locationFilter, setLocationFilter] = useState<string>("");
-  const [tagFilter, setTagFilter] = useState<string>("");
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
     fetchHotels();
@@ -59,61 +57,15 @@ const HotelDetail: React.FC = () => {
     setHotelData(hotel);
   };
 
-  const handleLocationFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLocationFilter(event.target.value);
-  };
-
-  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTagFilter(event.target.value);
-  };
-
-  const handleFilterClick = () => {
-    const filteredData = hotel.filter((hotel) => {
-      const locationMatch = hotel.location.toLowerCase().includes(locationFilter.toLowerCase());
-      const tagMatch = hotel.tags?.some(tag => tag.toLowerCase().includes(tagFilter.toLowerCase())) ?? false;
-      return locationMatch && tagMatch;
-    });
-    setHotelData(filteredData);
-  };
-
   return (
     <Box mx="auto" alignItems="center" style={{marginTop:'80px'}}>
-        <SearchBar
-            sx={{marginLeft:'4%', marginRight:'4%'}}
-            backgroundColor={'#F5F5F5'}
-            height={'90px'}
-        />
-      {/* <Box display="flex" justifyContent="between" style={ { marginTop: '20px',marginLeft:'37%'}}>
-        <TextField
-          type="text"
-          placeholder="Search"
-          variant="outlined"
-          size="small"
-          value={locationFilter}
-          onChange={handleLocationFilterChange}
-          className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-        />
-        <TextField
-          type="text"
-          placeholder="Filter by tag"
-          variant="outlined"
-          size="small"
-          value={tagFilter}
-          onChange={handleTagFilterChange}
-          className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleFilterClick}
-          className="px-4 py-2 bg-primary-500 text-white rounded-md shadow-sm hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400"
-          sx={{ ml: 1 , marginTop:'1px' , height: '38px'}}
-        >
-          Filter
-        </Button>
-      </Box> */}
+      <SearchBar
+        sx={{ marginLeft: isSmallScreen ? '8%':'4%', marginRight: isSmallScreen ? '8%':'4%' }}
+        backgroundColor={'#F5F5F5'}
+        height={isSmallScreen ? '100%' : 80}
+      />
       {hotelData.map((hotel, index) => (
-        <Box key={index} style={{marginLeft:"28%"}}>
+        <Box key={index} style={{ marginLeft: isSmallScreen ? "0%" : "28%" }}>
           <HotelCard
             title={hotel.title}
             location={hotel.location}

@@ -46,7 +46,7 @@ export default function AutoCompleteInputBox() {
     return (
         <Autocomplete
             id="location-selection"
-            sx={{ width: '30%' }}
+            sx={{ width:{xs: '100%', sm: '20%'}}}
             options={options}
             autoHighlight
             noOptionsText={inputValue.length >= 3 ? "No result ":"Type 3 letters at least"}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Divider, IconButton, Typography } from '@mui/material';
+import { Box, Button, Divider, IconButton, Typography, useMediaQuery } from '@mui/material';
 import { Popper } from "@mui/base/Popper";
 import AutoCompleteInputBox from "../components/shared/AutoCompleteInputBox";
 import { AddCircleOutlineSharp, RemoveCircleOutlineRounded } from "@mui/icons-material";
@@ -12,7 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 
 interface SearchBarProps {
-    sx?: React.CSSProperties; // Optional style prop
+    sx?: React.CSSProperties;
     backgroundColor?: string;
     height?: string | number;
     width?: string | number;
@@ -24,31 +24,26 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
-                                                 sx,
-                                                 backgroundColor = '#fffefe',
-                                                 height = 'auto',
-                                                 width = '100%',
-                                                 checkInLabel = 'check-in',
-                                                 checkOutLabel = 'check-out',
-                                                 guestsButtonLabel = 'Guests',
-                                                 searchButtonLabel = 'Search',
-                                                 searchButtonColor = 'orange'
-                                             }) => {
+    sx,
+    backgroundColor = '#fffefe',
+    height = 'auto',
+    width = '100%',
+    checkInLabel = 'check-in',
+    checkOutLabel = 'check-out',
+    guestsButtonLabel = 'Guests',
+    searchButtonLabel = 'Search',
+    searchButtonColor = 'orange'
+}) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [adults, setAdults] = React.useState<number>(1);
     const [children, setChildren] = React.useState<number>(0);
+    const isSmallScreen = useMediaQuery('(max-width:600px)');
     const router = useRouter();
-    const [childrenAges , setChildrenAges] = React.useState<number[]>([]);
+    const [childrenAges, setChildrenAges] = React.useState<number[]>([]);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
-
-   /* const handleClose = (event: MouseEvent) => {
-        if (anchorEl && !anchorEl.contains(event.target as Node)) {
-            setAnchorEl(null);
-        }
-    };*/
 
     const handleAdultsChange = (amount: number) => {
         if (amount >= 0) {
@@ -56,13 +51,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
         }
     };
 
-    const handleChildrenChange = (amount : number) => {
-        if (amount >= 0 && amount <= 4){
+    const handleChildrenChange = (amount: number) => {
+        if (amount >= 0 && amount <= 4) {
             setChildren(amount);
             setChildrenAges(new Array(amount).fill(0));
         }
     }
-    const handleChildrenAgesChange = (index : number , age : number) => {
+
+    const handleChildrenAgesChange = (index: number, age: number) => {
         const newAges = [...childrenAges];
         newAges[index] = age;
         setChildrenAges(newAges);
@@ -99,20 +95,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     p: { xs: 2, sm: 4 },
                     borderRadius: 6,
                     boxShadow: '0px 2px 5px rgba(4,7,10,1)',
-                    height,
                     width,
+                    height
                 }}
             >
                 <AutoCompleteInputBox />
-                <Divider orientation="vertical" flexItem sx={{ height: { xs: 'auto', sm: '100%' }, mx: { xs: 0, sm: -2 }, backgroundColor: 'grey' }} />
+                <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker label={checkInLabel} sx={{ width: '200px', fontSize: '10px', padding: 0 }} />
+                    <DatePicker label={checkInLabel} sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }} />
                 </LocalizationProvider>
-                <Divider orientation="vertical" flexItem sx={{ height: { xs: 'auto', sm: '100%' }, mx: { xs: 0, sm: -2 }, backgroundColor: 'grey' }} />
+                <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker label={checkOutLabel} sx={{ width: '200px', fontSize: '10px', padding: 0 }} />
+                    <DatePicker label={checkOutLabel} sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }} />
                 </LocalizationProvider>
-                <Divider orientation="vertical" flexItem sx={{ height: { xs: 'auto', sm: '100%' }, mx: { xs: 0, sm: -2 }, backgroundColor: 'grey' }} />
+                <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
                 <Button
                     aria-describedby={id}
                     variant="outlined"
@@ -126,7 +122,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         borderColor: '#a2a2a2',
                         color: '#363131',
                         backgroundColor: 'transparent',
-                        width: 140,
+                        width: isSmallScreen ? '100%' : '20%',
                         cursor: 'pointer',
                         height: 55,
                     }}
@@ -165,7 +161,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             <CountrySelect />
                         </Box>
 
-                        <Divider orientation={'horizontal'} sx={{ backgroundColor: 'black' }} />
+                        <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center' }}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>
@@ -206,72 +202,48 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                 </IconButton>
                             </Box>
                         </Box>
+                        <Divider orientation={'horizontal'} sx={{ backgroundColor: 'black' }} />
                         {children > 0 && (
-                            <Box sx={{ mt: 2 }}>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, mb: 1 }}>
-                                    {Array.from({ length: Math.min(2, children) }).map((_, index) => (
-                                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography variant='body2' sx={{ color: "#000000" }}>
-                                                kid {index + 1}
-                                            </Typography>
-                                            <Select
-                                                value={childrenAges[index]}
-                                                onChange={(e) => handleChildrenAgesChange(index, parseInt(e.target.value as string))}
-                                                displayEmpty
-                                                size="small"
-                                                sx={{ width: 62, height: 30, fontSize: '0.875rem' }}
-                                            >
-                                                {Array.from({ length: 18 }).map((_, age) => (
-                                                    <MenuItem key={age} value={age}>{age}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </Box>
-                                    ))}
-                                </Box>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5 }}>
-                                    {Array.from({ length: Math.max(0, children - 2) }).map((_, index) => (
-                                        <Box key={index + 2} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography variant='body2' sx={{ color: "#000000" }}>
-                                                kid {index + 3}
-                                            </Typography>
-                                            <Select
-                                                value={childrenAges[index + 2]}
-                                                onChange={(e) => handleChildrenAgesChange(index + 2, parseInt(e.target.value as string))}
-                                                displayEmpty
-                                                size="small"
-                                                sx={{ width: 62, height: 30, fontSize: '0.875rem' }}
-                                            >
-                                                {Array.from({ length: 18 }).map((_, age) => (
-                                                    <MenuItem key={age} value={age}>{age}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </Box>
-                                    ))}
-                                </Box>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                {Array.from({ length: children }).map((_, index) => (
+                                    <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center' }}>
+                                        <Typography variant='body1' sx={{ color: "#000000" }}>Age of child {index + 1}</Typography>
+                                        <Select
+                                            value={childrenAges[index] || ''}
+                                            onChange={(e) => handleChildrenAgesChange(index, parseInt(e.target.value as string))}
+                                            displayEmpty
+                                            sx={{ width: 60 }}
+                                        >
+                                            {Array.from({ length: 18 }).map((_, ageIndex) => (
+                                                <MenuItem key={ageIndex} value={ageIndex}>{ageIndex}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Box>
+                                ))}
                             </Box>
                         )}
                     </Box>
                 </Popper>
                 <Button
                     variant="contained"
-                    sx={{
-                        backgroundColor: searchButtonColor,
-                        '&:hover': { backgroundColor: 'darkorange' },
-                        borderRadius: 3,
-                        p: 1.2,
-                        textTransform: 'none',
-                        fontFamily:'inherit',
-                        fontSize: 20,
-                        marginLeft: { xs: 0, sm: 'auto' },
-                        width: { xs: '100%', sm: 120 }
-                    }}
                     onClick={handleSearch}
+                    sx={{
+                        '&:hover': { backgroundColor: searchButtonColor },
+                        borderRadius: 2,
+                        p: 1,
+                        textTransform: 'none',
+                        fontSize: 20,
+                        backgroundColor: searchButtonColor,
+                        color: '#ffffff',
+                        width: isSmallScreen ? '100%' : '20%',
+                        height: 55,
+                    }}
                 >
                     {searchButtonLabel}
                 </Button>
             </Box>
         </Box>
     );
-};
+}
 
 export default SearchBar;
