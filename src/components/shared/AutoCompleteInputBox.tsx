@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import axios from 'axios';
+// import axios from 'axios';
 import {json} from "node:stream/consumers";
 
 interface Option {
@@ -36,11 +36,11 @@ export default function AutoCompleteInputBox() {
 
         handleFetchData();
     }, [inputValue]);*/
-    useEffect(() => {
-        fetch(apiUrl)
-            .then((response) => response.json())
-            .then((json) => {json.value})
-    }, []);
+    // useEffect(() => {
+    //     fetch(apiUrl)
+    //         .then((response) => response.json())
+    //         .then((json) => {json.value})
+    // }, []);
 
 
     return (

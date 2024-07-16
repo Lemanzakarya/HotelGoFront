@@ -258,10 +258,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         backgroundColor: searchButtonColor,
                         '&:hover': { backgroundColor: 'darkorange' },
                         borderRadius: 3,
-                        p: 1,
-                        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+                        p: 1.2,
                         textTransform: 'none',
-                        fontSize: 26,
+                        fontFamily:'inherit',
+                        fontSize: 20,
                         marginLeft: { xs: 0, sm: 'auto' },
                         width: { xs: '100%', sm: 120 }
                     }}

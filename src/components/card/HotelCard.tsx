@@ -66,11 +66,11 @@ const HotelCard: React.FC<HotelCardProps> = ({
           />
         </AspectRatio>
       </CardOverflow>
-      <CardContent sx={{ flex: '1 0 auto' }}>
-        <Typography fontWeight="bold" textColor="text.primary">
+      <CardContent sx={{ flex: '1 0 auto', ml:1}} >
+        <Typography fontWeight="bold" textColor="text.primary" fontSize={27}>
           {title}
         </Typography>
-        <Typography textColor="text.secondary">
+        <Typography textColor="text.secondary" mt={5}>
           {location}
         </Typography>
         {tags && (
@@ -80,14 +80,13 @@ const HotelCard: React.FC<HotelCardProps> = ({
         )}
       </CardContent>
       <CardContent sx={{}}>
-      <Typography fontWeight="bold" textColor="success.plainColor" sx={{ mt: 1, alignSelf: 'flex-end', }}>
+      <Typography fontWeight="bold" textColor="success.plainColor" sx={{ mt:4 ,mr:1 , alignSelf: 'flex-end', fontSize : 30 }}>
           {price} $
         </Typography>
         <Button
           variant="solid"
-          color="primary"
-          size="md"
-          sx={{ mt: 1, width: isSmallScreen ? '100%' : '30%', alignSelf: isSmallScreen ? 'center' : 'flex-end'}}
+          size="lg"
+          sx={{ mt: 3, width: isSmallScreen ? '100%' : '40%', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
         >
           Look Through
         </Button>

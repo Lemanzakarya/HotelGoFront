@@ -77,13 +77,13 @@ const HotelDetail: React.FC = () => {
   };
 
   return (
-    <Box mx="auto" pt={10} alignItems="center" style={{marginTop:'80px'}}>
+    <Box mx="auto" alignItems="center" style={{marginTop:'80px'}}>
         <SearchBar
-            sx={{marginTop:'40px' , marginLeft:'10%', marginRight:'10%'}}
+            sx={{marginLeft:'4%', marginRight:'4%'}}
             backgroundColor={'#F5F5F5'}
             height={'90px'}
         />
-      <Box display="flex" justifyContent="between" style={ { marginTop: '80px',marginLeft:'37%'}}>
+      {/* <Box display="flex" justifyContent="between" style={ { marginTop: '20px',marginLeft:'37%'}}>
         <TextField
           type="text"
           placeholder="Search"
@@ -111,9 +111,9 @@ const HotelDetail: React.FC = () => {
         >
           Filter
         </Button>
-      </Box>
+      </Box> */}
       {hotelData.map((hotel, index) => (
-        <Box key={index} style={{marginLeft:'35%'}}>
+        <Box key={index} style={{marginLeft:"28%"}}>
           <HotelCard
             title={hotel.title}
             location={hotel.location}
