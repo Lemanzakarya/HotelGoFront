@@ -2,7 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import SearchBar from './components/SearchBar';
+import SearchBar from '../components/SearchBar';
 
 
 const PageContainer = styled.div`
@@ -10,7 +10,7 @@ const PageContainer = styled.div`
     background-image: url('https://wallpapercave.com/wp/wp4557646.jpg'); 
     background-size: cover;
     background-position: center; 
-    padding-bottom: 25vh;
+    padding-bottom: 8vh;
     background-repeat: no-repeat;
     background-color: blueviolet;
     width: 100%;
