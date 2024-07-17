@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import dayjs, { Dayjs } from 'dayjs';
-import { Anybody } from 'next/font/google';
+
 
 interface SearchBarProps {
     sx?: React.CSSProperties;
@@ -54,15 +54,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const handleAdultsChange = (amount: number) => {
         if (amount >= 0) {
             setAdults(amount);
+            if (amount == 0){
+                setChildren(0);
+                setChildrenAges([]);
+            }
         }
     };
 
     const handleChildrenChange = (amount: number) => {
         if (amount >= 0 && amount <= 4) {
             setChildren(amount);
-            setChildrenAges(new Array(amount).fill(0));
+            if (amount > children) {
+                setChildrenAges(prevAges => [...prevAges, ...new Array(amount - children).fill(0)]);
+            } else {
+                setChildrenAges(prevAges => prevAges.slice(0, amount));
+            }
         }
-    }
+    };
+
 
     const handleChildrenAgesChange = (index : number , age : number) => {
         const newAges = [...childrenAges];
@@ -197,10 +206,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     >
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center' }}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>Nationality</Typography>
-                            <CountrySelect />
+                            <CountrySelect sx={{ width:'auto', maxWidth:'100%'}} />
                         </Box>
-
-                        <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center' }}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>
@@ -221,7 +228,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                 </IconButton>
                             </Box>
                         </Box>
-                        <Divider orientation={'horizontal'} sx={{ backgroundColor: 'black' }} />
+
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center' }}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>
                                 Children
@@ -236,12 +243,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                         {children}
                                     </Typography>
                                 </IconButton>
-                                <IconButton aria-label="increase children" onClick={() => handleChildrenChange(children + 1)}>
-                                    <AddCircleOutlineSharp sx={{ color: 'rgba(0,0,0,0.73)' }} />
+                                <IconButton aria-label="increase children" onClick={() => handleChildrenChange(children + 1)} disabled={children === 4 || adults === 0}>
+                                    <AddCircleOutlineSharp sx={{ color: adults === 0 || children === 4 ? '#6c6565' : 'rgba(0,0,0,0.73)' }} />
                                 </IconButton>
                             </Box>
                         </Box>
-
                         {children > 0 && (
                                 <Box sx={{ mt: 2 }}>
                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, mb: 1 }}>
@@ -255,7 +261,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                                     onChange={(e) => handleChildrenAgesChange(index, parseInt(e.target.value as string))}
                                                     displayEmpty
                                                     size="small"
-                                                    sx={{ width: 60, height: 30, fontSize: '0.875rem' }}
+                                                    sx={{ width: 65, height: 30, fontSize: '0.875rem' }}
                                                 >
                                                     {Array.from({ length: 18 }).map((_, age) => (
                                                         <MenuItem key={age} value={age}>{age}</MenuItem>
@@ -275,7 +281,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                                     onChange={(e) => handleChildrenAgesChange(index + 2, parseInt(e.target.value as string))}
                                                     displayEmpty
                                                     size="small"
-                                                    sx={{ width: 60, height: 30, fontSize: '0.875rem' }}
+                                                    sx={{ width: 65, height: 30, fontSize: '0.875rem' }}
                                                 >
                                                     {Array.from({ length: 18 }).map((_, age) => (
                                                         <MenuItem key={age} value={age}>{age}</MenuItem>
