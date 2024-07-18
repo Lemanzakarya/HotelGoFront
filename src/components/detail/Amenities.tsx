@@ -13,7 +13,7 @@ const Amenities: React.FC = () => {
   return (
     <Paper elevation={3} style={{ padding: 16 }}>
       <Typography variant="h6" component="h2" gutterBottom>
-        Amenities
+        Popular Amenities
       </Typography>
       <Grid container spacing={2}>
         {amenities.map((amenity, index) => (

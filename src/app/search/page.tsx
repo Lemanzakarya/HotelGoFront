@@ -4,7 +4,7 @@ import HotelCard from "../../components/card/HotelCard";
 import Box from '@mui/material/Box';
 import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
-import FilterSidebar from "@/app/filtering/FilterSideBar";
+import FilterSidebar from "../../components/filtering/FilterSideBar";
 
 
 interface Hotel {
@@ -46,9 +46,9 @@ const hotel: Hotel[] = [
   }
 ];
 
-const HotelDetail: React.FC = () => {
+const SearchPage : React.FC = () => {
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
-  const isSmallScreen = useMediaQuery('(max-width:650px)');
+  const isSmallScreen = useMediaQuery('(max-width:900px)');
 
   useEffect(() => {
     fetchHotels();
@@ -63,23 +63,24 @@ const HotelDetail: React.FC = () => {
 
 
   return (
-      <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginTop: '80px'}}>
+      <div style={{marginTop: '80px'}}>
         <SearchBar
-            sx={{marginTop: '40px', marginLeft: '10%', marginRight: '10%'}}
+            sx={{marginTop: '40px', marginLeft: '5%', marginRight: '5%'}}
             backgroundColor={'#F5F5F5'}
-            height={'90px'}
+            height={isSmallScreen ? '100%' : 80}
         />
-        <Box display="flex" marginTop="65px" marginLeft="10%">
-          <Box flex="1" marginRight="20px">
+        <Box display="flex" flexDirection={isSmallScreen ? 'column' : 'row'} marginTop="2%">
+          <Box flex="1" marginLeft="5%" >
             <FilterSidebar/>
           </Box>
-          <Box flex="3" display="flex" flexDirection="column" gap="0px" >
+          <Box flex="3" display="flex" flexDirection="column" marginRight="5%" marginLeft={isSmallScreen? "5%" : "0%"}>
             {hotelData.map((hotel, index) => (
                 <Box key={index} >
                   <HotelCard
                       title={hotel.title}
                       location={hotel.location}
                       price={hotel.price}
+                      tags={hotel.tags}
                       apiEndpoint={`/api/hotel/${hotel.id}`} // Örnek API endpoint'i
                   />
                 </Box>
@@ -90,6 +91,6 @@ const HotelDetail: React.FC = () => {
   );
 };
 
-export default HotelDetail;
+export default SearchPage;
 
 
