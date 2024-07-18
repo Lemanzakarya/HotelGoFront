@@ -12,6 +12,7 @@ COPY package*.json ./
 RUN npm install -g npm@10.8.2
 #RUN npm install @mui/material @emotion/react @emotion/styled --force
 #RUN npm i zustand
+RUN npm install next@14.2.4
 
 # Copy the rest of the application code to the working directory
 COPY . .
