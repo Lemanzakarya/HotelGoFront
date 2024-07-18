@@ -35,7 +35,7 @@ COPY --from=builder /app/package*.json ./
 RUN npm install --production
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 3003
 
 # Start the application
 CMD ["npm", "start"]
