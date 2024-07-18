@@ -25,7 +25,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   tags,
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
-  const isSmallScreen = useMediaQuery('(max-width:650px)');
+  const isSmallScreen = useMediaQuery('(max-width:900px)');
   const router = useRouter();
 
   // useEffect(() => {
@@ -53,9 +53,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
       orientation={isSmallScreen ? "vertical" : "horizontal"}
       variant="outlined"
       sx={{
-        maxWidth: 800,
-        m: 2,
+        width: 'auto',
+        m:1,
         display: 'flex',
+        alignContent:isSmallScreen ? 'center' : 'unset',
         flexDirection: isSmallScreen ? 'column' : 'row',
       }}
     >
@@ -91,7 +92,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <Button
           variant="solid"
           size="lg"
-          sx={{ mt: 3, width: isSmallScreen ? '100%' : '40%', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
+          sx={{ mt: 3, width: isSmallScreen ? '100%' : 'auto', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
           onClick={handleLookThrough}
         >
           Look Through

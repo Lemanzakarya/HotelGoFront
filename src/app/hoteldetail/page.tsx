@@ -1,12 +1,21 @@
+'use client'
+
 import React from 'react';
-import { Container, Typography, Grid, Paper, IconButton, Box, Button } from '@mui/material';
-import Image from 'next/image';
 import Amenities from '../../components/detail/Amenities';
 import Gallery from '../../components/detail/Gallery';
+import { Container, Box, Typography, Tabs, Tab, Paper } from '@mui/material';
 
-const HotelDetailPage: React.FC = () => {
+
+const HotelDetail: React.FC = () => {
+  const [tabValue, setTabValue] = React.useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
   return (
-    <Container sx={{ marginTop: '80px' }}>
+    <Box>
+      <Container maxWidth="lg" sx={{ mt: 12 }}>
       <Box mt={4}>
         <Typography variant="h4" component="h1" gutterBottom>
           Granada Luxury Belek
@@ -15,11 +24,16 @@ const HotelDetailPage: React.FC = () => {
           Belek, Kadriye, Antalya
         </Typography>
       </Box>
-      <Box mt={4}>
         <Gallery />
-      </Box>
-      <Box mt={4}>
-        <Paper elevation={3} style={{ padding: 16 }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
+          <Tabs value={tabValue} onChange={handleChange} aria-label="hotel detail tabs">
+            <Tab label="Overview" />
+            <Tab label="Amenities" />
+          </Tabs>
+        </Box>
+        {tabValue === 0 && (
+          <Box sx={{ mt: 2 }}>
+            <Paper elevation={3} style={{ padding: 16 }}>
           <Typography variant="h6" component="h2" gutterBottom>
             About the Hotel
           </Typography>
@@ -35,13 +49,20 @@ const HotelDetailPage: React.FC = () => {
           <Typography variant="body1" paragraph>
           Granada Luxury Hotel Belek promises an unforgettable holiday experience with its expert SPA center staff offering amenities such as a Turkish bath, indoor pool, sauna, steam room, and massage services.
           </Typography>
+          <Typography variant="h6" component="div" color="primary">
+              9.2 Wonderful
+            </Typography>
         </Paper>
-      </Box>
-      <Box mt={4}>
-        <Amenities />
-      </Box>
-    </Container>
+          </Box>
+        )}
+        {tabValue === 1 && (
+          <Box sx={{ mt: 2 }}>
+            <Amenities />
+          </Box>
+        )}
+      </Container>
+    </Box>
   );
 };
 
-export default HotelDetailPage;
+export default HotelDetail;

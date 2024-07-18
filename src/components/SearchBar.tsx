@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import dayjs, { Dayjs } from 'dayjs';
-import { Anybody } from 'next/font/google';
 
 interface SearchBarProps {
     sx?: React.CSSProperties;
@@ -40,12 +39,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [adults, setAdults] = React.useState<number>(1);
     const [children, setChildren] = React.useState<number>(0);
     const router = useRouter();
-    const [childrenAges , setChildrenAges] = React.useState<number[]>([]);
+    const [childrenAges, setChildrenAges] = React.useState<number[]>([]);
     const [checkInDate, setCheckInDate] = React.useState<Dayjs | null>(null);
     const [checkOutDate, setCheckOutDate] = React.useState<Dayjs | null>(null);
-    const [nights , setNights] = React.useState<number>(0);
-    const isSmallScreen = useMediaQuery('(max-width:600px)');
-    
+    const [nights, setNights] = React.useState<number>(0);
+    const isSmallScreen = useMediaQuery('(max-width: 900px)');
+
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -64,7 +63,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         }
     }
 
-    const handleChildrenAgesChange = (index : number , age : number) => {
+    const handleChildrenAgesChange = (index: number, age: number) => {
         const newAges = [...childrenAges];
         newAges[index] = age;
         setChildrenAges(newAges);
@@ -128,26 +127,26 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 }}
             >
                 <AutoCompleteInputBox />
-                <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
+                <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker 
-                     sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }}
-                     onChange={(newDateValue) => {handleCheckInChange(newDateValue)}}
-                     value={checkInDate}
-                     label={checkInLabel}
-                     minDate={dayjs()} />
+                    <DatePicker
+                        sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }}
+                        onChange={(newDateValue) => { handleCheckInChange(newDateValue) }}
+                        value={checkInDate}
+                        label={checkInLabel}
+                        minDate={dayjs()} />
                 </LocalizationProvider>
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker 
-                    onChange={(newDateValue) => {handleCheckOutChange(newDateValue)}}
-                    value={checkOutDate}
-                    label={checkOutLabel}
-                    disabled={checkInDate === null}
-                    minDate={checkInDate ? checkInDate.add(1, 'day'): null}
-                     sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }} />
+                    <DatePicker
+                        onChange={(newDateValue) => { handleCheckOutChange(newDateValue) }}
+                        value={checkOutDate}
+                        label={checkOutLabel}
+                        disabled={checkInDate === null}
+                        minDate={checkInDate ? checkInDate.add(1, 'day') : undefined}
+                        sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }} />
                 </LocalizationProvider>
-                <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
+                <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <Button
                     aria-describedby={id}
                     variant="outlined"
@@ -200,7 +199,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             <CountrySelect />
                         </Box>
 
-                        <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
+                        <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center' }}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>
@@ -208,7 +207,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', borderRadius: 1, border: '1px solid #ccc', backgroundColor: 'rgba(161,213,236,0.3)' }}>
                                 <IconButton aria-label="decrease adults" onClick={() => handleAdultsChange(adults - 1)} disabled={adults === 0} size="small"
-                                            sx={{ color: adults === 0 ? '#6c6565' : 'rgba(0,0,0,0.73)' }}>
+                                    sx={{ color: adults === 0 ? '#6c6565' : 'rgba(0,0,0,0.73)' }}>
                                     <RemoveCircleOutlineRounded />
                                 </IconButton>
                                 <IconButton aria-label="number of adults">
@@ -228,7 +227,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', borderRadius: 1, border: '1px solid #ccc', backgroundColor: 'rgba(161,213,236,0.3)' }}>
                                 <IconButton aria-label="decrease children" onClick={() => handleChildrenChange(children - 1)} disabled={children === 0} size="small"
-                                            sx={{ color: children === 0 ? '#6c6565' : 'rgba(0,0,0,0.73)' }}>
+                                    sx={{ color: children === 0 ? '#6c6565' : 'rgba(0,0,0,0.73)' }}>
                                     <RemoveCircleOutlineRounded />
                                 </IconButton>
                                 <IconButton aria-label="number of children">
@@ -243,50 +242,50 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         </Box>
 
                         {children > 0 && (
-                                <Box sx={{ mt: 2 }}>
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, mb: 1 }}>
-                                        {Array.from({ length: Math.min(2, children) }).map((_, index) => (
-                                            <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Typography variant='body2' sx={{ color: "#000000" }}>
-                                                    kid {index + 1}
-                                                </Typography>
-                                                <Select
-                                                    value={childrenAges[index]}
-                                                    onChange={(e) => handleChildrenAgesChange(index, parseInt(e.target.value as string))}
-                                                    displayEmpty
-                                                    size="small"
-                                                    sx={{ width: 60, height: 30, fontSize: '0.875rem' }}
-                                                >
-                                                    {Array.from({ length: 18 }).map((_, age) => (
-                                                        <MenuItem key={age} value={age}>{age}</MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </Box>
-                                        ))}
-                                    </Box>
-                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5 }}>
-                                        {Array.from({ length: Math.max(0, children - 2) }).map((_, index) => (
-                                            <Box key={index + 2} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <Typography variant='body2' sx={{ color: "#000000" }}>
-                                                    kid {index + 3}
-                                                </Typography>
-                                                <Select
-                                                    value={childrenAges[index + 2]}
-                                                    onChange={(e) => handleChildrenAgesChange(index + 2, parseInt(e.target.value as string))}
-                                                    displayEmpty
-                                                    size="small"
-                                                    sx={{ width: 60, height: 30, fontSize: '0.875rem' }}
-                                                >
-                                                    {Array.from({ length: 18 }).map((_, age) => (
-                                                        <MenuItem key={age} value={age}>{age}</MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </Box>
-                                        ))}
-                                    </Box>
+                            <Box sx={{ mt: 2 }}>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5, mb: 1 }}>
+                                    {Array.from({ length: Math.min(2, children) }).map((_, index) => (
+                                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography variant='body2' sx={{ color: "#000000" }}>
+                                                kid {index + 1}
+                                            </Typography>
+                                            <Select
+                                                value={childrenAges[index]}
+                                                onChange={(e) => handleChildrenAgesChange(index, parseInt(e.target.value as string))}
+                                                displayEmpty
+                                                size="small"
+                                                sx={{ width: 60, height: 30, fontSize: '0.875rem' }}
+                                            >
+                                                {Array.from({ length: 18 }).map((_, age) => (
+                                                    <MenuItem key={age} value={age}>{age}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </Box>
+                                    ))}
                                 </Box>
-                            )}
-                        </Box>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5 }}>
+                                    {Array.from({ length: Math.max(0, children - 2) }).map((_, index) => (
+                                        <Box key={index + 2} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography variant='body2' sx={{ color: "#000000" }}>
+                                                kid {index + 3}
+                                            </Typography>
+                                            <Select
+                                                value={childrenAges[index + 2]}
+                                                onChange={(e) => handleChildrenAgesChange(index + 2, parseInt(e.target.value as string))}
+                                                displayEmpty
+                                                size="small"
+                                                sx={{ width: 60, height: 30, fontSize: '0.875rem' }}
+                                            >
+                                                {Array.from({ length: 18 }).map((_, age) => (
+                                                    <MenuItem key={age} value={age}>{age}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </Box>
+                        )}
+                    </Box>
                 </Popper>
                 <Button
                     variant="contained"
