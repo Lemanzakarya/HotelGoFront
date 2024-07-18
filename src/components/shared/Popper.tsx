@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Popper as MuiPopper } from '@mui/base/Popper';
+import {Popper as MuiPopper } from '@mui/material';
 import { styled, css } from '@mui/system';
 
 export default function Popper() {
