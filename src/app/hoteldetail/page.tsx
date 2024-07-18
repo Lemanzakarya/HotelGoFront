@@ -5,7 +5,6 @@ import Amenities from '../../components/detail/Amenities';
 import Gallery from '../../components/detail/Gallery';
 import { Container, Box, Typography, Tabs, Tab, Paper } from '@mui/material';
 import Overview from '@/components/detail/Overview';
-import Rooms from '@/components/detail/Rooms';
 
 
 const HotelDetail: React.FC = () => {
@@ -46,7 +45,6 @@ const HotelDetail: React.FC = () => {
         )}
          {tabValue === 2 && (
           <Box sx={{ mt: 2 }}>
-            <Rooms />
           </Box>
         )}
       </Container>
