@@ -9,7 +9,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install -g npm@10.8.2
+RUN npm install @mui/material @emotion/react @emotion/styled --force
+#RUN npm i zustand
 
 # Copy the rest of the application code to the working directory
 COPY . .
@@ -32,7 +34,7 @@ COPY --from=builder /app/package*.json ./
 RUN npm install --production
 
 # Expose the port the app runs on
-EXPOSE 3003
+EXPOSE 3000
 
 # Start the application
 CMD ["npm", "start"]

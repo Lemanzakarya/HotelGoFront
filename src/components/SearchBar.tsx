@@ -144,7 +144,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     value={checkOutDate}
                     label={checkOutLabel}
                     disabled={checkInDate === null}
-                    minDate={checkInDate ? checkInDate.add(1, 'day'): null}
+                    minDate={checkInDate ? checkInDate.add(1, 'day') : undefined}
                      sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }} />
                 </LocalizationProvider>
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
