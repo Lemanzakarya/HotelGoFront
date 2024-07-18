@@ -2,23 +2,35 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import {Popper} from "@mui/material";
 
+
+const CustomPopper = (props) => {
+    return (
+        <Popper {...props} style={{ width: '200px' }}>
+            <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
+                {props.children}
+            </Box>
+        </Popper>
+    );
+};
 
 export default function CountrySelect() {
     return (
         <Autocomplete
             id="country-select-demo"
-            sx={{ width: 100}}
+            sx={{ width: 130 }}
             options={countries}
             autoHighlight
             getOptionLabel={(option) => option.label}
+            PopperComponent={CustomPopper}
             renderOption={(props, option) => {
                 const { key, ...optionProps } = props;
                 return (
                     <Box
                         key={key}
                         component="li"
-                        sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                        sx={{ '& > img': { mr: 2, flexShrink: 0 } , borderRadius:2 , backgroundColor:'white' }}
                         {...optionProps}
                     >
                         <img
