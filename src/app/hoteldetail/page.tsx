@@ -5,6 +5,7 @@
   import Gallery from '../../components/detail/Gallery';
   import { Container, Box, Typography, Tabs, Tab, Paper,Rating } from '@mui/material';
   import Overview from '@/components/detail/Overview';
+import Rooms from '@/components/detail/Rooms';
 
 
   const HotelDetail: React.FC = () => {
