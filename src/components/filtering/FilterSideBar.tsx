@@ -24,17 +24,17 @@ const facilities = [
   'Business Center',
 ];
 
-const rooms = [
-  { id: 'room1', name: 'Single Room' },
-  { id: 'room2', name: 'Double Room' },
-  { id: 'room3', name: 'Suite' },
-  { id: 'room4', name: 'Family Room' },
-  { id: 'room5', name: 'Apartment' },
-];
+// const rooms = [
+//   { id: 'room1', name: 'Single Room' },
+//   { id: 'room2', name: 'Double Room' },
+//   { id: 'room3', name: 'Suite' },
+//   { id: 'room4', name: 'Family Room' },
+//   { id: 'room5', name: 'Apartment' },
+// ];
 
 const mealOptions = [
   'Breakfast Included',
-  'All Inclusive',
+  'all inclusive',
   'Half Board',
   'Full Board',
 ];
@@ -48,20 +48,22 @@ const FilterSidebar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [priceRange, setPriceRange] = useState<number[]>([1000, 20000]);
-  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
+  // const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
   const [selectedMealOptions, setSelectedMealOptions] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [results, setResults] = useState<any[]>([]);
+  const [selectedStars, setSelectedStars] = useState<number | null>(null);
 
-  const handleRoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const roomName = event.target.name;
-    if (event.target.checked) {
-      setSelectedRooms([...selectedRooms, roomName]);
-    } else {
-      setSelectedRooms(selectedRooms.filter(room => room !== roomName));
-    }
-  };
+  // const handleRoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const roomName = event.target.name;
+  //   if (event.target.checked) {
+  //     setSelectedRooms([...selectedRooms, roomName]);
+  //   } else {
+  //     setSelectedRooms(selectedRooms.filter(room => room !== roomName));
+  //   }
+  // };
 
   const handleMealChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const mealOption = event.target.name;
@@ -85,16 +87,87 @@ const FilterSidebar = () => {
     setPriceRange(newValue as number[]);
   }
 
-  const handleApplyChanges = () => {
-    console.log('Selected Facilities:', selectedFacilities);
-    console.log('Selected Meal Options:', selectedMealOptions);
+  const handleStarsChange = (event: React.SyntheticEvent, newValue: number | null) => {
+    setSelectedStars(newValue);
   };
 
-  const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-      return;
+  const handleApplyChanges = () => {
+    fetchResults();
+  };
+
+  const fetchResults = async () => {
+    const filters = [];
+
+    if (selectedStars) {
+      filters.push({
+        type: 2,
+        values: [selectedStars.toString()],
+      });
     }
-    setDrawerOpen(open);
+
+    if (priceRange) {
+      filters.push({
+        type: 8,
+        from: priceRange[0],
+        to: priceRange[1],
+      });
+    }
+
+    // if (selectedRooms.length > 0) {
+    //   filters.push({
+    //     type: 6,
+    //     values: selectedRooms,
+    //   });
+    // }
+
+    if (selectedFacilities.length > 0) {
+      filters.push({
+        type: 51,
+        values: selectedFacilities,
+      });
+    }
+
+    if (selectedMealOptions.length > 0) {
+      filters.push({
+        type: 6,
+        values: selectedMealOptions,
+      });
+    }
+
+    const params = {
+      currency: "EUR",
+      pagingOptions: [
+        {
+          currentPage: 1,
+          pageRowCount: 50,
+          getFilters: true,
+          filters,
+          sort: 0,
+          isNewPagingRequest: true,
+        }
+      ],
+      searchId: "35d52ca5-1c55-4445-9611-b6f31ae01142" // temporary static searchid
+    };
+
+    try {
+      const response = await fetch('http://localhost:5083/Tourvisio/GetPagingData', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setResults(data);
+        console.log(data);
+      } else {
+        console.error('Error:', response.status);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -109,7 +182,13 @@ const FilterSidebar = () => {
     <List sx={style}>
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
         <Typography>Stars</Typography>
-        <Rating name="half-rating" defaultValue={2.5} size="medium" precision={0.5} />
+        <Rating
+          name="half-rating"
+          value={selectedStars}
+          onChange={handleStarsChange}
+          size="medium"
+          precision={0.5}
+        />
       </ListItem>
       <Divider component="li" />
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -127,8 +206,8 @@ const FilterSidebar = () => {
       </ListItem>
       <Divider component="li" />
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-        <Typography>Boards</Typography>
-        <FormGroup>
+        {/* <Typography>Boards</Typography> */}
+        {/* <FormGroup>
           {rooms.map(room => (
             <FormControlLabel
               key={room.id}
@@ -148,7 +227,7 @@ const FilterSidebar = () => {
               label={room.name}
             />
           ))}
-        </FormGroup>
+        </FormGroup> */}
       </ListItem>
       <Divider component="li" />
       <ListItem>
@@ -196,7 +275,7 @@ const FilterSidebar = () => {
             aria-controls="panel2-content"
             id="panel2-header"
           >
-            <Typography>Meal Options</Typography>
+            <Typography>Boards</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
