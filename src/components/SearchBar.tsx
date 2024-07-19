@@ -37,7 +37,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     searchButtonLabel = 'Search',
     searchButtonColor = 'orange'
 }) => {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
     const [adults, setAdults] = React.useState<number>(0);
     const [children, setChildren] = React.useState<number>(0);
     const router = useRouter();
@@ -49,14 +49,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [guestDialog, setGuestDialog] = React.useState(false);
 
 
-    const handleClick = (dialogType) => {
-        switch(dialogType) {
-            case 'guest':
-                setGuestDialog(!guestDialog);
-                break;
-            default:
-                break;
-        }
+    const handleClick = () => {
+        setGuestDialog(!guestDialog);
     };
     const handleAdultsChange = (amount: number) => {
         if (amount >= 0) {
@@ -92,7 +86,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         router.push('/search');
     };
 
-    const open = Boolean(anchorEl);
+    const open = Boolean(guestDialog);
     const id = open ? 'guests-popper' : undefined;
 
     const handleCheckInChange = (date: Dayjs | null) => {
@@ -150,7 +144,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
-                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }}
+                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 , zIndex:2000 }}
                             onChange={(newDateValue) => {handleCheckInChange(newDateValue)}}
                             value={checkInDate}
                             label={checkInLabel}
@@ -167,14 +161,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             label={checkOutLabel}
                             disabled={checkInDate === null}
                             minDate={checkInDate ? checkInDate.add(1, 'day'): undefined}
-                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 }} />
+                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 , zIndex:2000 }}
+                    />
                 </LocalizationProvider>
 
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
                 <Button
                     aria-describedby={id}
                     variant="outlined"
-                    onClick={ () => handleClick('guest')}
+                    onClick={ () => handleClick()}
                     sx={{
                         '&:hover': { backgroundColor: 'white', borderColor: '#1f1f1f' },
                         borderRadius: 1.5,
@@ -215,7 +210,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 <Dialog
                     id="guest-dialog"
                     open={guestDialog}
-                    onClose={ () => handleClick('guest')}
+                    onClose={ () => handleClick()}
                     aria-labelledby={id}
                     maxWidth={'md'}
                     PaperProps={{
