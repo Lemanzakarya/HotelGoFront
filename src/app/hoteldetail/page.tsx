@@ -48,6 +48,7 @@ import Rooms from '@/components/detail/Rooms';
             )}
             {tabValue === 2 && (
               <Box sx={{ mt: 2 }}>
+                <Rooms />
               </Box>
             )}
         </Container>
