@@ -17,26 +17,16 @@
     return (
       <Box>
         <Container maxWidth="lg" sx={{ mt: 12 }}>
-          <Box display="flex" flexDirection="row" alignItems="center" mt={4} >
-            <Box>
-              <Typography variant="h4" component="h1" gutterBottom>
-                Granada Luxury Belek
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-                Belek, Kadriye, Antalya
-              </Typography>
-            </Box>
-            <Box
-              flexGrow={1}  
-              mr={2}        
-              order={2}
-              display="flex"
-              flexDirection="row"
-              justifyContent="flex-end"
-            >
-              <Rating name="card-rating" value={5} readOnly={true} size="medium" precision={0.5} />
-            </Box>
+        <Box mt={4}>
+          <Typography variant="h3" component="h1" marginBottom={0}  gutterBottom>
+            Granada Luxury Belek
+          </Typography>
+          <Rating name="card-rating" value={5} readOnly={true} size="medium" precision={0.5} />
+          <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+            Belek, Kadriye, Antalya
+          </Typography>
         </Box>
+
         <Gallery />
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tabValue} onChange={handleChange} aria-label="hotel detail tabs">
