@@ -63,14 +63,22 @@ const SearchPage : React.FC = () => {
 
 
   return (
-      <div style={{marginTop: '80px'}}>
-        <SearchBar
-            sx={{marginTop: '40px', marginLeft: '5%', marginRight: '5%'}}
-            backgroundColor={'#F5F5F5'}
-            height={isSmallScreen ? '100%' : 80}
-        />
-        <Box display="flex" flexDirection={isSmallScreen ? 'column' : 'row'} marginTop="2%">
-          <Box flex="1" marginLeft="5%" >
+      <div style={{marginTop: '20px'}}>
+        <Box
+          sx={{
+            position:'sticky',
+            top:4,
+            zIndex: 10,
+          }}
+        >
+            <SearchBar
+                sx={{marginTop: '20px', marginLeft: '5%', marginRight: '5%'}}
+                backgroundColor={'#F5F5F5'}
+                height={isSmallScreen ? '100%' : 80}
+            />
+        </Box>
+            <Box display="flex" flexDirection={isSmallScreen ? 'column' : 'row'} marginTop="4%">
+                <Box flex="1" marginLeft="5%" >
             <FilterSidebar/>
           </Box>
           <Box flex="3" display="flex" flexDirection="column" marginRight="5%" marginLeft={isSmallScreen? "5%" : "0%"}>
@@ -81,7 +89,7 @@ const SearchPage : React.FC = () => {
                       location={hotel.location}
                       price={hotel.price}
                       tags={hotel.tags}
-                      apiEndpoint={`/api/hotel/${hotel.id}`} // Örnek API endpoint'i
+                      apiEndpoint={`/api/hotel/${hotel.id}`}
                       stars={3.5}
                   />
                 </Box>

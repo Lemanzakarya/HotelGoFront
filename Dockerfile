@@ -1,4 +1,3 @@
-
 # Stage 1: Build the application
 FROM node:20-alpine AS builder
 
@@ -9,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install -g npm@10.8.2 && npm install next@14.2.4
+RUN npm install -g npm@10.7.0 && npm install next@14.2.4 && npm install
 #RUN npm install @mui/material @emotion/react @emotion/styled --force
 #RUN npm i zustand
 ##RUN npm install next@14.2.4
