@@ -2,14 +2,20 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import {Popper} from "@mui/material";
+import {Popper, PopperProps} from "@mui/material";
 
 
-const CustomPopper = (props) => {
+type CustomPopperProps = PopperProps & {
+    // Any additional props if necessary
+};
+
+const CustomPopper: React.FC<CustomPopperProps> = (props) => {
+    const { anchorEl, open, children, ...otherProps } = props;
+
     return (
-        <Popper {...props} style={{ width: '200px' }}>
+        <Popper anchorEl={anchorEl} open={open} style={{ width: '200px', zIndex: 1300 }} {...otherProps}>
             <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
-                {props.children}
+                {children as React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | Iterable<React.ReactNode> | React.ReactPortal | boolean | undefined | null}
             </Box>
         </Popper>
     );
