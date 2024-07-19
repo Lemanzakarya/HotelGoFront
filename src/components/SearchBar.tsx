@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Box, Button, Dialog, Divider, IconButton, Typography, useMediaQuery} from '@mui/material';
+import {Box, Button, Dialog, Divider, IconButton, Popper, Typography, useMediaQuery} from '@mui/material';
 import AutoCompleteInputBox from "../components/shared/AutoCompleteInputBox";
 import {Add, Remove} from "@mui/icons-material";
 import CountrySelect from "../components/shared/CountrySelector";
@@ -144,7 +144,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
-                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 , zIndex:2000 }}
+                            sx={{width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0}}
                             onChange={(newDateValue) => {handleCheckInChange(newDateValue)}}
                             value={checkInDate}
                             label={checkInLabel}
@@ -161,7 +161,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             label={checkOutLabel}
                             disabled={checkInDate === null}
                             minDate={checkInDate ? checkInDate.add(1, 'day'): undefined}
-                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0 , zIndex:2000 }}
+                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0  }}
                     />
                 </LocalizationProvider>
 

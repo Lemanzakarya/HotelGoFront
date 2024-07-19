@@ -68,7 +68,7 @@ const HotelDetail: React.FC = () => {
           sx={{
             position:'sticky',
             top:4,
-            zIndex: 1500,
+            zIndex: 10,
           }}
         >
           <SearchBar
