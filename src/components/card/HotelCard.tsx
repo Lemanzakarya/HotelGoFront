@@ -6,8 +6,9 @@ import CardContent from '@mui/joy/CardContent';
 import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
 import Button from '@mui/joy/Button';
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery, Rating } from '@mui/material';
 import { useRouter } from 'next/navigation';
+
 
 interface HotelCardProps {
   title: string;
@@ -15,6 +16,7 @@ interface HotelCardProps {
   apiEndpoint: string;
   price: string;
   tags?: string[];
+  stars : number;
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -23,6 +25,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   apiEndpoint,
   price: initialPrice,
   tags,
+  stars = 3.5,
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
   const isSmallScreen = useMediaQuery('(max-width:900px)');
@@ -76,6 +79,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <Typography fontWeight="bold" textColor="text.primary" fontSize={27}>
           {title}
         </Typography>
+        <Rating name=" card-rating"  value={stars} readOnly={true} size={"medium"}  precision={0.5}/>
         <Typography textColor="text.secondary" mt={5}>
           {location}
         </Typography>
