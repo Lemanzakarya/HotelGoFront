@@ -63,13 +63,21 @@ const HotelDetail: React.FC = () => {
 
 
   return (
-      <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginTop: '80px'}}>
-        <SearchBar
-            sx={{marginTop: '40px', marginLeft: '10%', marginRight: '10%'}}
-            backgroundColor={'#F5F5F5'}
-            height={'90px'}
-        />
-        <Box display="flex" marginTop="65px" marginLeft="10%">
+      <div className="m-auto pt-4 items-center w-full max-w-3xl" style={{marginTop: '10px'}}>
+        <Box
+          sx={{
+            position:'sticky',
+            top:4,
+            zIndex: 1500,
+          }}
+        >
+          <SearchBar
+              sx={{marginTop: '20px', marginLeft: '10%', marginRight: '10%' , position: 'sticky'}}
+              backgroundColor={'#F5F5F5'}
+              height={'90px'}
+          />
+        </Box>
+        <Box display="flex" marginTop="55px" marginLeft="10%">
           <Box flex="1" marginRight="20px">
             <FilterSidebar/>
           </Box>

@@ -10,6 +10,7 @@ const PageContainer = styled.div`
     background-image: url('https://wallpapercave.com/wp/wp4557646.jpg'); 
     background-size: cover;
     background-position: center; 
+    position: fixed;
     padding-bottom: 8vh;
     background-repeat: no-repeat;
     background-color: blueviolet;
