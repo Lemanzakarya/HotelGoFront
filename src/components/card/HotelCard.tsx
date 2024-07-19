@@ -6,8 +6,9 @@ import CardContent from '@mui/joy/CardContent';
 import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
 import Button from '@mui/joy/Button';
-import { useMediaQuery } from '@mui/material';
+import { useMediaQuery, Rating } from '@mui/material';
 import { useRouter } from 'next/navigation';
+
 
 interface HotelCardProps {
   title: string;
@@ -15,6 +16,7 @@ interface HotelCardProps {
   apiEndpoint: string;
   price: string;
   tags?: string[];
+  stars : number;
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -23,9 +25,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
   apiEndpoint,
   price: initialPrice,
   tags,
+  stars = 0,
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
-  const isSmallScreen = useMediaQuery('(max-width:650px)');
+  const isSmallScreen = useMediaQuery('(max-width:900px)');
   const router = useRouter();
 
   // useEffect(() => {
@@ -53,9 +56,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
       orientation={isSmallScreen ? "vertical" : "horizontal"}
       variant="outlined"
       sx={{
-        maxWidth: 800,
-        m: 2,
+        width: 'auto',
+        m:1,
         display: 'flex',
+        alignContent:isSmallScreen ? 'center' : 'unset',
         flexDirection: isSmallScreen ? 'column' : 'row',
       }}
     >
@@ -75,6 +79,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <Typography fontWeight="bold" textColor="text.primary" fontSize={27}>
           {title}
         </Typography>
+        <Rating name=" card-rating"  value={stars} readOnly={true} size={"medium"}  precision={0.5}/>
         <Typography textColor="text.secondary" mt={5}>
           {location}
         </Typography>
@@ -91,7 +96,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <Button
           variant="solid"
           size="lg"
-          sx={{ mt: 3, width: isSmallScreen ? '100%' : '40%', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
+          sx={{ mt: 3, width: isSmallScreen ? '100%' : 'auto', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
           onClick={handleLookThrough}
         >
           Look Through

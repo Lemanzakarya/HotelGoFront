@@ -41,11 +41,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [adults, setAdults] = React.useState<number>(0);
     const [children, setChildren] = React.useState<number>(0);
     const router = useRouter();
-    const [childrenAges , setChildrenAges] = React.useState<number[]>([]);
+    const [childrenAges, setChildrenAges] = React.useState<number[]>([]);
     const [checkInDate, setCheckInDate] = React.useState<Dayjs | null>(null);
     const [checkOutDate, setCheckOutDate] = React.useState<Dayjs | null>(null);
-    const [nights , setNights] = React.useState<number>(0);
-    const isSmallScreen = useMediaQuery('(max-width:600px)');
+    const [nights, setNights] = React.useState<number>(0);
+    const isSmallScreen = useMediaQuery('(max-width: 900px)');
     const [guestDialog, setGuestDialog] = React.useState(false);
 
 
@@ -60,7 +60,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 setChildrenAges([]);
             }
         }
-
     };
 
     const handleChildrenChange = (amount: number) => {
@@ -76,7 +75,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     };
 
 
-    const handleChildrenAgesChange = (index : number , age : number) => {
+    const handleChildrenAgesChange = (index: number, age: number) => {
         const newAges = [...childrenAges];
         newAges[index] = age;
         setChildrenAges(newAges);
@@ -140,8 +139,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 }}
             >
                 <AutoCompleteInputBox />
-                <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
-
+                <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
                             sx={{width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0}}
@@ -164,8 +162,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0  }}
                     />
                 </LocalizationProvider>
-
-                <Divider orientation="vertical" flexItem sx={{ height: 'auto'}} />
+                <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <Button
                     aria-describedby={id}
                     variant="outlined"
@@ -184,15 +181,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         height: 55,
                     }}
                 >
-                    {/*<Typography variant='h6' sx={{ color: "#6C6565" , display :'block' ,fontSize:18 }}>
-                        {adults === 0 && children === 0 ? 'Guests' : (
-                            <>
-                                {adults > 0 && `${adults} Adults`}
-                                {adults > 0 && children > 0 && <br />}
-                                {children > 0 && `${children} Children`}
-                            </>
-                        )}
-                    </Typography>*/}
+
                     <Typography variant='h6' sx={{ display: 'block' , color: '#6c6565' }}>
                         {adults === 0 && children === 0 ? ('Guests') : (
                             <>
@@ -251,7 +240,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     >
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center'}}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>Nationality</Typography>
-                            <CountrySelect  />
+                            <CountrySelect />
                         </Box>
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center', flexWrap:'wrap' }}>
