@@ -25,7 +25,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   apiEndpoint,
   price: initialPrice,
   tags,
-  stars = 3.5,
+  stars = 0,
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
   const isSmallScreen = useMediaQuery('(max-width:900px)');

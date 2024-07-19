@@ -82,6 +82,7 @@ const SearchPage : React.FC = () => {
                       price={hotel.price}
                       tags={hotel.tags}
                       apiEndpoint={`/api/hotel/${hotel.id}`} // Örnek API endpoint'i
+                      stars={3.5}
                   />
                 </Box>
             ))}
