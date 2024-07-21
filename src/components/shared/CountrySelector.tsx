@@ -2,23 +2,41 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import {Popper, PopperProps} from "@mui/material";
 
+
+type CustomPopperProps = PopperProps & {
+    // Any additional props if necessary
+};
+
+const CustomPopper: React.FC<CustomPopperProps> = (props) => {
+    const { anchorEl, open, children, ...otherProps } = props;
+
+    return (
+        <Popper anchorEl={anchorEl} open={open} style={{ width: '200px', zIndex: 1300 }} {...otherProps}>
+            <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
+                {children as React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | Iterable<React.ReactNode> | React.ReactPortal | boolean | undefined | null}
+            </Box>
+        </Popper>
+    );
+};
 
 export default function CountrySelect() {
     return (
         <Autocomplete
             id="country-select-demo"
-            sx={{ width: 100}}
+            sx={{ width: 130 }}
             options={countries}
             autoHighlight
             getOptionLabel={(option) => option.label}
+            PopperComponent={CustomPopper}
             renderOption={(props, option) => {
                 const { key, ...optionProps } = props;
                 return (
                     <Box
                         key={key}
                         component="li"
-                        sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                        sx={{ '& > img': { mr: 2, flexShrink: 0 } , borderRadius:2 , backgroundColor:'white' }}
                         {...optionProps}
                     >
                         <img
