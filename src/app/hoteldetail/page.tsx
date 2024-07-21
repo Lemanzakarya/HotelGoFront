@@ -28,7 +28,8 @@ import Rooms from '@/components/detail/Rooms';
           </Typography>
         </Box>
 
-        <Gallery />
+        <Gallery images={[]}/>
+        
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
             <Tabs value={tabValue} onChange={handleChange} aria-label="hotel detail tabs">
               <Tab label="Overview" />

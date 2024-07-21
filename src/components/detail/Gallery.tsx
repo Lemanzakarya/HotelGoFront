@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Typography, Grid, Paper, Box, Button } from '@mui/material';
-import { PhotoCamera } from '@mui/icons-material';
+import { Typography, Grid, Paper, Box, Button, Dialog, DialogContent  } from '@mui/material';
+import { Close, PhotoCamera } from '@mui/icons-material';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import CloseIcon from '@mui/icons-material/Close';
 
 const images = [
   'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Genel-257544.jpg',
@@ -15,12 +18,47 @@ const images = [
   'https://images.etstur.com/files/images/hotelImages/TR/95763/m/Granada-Luxury-Belek-Oda-313523.jpg',
 ];
 
+interface GalleryProps{
+  images : string[];
+}
 
-const Gallery = () => {
+
+
+const Gallery: React.FC<GalleryProps> = ({  }) => {
   const [showMore, setShowMore] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [open, setOpen] = useState(false);
 
   const handleShowMore = () => {
     setShowMore(!showMore);
+  };
+
+  const handleClickOpen = (index: number) => {
+    setSelectedImageIndex(index);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedImageIndex(null);
+  };
+
+  const handlePrevious = () => {
+    if (selectedImageIndex !== null && selectedImageIndex > 0) {
+      setSelectedImageIndex(selectedImageIndex - 1);
+    }
+    if(selectedImageIndex == 0){
+      setSelectedImageIndex(images.length -1);
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedImageIndex !== null && selectedImageIndex < images.length - 1) {
+      setSelectedImageIndex(selectedImageIndex + 1);
+    }
+    if(selectedImageIndex == images.length -1){
+      setSelectedImageIndex(0);
+    }
   };
 
   const imagesToShow = showMore ? images : images.slice(0, 5);
@@ -36,11 +74,13 @@ const Gallery = () => {
             component="img"
             src={images[0]}
             alt="Main Hotel Image"
+            onClick={() => handleClickOpen(0)}
             sx={{
               width: '100%',
               height: '400px',
               objectFit: 'cover',
               borderRadius: 1,
+              cursor: 'pointer',
             }}
           />
         </Grid>
@@ -52,11 +92,13 @@ const Gallery = () => {
                   component="img"
                   src={image}
                   alt={`Hotel image ${index + 2}`}
+                  onClick={() => handleClickOpen(index + 1)}
                   sx={{
                     width: '100%',
                     height: '200px',
                     objectFit: 'cover',
                     borderRadius: 1,
+                    cursor: 'pointer',
                   }}
                 />
               </Grid>
@@ -71,11 +113,13 @@ const Gallery = () => {
                   component="img"
                   src={image}
                   alt={`Hotel image ${index + 6}`}
+                  onClick={() => handleClickOpen(index + 5)}
                   sx={{
                     width: '100%',
                     height: '200px',
                     objectFit: 'cover',
                     borderRadius: 1,
+                    cursor: 'pointer',
                   }}
                 />
               </Grid>
@@ -88,6 +132,39 @@ const Gallery = () => {
           {showMore ? 'Show Less' : 'Show All Photos'}
         </Button>
       </Box>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogContent sx={{ overflow: 'hidden', padding: 0 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              height: '80vh', 
+              position: 'relative',
+            }}
+          >
+            <ArrowBackIosNewIcon
+              onClick={handlePrevious}
+              sx={{ zIndex: 1, cursor: 'pointer', fontSize: '2rem' }} 
+            />
+            <Box
+              component="img"
+              src={selectedImageIndex !== null ? images[selectedImageIndex] : ''}
+              alt="Selected Hotel Image"
+              sx={{
+                maxHeight: '90%', //look into the settings for different pictures
+                maxWidth: '90%',  
+                objectFit: 'contain',
+              }}
+            />
+            <ArrowForwardIosIcon
+              onClick={handleNext}
+              sx={{ zIndex: 1, cursor: 'pointer', fontSize: '2rem' }} // Ensuring the arrow is clickable and visible
+            />
+            <Close onClick={handleClose} sx={{ position: 'absolute', top: 8, right: 8, zIndex: 2, cursor: 'pointer' }} />
+          </Box>
+        </DialogContent>
+      </Dialog>
     </Paper>
   );
 };
