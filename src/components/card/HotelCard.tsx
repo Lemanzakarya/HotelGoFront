@@ -28,8 +28,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
   price: initialPrice,
   tags,
   stars = 0,
-                                               isLoading,
-                                               setIsLoading
+  isLoading,
+  setIsLoading
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
   const isSmallScreen = useMediaQuery('(max-width:900px)');
@@ -86,7 +86,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <Typography fontWeight="bold" textColor="text.primary" fontSize={27}>
           {title}
         </Typography>
-        <Rating name=" card-rating"  value={stars} readOnly={true} size={"medium"}  precision={0.5}/>
+        <Rating name=" card-rating"  value={stars} readOnly={true} size="medium"  precision={0.5}/>
         <Typography textColor="text.secondary" mt={5}>
           {location}
         </Typography>
@@ -105,6 +105,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
           size="lg"
           sx={{ mt: 3, width: isSmallScreen ? '100%' : 'auto', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
           onClick={handleLookThrough}
+          disabled={isLoading}
         >
           Look Through
         </Button>
