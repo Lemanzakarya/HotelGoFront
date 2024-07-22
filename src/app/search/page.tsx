@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
+import LoadingCircle from "@/components/shared/LoadingCircle";
 
 interface Hotel {
   id: string;
@@ -48,6 +49,7 @@ const hotel: Hotel[] = [
 const SearchPage: React.FC = () => {
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
   const isSmallScreen = useMediaQuery("(max-width:900px)");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchHotels();
@@ -70,8 +72,10 @@ const SearchPage: React.FC = () => {
         <SearchBar
           sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
           backgroundColor={"#F5F5F5"}
-          height={isSmallScreen ? "100%" : 80}
-        />
+          height={isSmallScreen ? "100%" : 80} 
+          isLoading={false} 
+          setIsLoading={setIsLoading}
+          />
       </Box>
       <Box
         display="flex"
@@ -97,6 +101,8 @@ const SearchPage: React.FC = () => {
                 tags={hotel.tags}
                 apiEndpoint={`/api/hotel/${hotel.id}`}
                 stars={3.5}
+                isLoading={false}
+                setIsLoading={setIsLoading}
               />
             </Box>
           ))}

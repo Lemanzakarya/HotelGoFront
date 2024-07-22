@@ -6,10 +6,12 @@
   import { Container, Box, Typography, Tabs, Tab, Paper,Rating } from '@mui/material';
   import Overview from '@/components/detail/Overview';
 import Rooms from '@/components/detail/Rooms';
+  import LoadingCircle from "@/components/shared/LoadingCircle";
 
 
   const HotelDetail: React.FC = () => {
     const [tabValue, setTabValue] = React.useState(0);
+    const [isLoading , setIsLoading] = React.useState(false);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setTabValue(newValue);
@@ -28,8 +30,9 @@ import Rooms from '@/components/detail/Rooms';
           </Typography>
         </Box>
 
-        <Gallery />
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
+        <Gallery images={[]}/>
+        
+        <Box sx={{ borderBottom: 1,borderColor: 'divider', mt: 2 }}>
             <Tabs value={tabValue} onChange={handleChange} aria-label="hotel detail tabs">
               <Tab label="Overview" />
                 <Tab label="Amenities" />
@@ -48,7 +51,27 @@ import Rooms from '@/components/detail/Rooms';
             )}
             {tabValue === 2 && (
               <Box sx={{ mt: 2 }}>
-                <Rooms />
+                <Rooms
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                />
+                  {isLoading && (
+                      <Box
+                          sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: '100%',
+                              position: 'fixed',
+                              top:80 ,
+                              right:10,
+                              left:10,
+                              zIndex: 10
+                          }}
+                      >
+                          <LoadingCircle/>
+                      </Box>
+                  )}
               </Box>
             )}
         </Container>

@@ -100,7 +100,7 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: white) {
+@media (prefers-color-scheme: light) {
   html {
     color-scheme: white;
   }
