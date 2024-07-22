@@ -4,6 +4,7 @@ import { Close, PhotoCamera } from '@mui/icons-material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import CloseIcon from '@mui/icons-material/Close';
+import { spacing } from 'material-ui/styles';
 
 const images = [
   'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Genel-257544.jpg',
@@ -85,9 +86,9 @@ const Gallery: React.FC<GalleryProps> = ({  }) => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Grid container spacing={2}>
+          <Grid container mb={2}  columnSpacing={2}>
             {imagesToShow.slice(1, 5).map((image, index) => (
-              <Grid item xs={12} sm={6} key={index + 1}>
+              <Grid item xs={12} sm={6} key={index + 1} >
                 <Box
                   component="img"
                   src={image}
@@ -106,7 +107,7 @@ const Gallery: React.FC<GalleryProps> = ({  }) => {
           </Grid>
         </Grid>
         {showMore && (
-          <Grid container spacing={2}>
+          <Grid container spacing={1} justifyContent="flex-start" ml={1}>
             {images.slice(5).map((image, index) => (
               <Grid item xs={12} sm={6} md={3} key={index + 5}>
                 <Box
