@@ -94,7 +94,14 @@ const rooms: Room[] = [
   },
 ];
 
-const Rooms: React.FC = () => {
+const Rooms: React.FC = ({isLoading , setIsLoading}) => {
+
+  const handleReserve = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }
   return (
     <Container>
       <Grid container spacing={3}>
@@ -135,7 +142,7 @@ const Rooms: React.FC = () => {
                 </ViewDetailsLink>
               </Link>
               <Link href={`/reservation/${room.id}`} passHref>
-                <ReserveButton variant="contained" fullWidth>
+                <ReserveButton variant="contained" fullWidth onClick={handleReserve}>
                   Reserve
                 </ReserveButton>
               </Link>
