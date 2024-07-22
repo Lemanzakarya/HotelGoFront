@@ -17,6 +17,8 @@ interface HotelCardProps {
   price: string;
   tags?: string[];
   stars : number;
+  isLoading: boolean;
+  setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -26,11 +28,12 @@ const HotelCard: React.FC<HotelCardProps> = ({
   price: initialPrice,
   tags,
   stars = 0,
+                                               isLoading,
+                                               setIsLoading
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
   const isSmallScreen = useMediaQuery('(max-width:900px)');
   const router = useRouter();
-
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -48,7 +51,11 @@ const HotelCard: React.FC<HotelCardProps> = ({
   // }, [apiEndpoint]);
 
   const handleLookThrough = () => {
-    router.push('/hoteldetail');
+    setIsLoading(true);
+    setTimeout(() => {
+      router.push('/hoteldetail');
+      setIsLoading(false);
+    }, 2000);
   };
 
   return (
