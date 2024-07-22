@@ -3,6 +3,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import SearchBar from '../components/SearchBar';
+import LoadingCircle from "@/components/shared/LoadingCircle";
 
 
 const PageContainer = styled.div`
@@ -20,12 +21,27 @@ const PageContainer = styled.div`
     align-items: center;
     justify-content: center;
 `;
+const LoadingContainer = styled.div`
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    bottom: 30vh;
+`;
 
 const Page: React.FC = () => {
+    const [isLoading , setIsLoading] = React.useState(false);
+
   return (
 
       <PageContainer>
-        <SearchBar/>
+        <SearchBar isLoading={isLoading} setIsLoading={setIsLoading}/>
+          {isLoading && (
+                <LoadingContainer>
+                    <LoadingCircle/>
+                </LoadingContainer>
+          ) }
       </PageContainer>
   );
 };

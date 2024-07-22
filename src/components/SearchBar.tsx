@@ -1,5 +1,13 @@
 import * as React from 'react';
-import {Box, Button, Dialog, Divider, IconButton, Popper, Typography, useMediaQuery} from '@mui/material';
+import {
+    Box,
+    Button,
+    Dialog,
+    Divider,
+    IconButton,
+    Typography,
+    useMediaQuery
+} from '@mui/material';
 import AutoCompleteInputBox from "../components/shared/AutoCompleteInputBox";
 import {Add, Remove} from "@mui/icons-material";
 import CountrySelect from "../components/shared/CountrySelector";
@@ -25,6 +33,9 @@ interface SearchBarProps {
     guestsButtonLabel?: string;
     searchButtonLabel?: string;
     searchButtonColor?: string;
+    isLoading: boolean;
+    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
+    
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -35,7 +46,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
     checkInLabel = 'check-in',
     checkOutLabel = 'check-out',
     searchButtonLabel = 'Search',
-    searchButtonColor = 'orange'
+    searchButtonColor = 'orange',
+    isLoading,
+    setIsLoading
 }) => {
 
     const [adults, setAdults] = React.useState<number>(0);
@@ -47,7 +60,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [nights, setNights] = React.useState<number>(0);
     const isSmallScreen = useMediaQuery('(max-width: 900px)');
     const [guestDialog, setGuestDialog] = React.useState(false);
-
 
     const handleClick = () => {
         setGuestDialog(!guestDialog);
@@ -82,7 +94,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     const handleSearch = () => {
-        router.push('/search');
+        setIsLoading(true);
+        setTimeout(() => {
+            router.push('/search');
+            setIsLoading(false);
+        }, 2000);
+
     };
 
     const open = Boolean(guestDialog);
@@ -366,8 +383,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         width: isSmallScreen ? '100%' : '20%',
                         height: 55,
                     }}
+                    disabled={isLoading}
                 >
-                    {searchButtonLabel}
+                    {isLoading ? 'Loading...' : searchButtonLabel}
+
                 </Button>
             </Box>
         </Box>
