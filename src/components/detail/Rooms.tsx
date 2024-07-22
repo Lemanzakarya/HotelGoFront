@@ -1,9 +1,11 @@
 'use client'
+
 import React from 'react';
 import { Grid, Card, CardContent, CardMedia, Typography, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import Link from 'next/link';
 import { Wifi as WifiIcon, KingBed as KingBedIcon, AttachMoney as AttachMoneyIcon } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 const RootCard = styled(Card)({
   maxWidth: 345,
@@ -95,6 +97,14 @@ const rooms: Room[] = [
 ];
 
 const Rooms: React.FC = () => {
+
+    const router = useRouter();
+
+    
+  const handleReserve = () => {
+    router.push(`/reservation`);
+  };
+  
   return (
     <Container>
       <Grid container spacing={3}>
@@ -134,11 +144,9 @@ const Rooms: React.FC = () => {
                   View Details
                 </ViewDetailsLink>
               </Link>
-              <Link href={`/reservation/${room.id}`} passHref>
-                <ReserveButton variant="contained" fullWidth>
+                <ReserveButton variant="contained" fullWidth onClick={handleReserve}>
                   Reserve
                 </ReserveButton>
-              </Link>
             </RootCard>
           </Grid>
         ))}
@@ -148,3 +156,8 @@ const Rooms: React.FC = () => {
 }
 
 export default Rooms;
+
+
+
+
+

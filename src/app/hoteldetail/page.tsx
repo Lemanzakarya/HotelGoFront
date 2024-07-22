@@ -17,13 +17,13 @@ import Rooms from '@/components/detail/Rooms';
 
     return (
       <Box>
-        <Container maxWidth="lg" sx={{ mt: 12 }}>
-        <Box mt={4}>
+        <Container maxWidth="lg">
+        <Box mt={2}>
           <Typography variant="h3" component="h1" marginBottom={0}  gutterBottom>
             Granada Luxury Belek
           </Typography>
-          <Rating name="card-rating" value={5} readOnly={true} size="medium" precision={0.5} />
-          <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+          <Rating name="card-rating" value={5} readOnly={true} sx={{ml:0.3}} size="medium" precision={0.5} />
+          <Typography ml={1} variant="subtitle1" color="textSecondary" gutterBottom>
             Belek, Kadriye, Antalya
           </Typography>
         </Box>
