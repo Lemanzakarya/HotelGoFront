@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import {
   Accordion, AccordionDetails, AccordionSummary,
   Box, Divider, FormControlLabel, FormGroup, Grid, List, ListItem, ListItemText, Rating, Slider, Typography, Drawer, IconButton, useMediaQuery, useTheme, Popover, Button
@@ -10,6 +10,61 @@ const style = {
   width: 'auto',
   backgroundColor: '#ffffff',
 };
+
+interface GetPagingDataResponseModel {
+  body?: GetPagingDataBody;
+}
+
+interface GetPagingDataBody {
+  hotels?: PriceSearchHotel[];
+  filters?: PagingDataFilters;
+}
+
+interface PagingDataFilters {
+  hotel?: PagingFilters[];
+}
+
+interface PagingFilters {
+  type: number;
+  options?: PagingDataOptions[];
+  from: number;
+  to: number;
+}
+
+interface PagingDataOptions {
+  count: number;
+  name?: string;
+  id?: string;
+}
+
+interface PriceSearchHotel {
+  name?: string;
+  stars?: string;
+  rating?: string;
+  location?: HotelProductSimpleCity;
+  country?: PriceSearchCountry;
+  city?: HotelProductSimpleCity;
+  offers?: HotelOffer[];
+  provider?: number;
+  id?: string;
+}
+
+interface HotelProductSimpleCity {
+  id?: string;
+  name?: string;
+}
+
+interface PriceSearchCountry {
+  internationalCode?: string;
+  name?: string;
+}
+
+interface HotelOffer {
+  night?: number;
+  offerId?: string;
+}
+
+
 
 const facilities = [
   'Free Wi-Fi',
@@ -23,14 +78,6 @@ const facilities = [
   'Pet Friendly',
   'Business Center',
 ];
-
-// const rooms = [
-//   { id: 'room1', name: 'Single Room' },
-//   { id: 'room2', name: 'Double Room' },
-//   { id: 'room3', name: 'Suite' },
-//   { id: 'room4', name: 'Family Room' },
-//   { id: 'room5', name: 'Apartment' },
-// ];
 
 const mealOptions = [
   'Breakfast Included',
@@ -47,23 +94,19 @@ const FilterSidebar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const [priceRange, setPriceRange] = useState<number[]>([1000, 20000]);
+  const [priceRange, setPriceRange] = useState<number[]>([]);
+  const [priceState , setPriceState] = useState<number[]>([]);
   // const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
   const [selectedMealOptions, setSelectedMealOptions] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<GetPagingDataResponseModel | null>(null);
   const [selectedStars, setSelectedStars] = useState<number | null>(null);
 
-  // const handleRoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const roomName = event.target.name;
-  //   if (event.target.checked) {
-  //     setSelectedRooms([...selectedRooms, roomName]);
-  //   } else {
-  //     setSelectedRooms(selectedRooms.filter(room => room !== roomName));
-  //   }
-  // };
+  useEffect(() => {
+    fetchResults();
+  }, []);
 
   const handleMealChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const mealOption = event.target.name;
@@ -84,7 +127,7 @@ const FilterSidebar = () => {
   }
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setPriceRange(newValue as number[]);
+    setPriceState(newValue as number[]);
   }
 
   const handleStarsChange = (event: React.SyntheticEvent, newValue: number | null) => {
@@ -104,12 +147,12 @@ const FilterSidebar = () => {
         values: [selectedStars.toString()],
       });
     }
-
-    if (priceRange) {
+    if (!(priceState[0] === priceRange[0] && priceState[1] === priceRange[1])) {
+      console.log("gid")
       filters.push({
         type: 8,
-        from: priceRange[0],
-        to: priceRange[1],
+        from: priceState[0],
+        to: priceState[1],
       });
     }
 
@@ -146,7 +189,7 @@ const FilterSidebar = () => {
           isNewPagingRequest: true,
         }
       ],
-      searchId: "35d52ca5-1c55-4445-9611-b6f31ae01142" // temporary static searchid
+      searchId: "e870b699-c759-4132-9a03-d1a47f402b29" // temporary static searchid
     };
 
     try {
@@ -157,11 +200,20 @@ const FilterSidebar = () => {
         },
         body: JSON.stringify(params),
       });
-
-      if (response.ok) {
-        const data = await response.json();
+      if (response.ok) {  
+        const data:GetPagingDataResponseModel = await response.json();
         setResults(data);
-        console.log(data);
+        var min = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.from
+        var max = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.to
+        if (min !== undefined && max !== undefined) {
+          const numberArray = [min, max];
+          if(priceState.length ===0){
+            setPriceState(numberArray);
+          }
+          if(priceRange.length===0){
+            setPriceRange(numberArray);
+          }
+        }
       } else {
         console.error('Error:', response.status);
       }
@@ -178,8 +230,10 @@ const FilterSidebar = () => {
     setAnchorEl(null);
   };
 
+
   const drawerContent = (
     <List sx={style}>
+
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
         <Typography>Stars</Typography>
         <Rating
@@ -190,44 +244,21 @@ const FilterSidebar = () => {
           precision={0.5}
         />
       </ListItem>
+
       <Divider component="li" />
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
         <Typography>Price Range</Typography>
-        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceRange[0]} TL - ${priceRange[1]} TL`}</Typography>
+        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceState[0]} TL - ${priceState[1]} TL`}</Typography>
         <Slider
           getAriaLabel={() => 'Price range'}
-          value={priceRange}
+          value={priceState}
           onChange={handleSliderChange}
           valueLabelDisplay="off"
           getAriaValueText={valuetext}
-          min={1000}
-          max={30000}
+          disableSwap
+          min={priceRange[0]}
+          max={priceRange[1]} 
         />
-      </ListItem>
-      <Divider component="li" />
-      <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-        {/* <Typography>Boards</Typography> */}
-        {/* <FormGroup>
-          {rooms.map(room => (
-            <FormControlLabel
-              key={room.id}
-              control={
-                <CheckBox
-                  checked={selectedRooms.includes(room.id)}
-                  onChange={handleRoomChange}
-                  name={room.id}
-                  sx={{
-                    color: '#544c4c',
-                    '&.Mui-checked': {
-                      color: 'rgba(24,85,107,0.94)',
-                    }
-                  }}
-                />
-              }
-              label={room.name}
-            />
-          ))}
-        </FormGroup> */}
       </ListItem>
       <Divider component="li" />
       <ListItem>
