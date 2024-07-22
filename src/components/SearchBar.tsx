@@ -90,34 +90,36 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     const handleSearch = () => {
         let message = '';
-
-    if (!checkInDate && !checkOutDate && adults === 0) {
-        message = 'Please provide check-in date, check-out date, and at least 1 adult.';
-    } else if (!checkInDate) {
-        message = 'Please provide a check-in date.';
-    } else if (!checkOutDate) {
-        message = 'Please provide a check-out date.';
-    } else if (adults === 0) {
-        message = 'Please provide at least 1 adult.';
-    }
-
-    if (message) {
-        setErrorMessage(message);
-        setSnackbarOpen(true);
-    } else {
         setIsLoading(true);
-        setTimeout(() => {
-            router.push('/search');
-    }
+        
+        if (!checkInDate && !checkOutDate && adults === 0) {
+            message = 'Please provide check-in date, check-out date, and at least 1 adult.';
+        } else if (!checkInDate) {
+            message = 'Please provide a check-in date.';
+        } else if (!checkOutDate) {
+            message = 'Please provide a check-out date.';
+        } else if (adults === 0) {
+            message = 'Please provide at least 1 adult.';
+        }
+    
+        if (message) {
+            setErrorMessage(message);
+            setSnackbarOpen(true);
+            setIsLoading(false);  // Reset loading state when there is an error
+        } else {
+            setTimeout(() => {
+                router.push('/search');
+                setIsLoading(false);
+            }, 2000);
+        }
     };
+    
+    
     const handleCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
         }
         setSnackbarOpen(false);
-            setIsLoading(false);
-        }, 2000);
-
     };
 
     const open = Boolean(guestDialog);
