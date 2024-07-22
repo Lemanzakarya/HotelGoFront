@@ -27,6 +27,8 @@ const LoadingContainer = styled.div`
     justify-content: center;
     align-items: center;
     width: 100%;
+    right: 10px;
+    left: 10px;
     bottom: 30vh;
 `;
 

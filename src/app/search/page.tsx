@@ -92,6 +92,8 @@ const SearchPage : React.FC = () => {
                               width: '100%',
                               position: 'fixed',
                               top: '50%',
+                              right: 10,
+                              left: 10,
                               zIndex: 10
                           }}
                       >
@@ -111,8 +113,8 @@ const SearchPage : React.FC = () => {
                               tags={hotel.tags}
                               apiEndpoint={`/api/hotel/${hotel.id}`}
                               stars={3.5}
-                                isLoading={isLoading}
-                                setIsLoading={setIsLoading}
+                              isLoading={isLoading}
+                              setIsLoading={setIsLoading}
                           />
                       </Box>
                   ))}
