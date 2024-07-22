@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, {SetStateAction} from 'react';
 import { Grid, Card, CardContent, CardMedia, Typography, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import Link from 'next/link';
@@ -54,6 +54,10 @@ interface Room {
   price: string;
   features: { icon: JSX.Element | null; text: string }[];
 }
+interface RoomsProps {
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<SetStateAction<boolean>>;
+}
 
 const rooms: Room[] = [
   {
@@ -94,7 +98,14 @@ const rooms: Room[] = [
   },
 ];
 
-const Rooms: React.FC = () => {
+const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
+
+  const handleReserve = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }
   return (
     <Container>
       <Grid container spacing={3}>
@@ -135,7 +146,7 @@ const Rooms: React.FC = () => {
                 </ViewDetailsLink>
               </Link>
               <Link href={`/reservation/${room.id}`} passHref>
-                <ReserveButton variant="contained" fullWidth>
+                <ReserveButton variant="contained" fullWidth onClick={handleReserve} disabled={isLoading}>
                   Reserve
                 </ReserveButton>
               </Link>
