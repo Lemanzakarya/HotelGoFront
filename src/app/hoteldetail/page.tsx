@@ -128,7 +128,7 @@ const HotelDetail: React.FC = () => {
       <Container maxWidth="lg" sx={{ mt: 8 }}>
         <Box mt={4}>
           <Typography variant="h3" component="h1" marginBottom={0} gutterBottom>
-            {h}
+            {}
           </Typography>
           <Rating
             name="card-rating"
@@ -167,7 +167,11 @@ const HotelDetail: React.FC = () => {
         )}
         {tabValue === 2 && (
           <Box sx={{ mt: 2 }}>
-            <Rooms />
+            <Rooms 
+              isLoading={false} 
+              setIsLoading={function (value: React.SetStateAction<boolean>): void {
+                throw new Error("Function not implemented.");
+            } } />
           </Box>
         )}
       </Container>
