@@ -31,8 +31,9 @@ type TextCategory = {
   name:string;
   presentations:{
     text:string;
-  };
-}
+  }[];
+}[];
+
 type mediaFile = {
   urlFull:string;
 }[];
@@ -40,16 +41,16 @@ type mediaFile = {
 
 type data = {
     hotel:{
-      // seasons:{
-      //   mediaFiles : mediaFile[];
-      //   textCategories : TextCategory[];
-      //   facilityCategories:{
-      //     facilities: Facilities[];
-      //   }[];
-      // }
+      seasons:{
+        mediaFiles : mediaFile[];
+        textCategories : TextCategory[];
+        facilityCategories:{
+          facilities: Facilities[];
+        }[];
+      }
       address:Address;
       homePage:string;
-      //hotelCategory:string;
+      hotelCategory:string;
       name:string;
       stars:number;
     }
@@ -66,7 +67,7 @@ const HotelDetail: React.FC = () => {
   const [hotelData, setHotelData] = useState<data | null>(); 
   const [hotelRoomPhotos, setHotelRoomPhotos] = useState<string[] | null>([]); 
   const [textCategory, setTextCategory] = useState<string[] | null>();
-
+  const [hotelStar, setHotelStar] = useState<number | null>(0);
   const postData = {
     productType: 2,
     ownerProvider: 2,
@@ -98,6 +99,11 @@ const HotelDetail: React.FC = () => {
         // setHotelOverview(textCategory);
       }catch(error) { 
         console.log(error);
+      }try{
+        const star = data.body?.hotel.stars;
+        setHotelStar(star);
+      }catch(error){
+        console.log(error);
       }
 
     };
@@ -126,7 +132,7 @@ const HotelDetail: React.FC = () => {
           </Typography>
           <Rating
             name="card-rating"
-            value={hotelData?.hotel.stars}
+            value={hotelStar}
             readOnly={true}
             size="medium"
             precision={0.5}
@@ -151,7 +157,7 @@ const HotelDetail: React.FC = () => {
         </Box>
         {tabValue === 0 && (
           <Box sx={{ mt: 2 }}>
-            { <Overview text={description} /> }
+            {/* { <Overview text={description} /> } */}
           </Box>
         )}
         {tabValue === 1 && (
