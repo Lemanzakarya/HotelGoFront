@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Box, Button, Dialog, Divider, IconButton, Popper, Typography, useMediaQuery} from '@mui/material';
+import {Box, Button, Dialog, Divider, IconButton, Popper, Typography, useMediaQuery, Snackbar, Slide, Alert} from '@mui/material';
 import AutoCompleteInputBox from "../components/shared/AutoCompleteInputBox";
 import {Add, Remove} from "@mui/icons-material";
 import CountrySelect from "../components/shared/CountrySelector";
@@ -25,6 +25,8 @@ interface SearchBarProps {
     guestsButtonLabel?: string;
     searchButtonLabel?: string;
     searchButtonColor?: string;
+    isLoading: boolean;
+    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -35,7 +37,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
     checkInLabel = 'check-in',
     checkOutLabel = 'check-out',
     searchButtonLabel = 'Search',
-    searchButtonColor = 'orange'
+    searchButtonColor = 'orange',
+    isLoading,
+    setIsLoading
 }) => {
 
     const [adults, setAdults] = React.useState<number>(0);
@@ -47,6 +51,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [nights, setNights] = React.useState<number>(0);
     const isSmallScreen = useMediaQuery('(max-width: 900px)');
     const [guestDialog, setGuestDialog] = React.useState(false);
+    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState<string>('');
 
 
     const handleClick = () => {
@@ -55,6 +61,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const handleAdultsChange = (amount: number) => {
         if (amount >= 0) {
             setAdults(amount);
+            setSnackbarOpen(false);
             if (amount == 0){
                 setChildren(0);
                 setChildrenAges([]);
@@ -82,7 +89,37 @@ const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     const handleSearch = () => {
-        router.push('/search');
+        let message = '';
+        setIsLoading(true);
+        
+        if (!checkInDate && !checkOutDate && adults === 0) {
+            message = 'Please provide check-in date, check-out date, and at least 1 adult.';
+        } else if (!checkInDate) {
+            message = 'Please provide a check-in date.';
+        } else if (!checkOutDate) {
+            message = 'Please provide a check-out date.';
+        } else if (adults === 0) {
+            message = 'Please provide at least 1 adult.';
+        }
+    
+        if (message) {
+            setErrorMessage(message);
+            setSnackbarOpen(true);
+            setIsLoading(false);  // Reset loading state when there is an error
+        } else {
+            setTimeout(() => {
+                router.push('/search');
+                setIsLoading(false);
+            }, 2000);
+        }
+    };
+    
+    
+    const handleCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackbarOpen(false);
     };
 
     const open = Boolean(guestDialog);
@@ -90,6 +127,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     const handleCheckInChange = (date: Dayjs | null) => {
         setCheckInDate(date);
+        setSnackbarOpen(false);
         if (date && checkOutDate && date.isAfter(checkOutDate)) {
             setCheckOutDate(date);
             setNights(0);
@@ -99,6 +137,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
     };
 
     const handleCheckOutChange = (date: Dayjs | null) => {
+        setCheckOutDate(date);
+        setSnackbarOpen(false);
         if (checkInDate && date && date.isBefore(checkInDate)) {
             setCheckOutDate(checkInDate);
             setNights(0);
@@ -366,10 +406,34 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         width: isSmallScreen ? '100%' : '20%',
                         height: 55,
                     }}
+                    disabled={isLoading}
                 >
-                    {searchButtonLabel}
+                    {isLoading ? 'Loading...' : searchButtonLabel}
+
                 </Button>
             </Box>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                message={errorMessage}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                TransitionComponent={(props) => <Slide {...props} direction="left" />}
+            >
+                <Alert
+        onClose={handleCloseSnackbar}
+        severity="error"
+        sx={{
+            backgroundColor: 'white',
+            color: 'black',
+            mt: 8
+        }}
+    >
+        {errorMessage}
+    </Alert>
+            
+            </Snackbar>
+            
         </Box>
     );
 }

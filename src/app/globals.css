@@ -80,8 +80,8 @@
 }
 
 html, body {
-  overflow: auto;
-  height: auto;
+  overflow: initial;
+  height: 100%;
   margin: 0;
 }
 
@@ -100,7 +100,7 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: white) {
+@media (prefers-color-scheme: light) {
   html {
     color-scheme: white;
   }
