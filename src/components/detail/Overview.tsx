@@ -1,7 +1,11 @@
 import { Box, Typography, Paper } from '@mui/material';
 import React from 'react';
 
-const Overview = () => {
+interface OverviewProps{
+  text:string[];
+}
+
+const Overview : React.FC<OverviewProps> = ({text}) => {
   return (
       <Paper elevation={3} sx={{ padding: 2 }}>
         <Typography variant="h6" component="h2" gutterBottom>

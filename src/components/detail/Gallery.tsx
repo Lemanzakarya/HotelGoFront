@@ -6,29 +6,30 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import CloseIcon from '@mui/icons-material/Close';
 import { spacing } from 'material-ui/styles';
 
-const images = [
-  'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Genel-257544.jpg',
-  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/3b/c9/63/exterior.jpg?w=700&h=-1&s=1',
-  'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Yeme-Icme-257428.jpg',
-  'https://images.etstur.com/files/images/hotelImages/TR/95763/m/Granada-Luxury-Belek-Oda-313523.jpg',
-  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/3b/c9/63/exterior.jpg?w=700&h=-1&s=1',
-  'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Yeme-Icme-257428.jpg',
-  'https://images.etstur.com/files/images/hotelImages/TR/95763/m/Granada-Luxury-Belek-Oda-313523.jpg',
-  'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/3b/c9/63/exterior.jpg?w=700&h=-1&s=1',
-  'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Yeme-Icme-257428.jpg',
-  'https://images.etstur.com/files/images/hotelImages/TR/95763/m/Granada-Luxury-Belek-Oda-313523.jpg',
-];
+// const images = [
+//   'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Genel-257544.jpg',
+//   'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/3b/c9/63/exterior.jpg?w=700&h=-1&s=1',
+//   'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Yeme-Icme-257428.jpg',
+//   'https://images.etstur.com/files/images/hotelImages/TR/95763/m/Granada-Luxury-Belek-Oda-313523.jpg',
+//   'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/3b/c9/63/exterior.jpg?w=700&h=-1&s=1',
+//   'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Yeme-Icme-257428.jpg',
+//   'https://images.etstur.com/files/images/hotelImages/TR/95763/m/Granada-Luxury-Belek-Oda-313523.jpg',
+//   'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/3b/c9/63/exterior.jpg?w=700&h=-1&s=1',
+//   'https://images.etstur.com/imgproxy/files/images/hotelImages/TR/95763/l/Granada-Luxury-Belek-Yeme-Icme-257428.jpg',
+//   'https://images.etstur.com/files/images/hotelImages/TR/95763/m/Granada-Luxury-Belek-Oda-313523.jpg',
+// ];
 
 interface GalleryProps{
-  images : string[];
+  images : (string | null )[];
 }
 
 
 
-const Gallery: React.FC<GalleryProps> = ({  }) => {
+const Gallery: React.FC<GalleryProps> = ({ images }) => {
   const [showMore, setShowMore] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
+
 
   const handleShowMore = () => {
     setShowMore(!showMore);
@@ -62,7 +63,10 @@ const Gallery: React.FC<GalleryProps> = ({  }) => {
     }
   };
 
-  const imagesToShow = showMore ? images : images.slice(0, 5);
+  const validImages = images.filter((img) => img !== null) as string[];
+  const fallbackImage = "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg";
+  const imagesToShow = showMore ? validImages : validImages.slice(0, 5);
+
 
   return (
     <Paper elevation={3} style={{ padding: 16 }}>
@@ -73,7 +77,7 @@ const Gallery: React.FC<GalleryProps> = ({  }) => {
         <Grid item xs={12} md={6}>
           <Box
             component="img"
-            src={images[0]}
+            src={validImages[0] || fallbackImage}
             alt="Main Hotel Image"
             onClick={() => handleClickOpen(0)}
             sx={{
@@ -112,7 +116,7 @@ const Gallery: React.FC<GalleryProps> = ({  }) => {
               <Grid item xs={12} sm={6} md={3} key={index + 5}>
                 <Box
                   component="img"
-                  src={image}
+                  src={image || fallbackImage}
                   alt={`Hotel image ${index + 6}`}
                   onClick={() => handleClickOpen(index + 5)}
                   sx={{
@@ -150,7 +154,11 @@ const Gallery: React.FC<GalleryProps> = ({  }) => {
             />
             <Box
               component="img"
-              src={selectedImageIndex !== null ? images[selectedImageIndex] : ''}
+              src={
+                selectedImageIndex !== null && images[selectedImageIndex] !== null // Check for both null index and null image
+                  ? images[selectedImageIndex]
+                  : fallbackImage 
+              }
               alt="Selected Hotel Image"
               sx={{
                 maxHeight: '90%', //look into the settings for different pictures
