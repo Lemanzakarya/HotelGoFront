@@ -53,7 +53,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [guestDialog, setGuestDialog] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
-
+    const [selectedNationality , setSelectedNationality] = React.useState<string>('TR');
 
     const handleClick = () => {
         setGuestDialog(!guestDialog);
@@ -280,7 +280,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     >
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center'}}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>Nationality</Typography>
-                            <CountrySelect />
+                            <CountrySelect
+                                value={selectedNationality}
+                                onChange={(e , newValue) => setSelectedNationality(newValue)}
+                            />
                         </Box>
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center', flexWrap:'wrap' }}>

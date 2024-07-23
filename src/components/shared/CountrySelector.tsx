@@ -21,13 +21,30 @@ const CustomPopper: React.FC<CustomPopperProps> = (props) => {
     );
 };
 
-export default function CountrySelect() {
+
+export default function CountrySelect({value , onChange}: {
+    value: string | null;
+    onChange: (event: React.SyntheticEvent, newValue: string | null) => void;
+}) {
+
+    const getCountryByCode = (value: string) => {
+        return countries.find((country) => country.code === value);
+    }
+    const handleChange = (event, newValue) => {
+        onChange(event, newValue ? newValue.code : null);
+    };
+    const countryValue = getCountryByCode(value || 'TR');
+
     return (
         <Autocomplete
             id="country-select-demo"
             sx={{ width: 130 }}
             options={countries}
+            value={countryValue}
+            onChange={handleChange}
             autoHighlight
+            clearOnEscape={false}
+            clearIcon={null}
             getOptionLabel={(option) => option.label}
             PopperComponent={CustomPopper}
             renderOption={(props, option) => {
@@ -39,6 +56,7 @@ export default function CountrySelect() {
                         sx={{ '& > img': { mr: 2, flexShrink: 0 } , borderRadius:2 , backgroundColor:'white' }}
                         {...optionProps}
                     >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             loading="lazy"
                             width="20"
@@ -55,11 +73,14 @@ export default function CountrySelect() {
                     {...params}
                     label="Country"
                     InputLabelProps={{
-                        sx: { fontSize: 14 } 
+                        sx: { fontSize: 18 }
                     }}
                     inputProps={{
                         ...params.inputProps,
                         autoComplete: 'new-password',
+                        style: {
+                            fontSize: 13
+                        }
                     }}
                 />
             )}
