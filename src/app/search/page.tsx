@@ -1,12 +1,11 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import HotelCard from "../../components/card/HotelCard";
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
 import LoadingCircle from "@/components/shared/LoadingCircle";
-
 
 interface Hotel {
   id: string;
@@ -44,12 +43,12 @@ const hotel: Hotel[] = [
     location: "Merkez, Adana",
     price: "499,99",
     tags: ["Wifi", "Star", "2.4 km"],
-  }
+  },
 ];
 
-const SearchPage : React.FC = () => {
+const SearchPage: React.FC = () => {
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
-  const isSmallScreen = useMediaQuery('(max-width:900px)');
+  const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -61,69 +60,56 @@ const SearchPage : React.FC = () => {
     setHotelData(hotel);
   };
 
-
-
-
   return (
-      <div style={{marginTop: '20px'}}>
-          <Box
-              sx={{
-                  position: 'sticky',
-                  top: 4,
-                  zIndex: 10,
-              }}
-          >
-              <SearchBar
-                  sx={{marginTop: '20px', marginLeft: '5%', marginRight: '5%'}}
-                  backgroundColor={'#F5F5F5'}
-                  height={isSmallScreen ? '100%' : 80}
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
+    <div style={{ marginTop: "20px" }}>
+      <Box
+        sx={{
+          position: "sticky",
+          top: 4,
+          zIndex: 10,
+        }}
+      >
+        <SearchBar
+          sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
+          backgroundColor={"#F5F5F5"}
+          height={isSmallScreen ? "100%" : 80} 
+          isLoading={false} 
+          setIsLoading={setIsLoading}
+          />
+      </Box>
+      <Box
+        display="flex"
+        flexDirection={isSmallScreen ? "column" : "row"}
+        marginTop="4%"
+      >
+        <Box flex="1" marginLeft="5%">
+          <FilterSidebar />
+        </Box>
+        <Box
+          flex="3"
+          display="flex"
+          flexDirection="column"
+          marginRight="5%"
+          marginLeft={isSmallScreen ? "5%" : "0%"}
+        >
+          {hotelData.map((hotel, index) => (
+            <Box key={index}>
+              <HotelCard
+                title={hotel.title}
+                location={hotel.location}
+                price={hotel.price}
+                tags={hotel.tags}
+                apiEndpoint={`/api/hotel/${hotel.id}`}
+                stars={3.5}
+                isLoading={false}
+                setIsLoading={setIsLoading}
               />
-          </Box>
-          <Box display="flex" flexDirection={isSmallScreen ? 'column' : 'row'} marginTop="4%">
-              <Box flex="1" marginLeft="5%">
-                  {isLoading && (
-                      <Box
-                          sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              width: '100%',
-                              position: 'fixed',
-                              top: '50%',
-                              right: 10,
-                              left: 10,
-                              zIndex: 10
-                          }}
-                      >
-                          <LoadingCircle/>
-                      </Box>
-                  )}
-                  <FilterSidebar/>
-              </Box>
-              <Box flex="3" display="flex" flexDirection="column" marginRight="5%"
-                   marginLeft={isSmallScreen ? "5%" : "0%"}>
-                  {hotelData.map((hotel, index) => (
-                      <Box key={index}>
-                          <HotelCard
-                              title={hotel.title}
-                              location={hotel.location}
-                              price={hotel.price}
-                              tags={hotel.tags}
-                              apiEndpoint={`/api/hotel/${hotel.id}`}
-                              stars={3.5}
-                              isLoading={isLoading}
-                              setIsLoading={setIsLoading}
-                          />
-                      </Box>
-                  ))}
-              </Box>
-          </Box>
-      </div>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </div>
   );
 };
 
 export default SearchPage;
-
-
