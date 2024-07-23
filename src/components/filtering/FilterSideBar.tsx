@@ -65,27 +65,6 @@ interface HotelOffer {
 }
 
 
-
-const facilities = [
-  'Free Wi-Fi',
-  'Parking',
-  'Swimming Pool',
-  'Gym',
-  'Restaurant',
-  'Bar',
-  'Spa',
-  'Room Service',
-  'Pet Friendly',
-  'Business Center',
-];
-
-const mealOptions = [
-  'Breakfast Included',
-  'all inclusive',
-  'Half Board',
-  'Full Board',
-];
-
 function valuetext(value: number) {
   return `${value} TL`;
 }
@@ -96,9 +75,10 @@ const FilterSidebar = () => {
 
   const [priceRange, setPriceRange] = useState<number[]>([]);
   const [priceState , setPriceState] = useState<number[]>([]);
-  // const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
-  const [selectedMealOptions, setSelectedMealOptions] = useState<string[]>([]);
+  const [allFacilities, setAllFacilities] = useState<PagingDataOptions[]>([]);
+  const [selectedBoardOptions, setSelectedBoardOptions] = useState<string[]>([]);
+  const [allBoards, setAllBoards] = useState<PagingDataOptions[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [results, setResults] = useState<GetPagingDataResponseModel | null>(null);
@@ -106,35 +86,35 @@ const FilterSidebar = () => {
 
   useEffect(() => {
     fetchResults();
-  }, []);
+  }, [selectedFacilities,selectedBoardOptions,selectedStars,priceState]);
 
-  const handleMealChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const mealOption = event.target.name;
+  const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const boardOption = event.target.name;
     if (event.target.checked) {
-      setSelectedMealOptions([...selectedMealOptions, mealOption]);
+      setSelectedBoardOptions([...selectedBoardOptions, boardOption]);
     } else {
-      setSelectedMealOptions(selectedMealOptions.filter(option => option !== mealOption));
+      setSelectedBoardOptions(selectedBoardOptions.filter(option => option !== boardOption));
     }
   }
 
   const handleFacilityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const facilityName = event.target.name;
+    const facility = event.target.name;
     if (event.target.checked) {
-      setSelectedFacilities([...selectedFacilities, facilityName]);
+      setSelectedFacilities([...selectedFacilities, facility]);
     } else {
-      setSelectedFacilities(selectedFacilities.filter(facility => facility !== facilityName));
+      setSelectedFacilities(selectedFacilities.filter(fac => fac !== facility
+      ));
     }
   }
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     setPriceState(newValue as number[]);
+    setTimeout(() => {
+    }, 600);
   }
 
   const handleStarsChange = (event: React.SyntheticEvent, newValue: number | null) => {
     setSelectedStars(newValue);
-  };
-
-  const handleApplyChanges = () => {
     fetchResults();
   };
 
@@ -148,7 +128,6 @@ const FilterSidebar = () => {
       });
     }
     if (!(priceState[0] === priceRange[0] && priceState[1] === priceRange[1])) {
-      console.log("gid")
       filters.push({
         type: 8,
         from: priceState[0],
@@ -156,24 +135,17 @@ const FilterSidebar = () => {
       });
     }
 
-    // if (selectedRooms.length > 0) {
-    //   filters.push({
-    //     type: 6,
-    //     values: selectedRooms,
-    //   });
-    // }
-
     if (selectedFacilities.length > 0) {
       filters.push({
-        type: 51,
+        type: 7,
         values: selectedFacilities,
       });
     }
 
-    if (selectedMealOptions.length > 0) {
+    if (selectedBoardOptions.length > 0) {
       filters.push({
         type: 6,
-        values: selectedMealOptions,
+        values: selectedBoardOptions,
       });
     }
 
@@ -189,10 +161,10 @@ const FilterSidebar = () => {
           isNewPagingRequest: true,
         }
       ],
-      searchId: "e870b699-c759-4132-9a03-d1a47f402b29" // temporary static searchid
+      searchId: "cbd5894d-884d-48c0-873e-6e3b3df5242c" // temporary static searchid
     };
 
-    try {
+    try { 
       const response = await fetch('http://localhost:5083/Tourvisio/GetPagingData', {
         method: 'POST',
         headers: {
@@ -205,6 +177,10 @@ const FilterSidebar = () => {
         setResults(data);
         var min = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.from
         var max = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.to
+        const facilities: PagingDataOptions[] = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 7)?.options || [];
+        setAllFacilities(facilities);
+        const boards: PagingDataOptions[] = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 6)?.options || [];
+        setAllBoards(boards);
         if (min !== undefined && max !== undefined) {
           const numberArray = [min, max];
           if(priceState.length ===0){
@@ -213,10 +189,11 @@ const FilterSidebar = () => {
           if(priceRange.length===0){
             setPriceRange(numberArray);
           }
-        }
+
       } else {
         console.error('Error:', response.status);
       }
+    }
     } catch (error) {
       console.error('Error:', error);
     }
@@ -260,44 +237,6 @@ const FilterSidebar = () => {
           max={priceRange[1]} 
         />
       </ListItem>
-      <Divider component="li" />
-      <ListItem>
-        <Accordion sx={{ width: 360, border: '1px solid #ddd', borderRadius: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreTwoTone />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-          >
-            Facilities
-          </AccordionSummary>
-          <AccordionDetails>
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-              {facilities.map((facility, index) => (
-                <Grid item xs={12} key={index}>
-                  <Box sx={{ border: '1px solid #ddd', borderRadius: 1, paddingLeft: 1, marginBottom: 0.4 }}>
-                    <FormGroup>
-                      <FormControlLabel
-                        control={
-                          <CheckBox
-                            checked={selectedFacilities.includes(facility)}
-                            onChange={handleFacilityChange}
-                            name={facility}
-                            sx={{
-                              color: '#544c4c',
-                              '&.Mui-checked': {
-                                color: 'rgba(24,85,107,0.94)',
-                              }
-                            }}
-                          />}
-                        label={facility} />
-                    </FormGroup>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-      </ListItem>
       <Divider component='li' />
       <ListItem>
         <Accordion sx={{ width: 360, border: '1px solid #ddd', borderRadius: 2 }}>
@@ -310,16 +249,16 @@ const FilterSidebar = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-              {mealOptions.map((meal, index) => (
+              {allBoards.map((board, index) => (
                 <Grid item xs={12} key={index}>
                   <Box sx={{ border: '1px solid #ddd', borderRadius: 1, paddingLeft: 1, marginBottom: 1 }}>
                     <FormGroup>
                       <FormControlLabel
                         control={
                           <CheckBox
-                            name={meal}
-                            checked={selectedMealOptions.includes(meal)}
-                            onChange={handleMealChange}
+                            name={board.id}
+                            checked={selectedBoardOptions.includes(board.id || '')}
+                            onChange={handleBoardChange}
                             sx={{
                               color: '#544c4c',
                               '&.Mui-checked': {
@@ -328,7 +267,7 @@ const FilterSidebar = () => {
                             }}
                           />
                         }
-                        label={meal}
+                        label={board.name + " (" + board.count + ")"}
                       />
                     </FormGroup>
                   </Box>
@@ -338,15 +277,43 @@ const FilterSidebar = () => {
           </AccordionDetails>
         </Accordion>
       </ListItem>
-      <ListItem sx={{ flexDirection: 'column', alignItems: 'center', marginTop: 1, marginBottom: 1.5 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleApplyChanges}
-          sx={{ boxShadow: '0 2px 4px 0 rgba(0,0,0,2)', width: '50%', borderRadius: 2 }}
-        >
-          Apply Changes
-        </Button>
+
+      <ListItem>
+        <Accordion sx={{ width: 360, border: '1px solid #ddd', borderRadius: 2 }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreTwoTone />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Facilities
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              {allFacilities.map((facility, index) => (
+                <Grid item xs={12} key={index}>
+                  <Box sx={{ border: '1px solid #ddd', borderRadius: 1, paddingLeft: 1, marginBottom: 0.4 }}>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <CheckBox
+                            checked={selectedFacilities.includes(facility?.id || '')}
+                            onChange={handleFacilityChange}
+                            name={facility.id}
+                            sx={{
+                              color: '#544c4c',
+                              '&.Mui-checked': {
+                                color: 'rgba(24,85,107,0.94)',
+                              }
+                            }}
+                          />}
+                        label={facility.name + " (" + facility.count + ")"} />
+                    </FormGroup>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
       </ListItem>
     </List>
   );
