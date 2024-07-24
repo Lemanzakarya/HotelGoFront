@@ -143,7 +143,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
             />
             <Box
               component="img"
-              src={selectedImageIndex !== null && images?.[selectedImageIndex] ? images ? images : [selectedImageIndex] : fallbackImage}
+              src={selectedImageIndex !== null && images?.[selectedImageIndex] ? images[selectedImageIndex] : fallbackImage}
               alt="Selected Hotel Image"
               sx={{
                 maxHeight: '90%', //look into the settings for different pictures
