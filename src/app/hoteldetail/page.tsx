@@ -66,8 +66,9 @@ const HotelDetail: React.FC = () => {
 
   const [hotelData, setHotelData] = useState<data | null>(); 
   const [hotelRoomPhotos, setHotelRoomPhotos] = useState<string[] | null>([]); 
-  const [textCategory, setTextCategory] = useState<string[] | null>();
+  const [textCategory, setTextCategory] = useState<TextCategory | null>([]);
   const [hotelStar, setHotelStar] = useState<number | null>(0);
+
   const postData = {
     productType: 2,
     ownerProvider: 2,
@@ -96,7 +97,7 @@ const HotelDetail: React.FC = () => {
       }try{
         const textCategory = data.body.hotel.seasons[0].textCategories;
         //console.log(textCategory)
-        // setHotelOverview(textCategory);
+         setTextCategory(textCategory);
       }catch(error) { 
         console.log(error);
       }try{
@@ -157,7 +158,7 @@ const HotelDetail: React.FC = () => {
         </Box>
         {tabValue === 0 && (
           <Box sx={{ mt: 2 }}>
-            {/* { <Overview text={description} /> } */}
+            {  <Overview textCategories={textCategory} />  }
           </Box>
         )}
         {tabValue === 1 && (
