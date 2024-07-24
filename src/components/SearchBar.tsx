@@ -144,27 +144,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
             const message = `Please provide ${missingFields.join(', ')}.`;
             setErrorMessage(message);
             setSnackbarOpen(true);
-            setIsLoading(false);  // Reset loading state when there is an error
+            //setIsLoading(false);  // Reset loading state when there is an error
 
         }
         //add an else condition to prevent going to next page if there is an error
-        //else{
-            setTimeout(() => {
-                const query = new URLSearchParams({
-                    checkInDate: checkInDate ? checkInDate.toISOString() : '',
-                    checkOutDate: checkOutDate ? checkOutDate.toISOString() : '',
-                    adults: adults.toString(),
-                    children: children.toString(),
-                    nights: nights.toString(),
-                    childrenAges: childrenAges.join(','),
-                    selectedNationality: selectedNationality || '',
-                }).toString();
-                router.push(`/search?${query}`);
-                setIsLoading(false);
-            }, 2000);
-        //}
-            
-        
+        setTimeout(() => {
+            const query = new URLSearchParams({
+                checkInDate: checkInDate ? checkInDate.toISOString() : '',
+                checkOutDate: checkOutDate ? checkOutDate.toISOString() : '',
+                adults: adults.toString(),
+                children: children.toString(),
+                nights: nights.toString(),
+                childrenAges: childrenAges.join(','),
+                selectedNationality: selectedNationality || '',
+            }).toString();
+            router.push(`/search?${query}`);
+            setIsLoading(false);
+        },3000);
+
     };
     
     

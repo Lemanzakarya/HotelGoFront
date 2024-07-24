@@ -7,6 +7,7 @@ import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
 import {useSearchParams} from "next/navigation";
 import dayjs, {Dayjs} from "dayjs";
+import LoadingCircle from "@/components/shared/LoadingCircle";
 
 interface Hotel {
   id: string;
@@ -101,7 +102,7 @@ const SearchPageServer: React.FC = () => {
           sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
           backgroundColor={"#F5F5F5"}
           height={isSmallScreen ? "100%" : 80} 
-          isLoading={false}
+          isLoading={isLoading}
           setIsLoading={setIsLoading}
           checkInDateParam={checkIn}
           checkOutDateParam={checkOut}
@@ -117,6 +118,23 @@ const SearchPageServer: React.FC = () => {
         marginTop="4%"
       >
         <Box flex="1" marginLeft="5%">
+          {isLoading && (
+              <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    position: 'fixed',
+                    top: '50%',
+                    right: 10,
+                    left: 10,
+                    zIndex: 10
+                  }}
+              >
+                <LoadingCircle/>
+              </Box>
+          )}
           <FilterSidebar />
         </Box>
         <Box
@@ -135,7 +153,7 @@ const SearchPageServer: React.FC = () => {
                 tags={hotel.tags}
                 apiEndpoint={`/api/hotel/${hotel.id}`}
                 stars={3.5}
-                isLoading={false}
+                isLoading={isLoading}
                 setIsLoading={setIsLoading}
               />
             </Box>
