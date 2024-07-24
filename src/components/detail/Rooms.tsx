@@ -101,19 +101,17 @@ const rooms: Room[] = [
 
 const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
 
+  
+  const router = useRouter();
+
   const handleReserve = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      router.push(`/reservation`);
     }, 2000);
   }
 
-    const router = useRouter();
-
-    
-  const handleReserve = () => {
-    router.push(`/reservation`);
-  };
   
   return (
     <Container>
@@ -154,7 +152,6 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
                   View Details
                 </ViewDetailsLink>
               </Link>
-              <Link href={`/reservation/${room.id}`} passHref>
                 <ReserveButton variant="contained" fullWidth onClick={handleReserve} disabled={isLoading}>
                   Reserve
                 </ReserveButton>

@@ -91,7 +91,6 @@ const HotelDetail: React.FC = () => {
       }try{
         const facilities = data.body.hotel.seasons[0].facilityCategories[0].facilities;
         setFacilities(facilities);
-        console.log(facilities);
       }catch (error) {
         console.log(error);
       }try{
