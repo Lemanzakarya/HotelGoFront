@@ -78,14 +78,12 @@ const HotelDetail: React.FC = () => {
   
   useEffect(() => {
     const fetchHotelData = async () => { 
-      const data = await sendPostRequest(postData);
-      console.log(data.body);
+      const data = await sendPostRequest(postData);;
       setHotelData(data.body);
 
       try{
         const urls = data.body.hotel.seasons[0].mediaFiles.map((file: {urlFull: any;}) => file.urlFull);
         setHotelRoomPhotos(urls);
-        //console.log(hotelRoomPhotos)
       }catch (error) {
         console.log(error);
       }try{

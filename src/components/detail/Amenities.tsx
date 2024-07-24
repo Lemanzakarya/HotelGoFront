@@ -22,8 +22,7 @@ const Amenities: React.FC<AmenitiesProps> = ({facilities}) => {
   if (!facilities || facilities.length === 0) {
     return null; // Don't render the component if there are no facilities
   }
-  console.log(facilities);
-  console.log(facilities[0].name)
+
 
   return (
     <Paper elevation={3} style={{ padding: 16 }}>

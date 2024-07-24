@@ -11,7 +11,7 @@ type TextCategory = {
 }[];
 
 interface OverviewProps{
-  textCategories: TextCategory;
+  textCategories: (TextCategory | null);
 }
 
 const Overview : React.FC<OverviewProps> = ({textCategories}) => {
