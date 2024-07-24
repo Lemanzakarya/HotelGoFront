@@ -16,7 +16,6 @@ interface OverviewProps{
 
 const Overview : React.FC<OverviewProps> = ({textCategories}) => {
 
-  console.log(textCategories)
 
   if (!textCategories) {
     return null; // Don't render anything if textCategories is null

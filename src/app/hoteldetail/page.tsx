@@ -23,7 +23,7 @@ type Address ={
   addressLines : string[];
 }
 
-type Facilities = {
+type Facility = {
   name:string;
   isPriced:boolean;
 };
@@ -45,7 +45,7 @@ type data = {
         mediaFiles : mediaFile[];
         textCategories : TextCategory[];
         facilityCategories:{
-          facilities: Facilities[];
+          facilities: Facility[];
         }[];
       }
       address:Address;
@@ -68,7 +68,7 @@ const HotelDetail: React.FC = () => {
   const [hotelRoomPhotos, setHotelRoomPhotos] = useState<string[] | null>([]); 
   const [textCategory, setTextCategory] = useState<TextCategory | null>([]);
   const [hotelStar, setHotelStar] = useState<number | null>(0);
-
+  const [facilities, setFacilities] = useState<Facility[]>([]); 
   const postData = {
     productType: 2,
     ownerProvider: 2,
@@ -89,9 +89,9 @@ const HotelDetail: React.FC = () => {
       }catch (error) {
         console.log(error);
       }try{
-        const facilities =  data.body.hotel.seasons[0].facilityCategories[0].facilities[0];
-        //setHotelFacilities(facilities);
-        //console.log(facilities);
+        const facilities = data.body.hotel.seasons[0].facilityCategories[0].facilities;
+        setFacilities(facilities);
+        console.log(facilities);
       }catch (error) {
         console.log(error);
       }try{
@@ -163,7 +163,7 @@ const HotelDetail: React.FC = () => {
         )}
         {tabValue === 1 && (
           <Box sx={{ mt: 2 }}>
-            <Amenities />
+            { <Amenities facilities={facilities}/> }
           </Box>
         )}
         {tabValue === 2 && (
