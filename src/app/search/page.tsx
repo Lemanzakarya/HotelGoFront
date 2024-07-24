@@ -1,11 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , Suspense } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from "@mui/material/Box";
 import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
-import LoadingCircle from "@/components/shared/LoadingCircle";
+import {useSearchParams} from "next/navigation";
+import dayjs, {Dayjs} from "dayjs";
 
 interface Hotel {
   id: string;
@@ -46,10 +47,37 @@ const hotel: Hotel[] = [
   },
 ];
 
-const SearchPage: React.FC = () => {
+const SearchPageServer: React.FC = () => {
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
+
+  const searchParams = useSearchParams();
+
+  const checkInDate = searchParams.get('checkInDate');
+  const checkOutDate = searchParams.get('checkOutDate');
+  const adults = searchParams.get('adults');
+  const children = searchParams.get('children');
+  const childrenAges = searchParams.get('childrenAges');
+  const selectedNationality = searchParams.get('selectedNationality');
+
+  const [checkIn, setCheckIn] = useState<Dayjs | null>(null);
+  const [checkOut, setCheckOut] = useState<Dayjs | null>(null);
+  const [numAdults, setNumAdults] = useState<number>(0);
+  const [numChildren, setNumChildren] = useState<number>(0);
+  const [agesOfChildren, setAgesOfChildren] = useState<number[]>([]);
+  const [nationality, setNationality] = useState<string>('');
+
+  useEffect(() => {
+    if (checkInDate) setCheckIn(dayjs(checkInDate));
+    if (checkOutDate) setCheckOut(dayjs(checkOutDate));
+    if (adults) setNumAdults(parseInt(adults, 10));
+    if (children) setNumChildren(parseInt(children, 10));
+    if (childrenAges) setAgesOfChildren(childrenAges.split(',').map(age => parseInt(age, 10)));
+    if (selectedNationality) setNationality(selectedNationality);
+  }, [checkInDate, checkOutDate, adults, children,childrenAges, selectedNationality]);
+
+
 
   useEffect(() => {
     fetchHotels();
@@ -73,8 +101,14 @@ const SearchPage: React.FC = () => {
           sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
           backgroundColor={"#F5F5F5"}
           height={isSmallScreen ? "100%" : 80} 
-          isLoading={false} 
+          isLoading={false}
           setIsLoading={setIsLoading}
+          checkInDateParam={checkIn}
+          checkOutDateParam={checkOut}
+          adultsParam={numAdults}
+          childrenParam={numChildren}
+          childrenAgesParam={agesOfChildren}
+          nationalityParam={nationality}
           />
       </Box>
       <Box
@@ -111,5 +145,12 @@ const SearchPage: React.FC = () => {
     </div>
   );
 };
+const SearchPage = () => {
+  return (
+      <Suspense>
+        <SearchPageServer />
+      </Suspense>
+  );
+}
 
 export default SearchPage;

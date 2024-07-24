@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Box, Button, Dialog, Divider, IconButton, Popper, Typography, useMediaQuery, Snackbar, Slide, Alert} from '@mui/material';
+import {Box, Button, Dialog, Divider, IconButton, Typography, useMediaQuery, Snackbar, Slide, Alert} from '@mui/material';
 import AutoCompleteInputBox from "../components/shared/AutoCompleteInputBox";
 import {Add, Remove} from "@mui/icons-material";
 import CountrySelect from "../components/shared/CountrySelector";
@@ -11,6 +11,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import dayjs, { Dayjs } from 'dayjs';
 import {MobileDatePicker} from "@mui/x-date-pickers";
+import {useEffect} from "react";
+
 
 
 
@@ -20,11 +22,12 @@ interface SearchBarProps {
     backgroundColor?: string;
     height?: string | number;
     width?: string | number;
-    checkInLabel?: string;
-    checkOutLabel?: string;
-    guestsButtonLabel?: string;
-    searchButtonLabel?: string;
-    searchButtonColor?: string;
+    checkOutDateParam?: Dayjs | null;
+    checkInDateParam?: Dayjs | null;
+    nationalityParam?: string;
+    adultsParam?: number;
+    childrenParam?: number;
+    childrenAgesParam?: number[];
     isLoading: boolean;
     setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -34,10 +37,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
     backgroundColor = '#fffefe',
     height = 'auto',
     width = '100%',
-    checkInLabel = 'check-in',
-    checkOutLabel = 'check-out',
-    searchButtonLabel = 'Search',
-    searchButtonColor = 'orange',
+    checkOutDateParam,
+    checkInDateParam,
+    nationalityParam,
+    adultsParam,
+    childrenParam,
+    childrenAgesParam,
     isLoading,
     setIsLoading
 }) => {
@@ -54,7 +59,30 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
     const [location, setLocation]= React.useState<string>('');
+    const [selectedNationality , setSelectedNationality] = React.useState<string | null>('TR');
 
+
+    useEffect(() => {
+        // Update state with props if they are provided, but only if they haven't been set already
+        if (checkInDateParam && !checkInDate) {
+            setCheckInDate(dayjs(checkInDateParam));
+        }
+        if (checkOutDateParam && !checkOutDate) {
+            setCheckOutDate(dayjs(checkOutDateParam));
+        }
+        if (adultsParam !== undefined && adults === 0) {
+            setAdults(adultsParam);
+        }
+        if (childrenParam !== undefined && children === 0) {
+            setChildren(childrenParam);
+        }
+        if (childrenAgesParam && childrenAges.length === 0) {
+            setChildrenAges(childrenAgesParam);
+        }
+        if (nationalityParam && selectedNationality === 'TR') {
+            setSelectedNationality(nationalityParam);
+        }
+    }, [checkInDateParam, checkOutDateParam, adultsParam, childrenParam, childrenAgesParam, nationalityParam]);
 
     const handleClick = () => {
         setGuestDialog(!guestDialog);
@@ -122,7 +150,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
         //add an else condition to prevent going to next page if there is an error
         //else{
             setTimeout(() => {
-                router.push('/search');
+                const query = new URLSearchParams({
+                    checkInDate: checkInDate ? checkInDate.toISOString() : '',
+                    checkOutDate: checkOutDate ? checkOutDate.toISOString() : '',
+                    adults: adults.toString(),
+                    children: children.toString(),
+                    nights: nights.toString(),
+                    childrenAges: childrenAges.join(','),
+                    selectedNationality: selectedNationality || '',
+                }).toString();
+                router.push(`/search?${query}`);
                 setIsLoading(false);
             }, 2000);
         //}
@@ -202,7 +239,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             sx={{width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0}}
                             onChange={(newDateValue) => {handleCheckInChange(newDateValue)}}
                             value={checkInDate}
-                            label={checkInLabel}
+                            label={"Check-in"}
                             minDate={dayjs()}
                         />
                 </LocalizationProvider>
@@ -213,7 +250,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     <MobileDatePicker
                             onChange={(newDateValue) => {handleCheckOutChange(newDateValue)}}
                             value={checkOutDate}
-                            label={checkOutLabel}
+                            label={'Check-out'}
                             disabled={checkInDate === null}
                             minDate={checkInDate ? checkInDate.add(1, 'day'): undefined}
                             sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0  }}
@@ -297,7 +334,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     >
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center'}}>
                             <Typography variant='body1' sx={{ color: "#000000" }}>Nationality</Typography>
-                            <CountrySelect />
+                            <CountrySelect
+                                value={selectedNationality}
+                                onChange={(e , newValue) => setSelectedNationality(newValue)}
+                            />
                         </Box>
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center', flexWrap:'wrap' }}>
@@ -413,19 +453,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     variant="contained"
                     onClick={handleSearch}
                     sx={{
-                        '&:hover': { backgroundColor: searchButtonColor },
+                        '&:hover': { backgroundColor: 'orange' },
                         borderRadius: 2,
                         p: 1,
                         textTransform: 'none',
                         fontSize: 20,
-                        backgroundColor: searchButtonColor,
+                        backgroundColor: 'orange',
                         color: '#ffffff',
                         width: isSmallScreen ? '100%' : '20%',
                         height: 55,
                     }}
                     disabled={isLoading}
                 >
-                    {isLoading ? 'Loading...' : searchButtonLabel}
+                    {isLoading ? 'Loading...' : "Search"}
 
                 </Button>
             </Box>
