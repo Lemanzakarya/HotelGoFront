@@ -53,7 +53,7 @@ interface Room {
   description: string;
   imageUrl: string;
   price: string;
-  features: { icon: JSX.Element | null; text: string }[];
+  features: { icon: React.ReactElement | null; text: string }[];
 }
 interface RoomsProps {
   isLoading: boolean;
@@ -111,7 +111,7 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
     }, 2000);
   }
 
-  
+
   return (
     <Container>
       <Grid container spacing={3}>
@@ -138,7 +138,10 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
                 <FeaturesList>
                   {room.features.map((feature, index) => (
                     <FeatureItem key={index}>
-                      {feature.icon && React.cloneElement(feature.icon, { style: { marginRight: '8px' } })}
+                      {feature.icon && (
+                          /*React.cloneElement(feature.icon, { style: { marginRight: '8px' } })*/
+                          <div style={{ marginRight: '8px' }}>{feature.icon}</div>
+                      )}
                       <Typography variant="body2" color="textPrimary" sx={{ marginLeft: '5px' }}>
                         {feature.text}
                       </Typography>

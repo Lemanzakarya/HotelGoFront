@@ -3,7 +3,7 @@ import { Typography, Grid, Paper, Box, Button, Dialog, DialogContent  } from '@m
 import { Close, PhotoCamera } from '@mui/icons-material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import CloseIcon from '@mui/icons-material/Close';
+
 
 
 
@@ -51,7 +51,8 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
     });
   };
 
-  const validImages = images?.filter((img) => img !== null) as string[];
+  /*const validImages = images?.filter((img) => img !== null) as string[];*/
+  const validImages = (images as string[])?.filter((img) => img !== null) || [];
   const fallbackImage = "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg";
   const imagesToShow = showMore ? validImages : validImages.slice(0, 5);
 

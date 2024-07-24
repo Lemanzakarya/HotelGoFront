@@ -34,21 +34,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const [price, setPrice] = useState<string>(initialPrice);
   const isSmallScreen = useMediaQuery('(max-width:900px)');
   const router = useRouter();
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(apiEndpoint);
-  //       if (!response.ok) {
-  //         throw new Error('Data could not be fetched');
-  //       }
-  //       const data = await response.json();
-  //       setPrice(data.price); 
-  //     } catch (error) {
-  //       console.error('Data fetch error', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [apiEndpoint]);
+
 
   const handleLookThrough = () => {
     setIsLoading(true);

@@ -36,8 +36,10 @@ interface AutoCompleteResponse {
         }[];
     };
 }
-
-export default function AutoCompleteInputBox() {
+interface AutoCompleteInputBoxProps {
+    onChange: (location: string) => void;
+}
+export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxProps)  {
     const [options, setOptions] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({
@@ -98,6 +100,11 @@ export default function AutoCompleteInputBox() {
             getOptionLabel={(option: Option) => option.label}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
+            }}
+            onChange={(event, newValue) => {
+                if (newValue) {
+                    onChange(newValue.label);
+                }
             }}
             groupBy={(option) => option.type === 1 ? 'Location' : 'Hotel'}
             PaperComponent={({ children }) => (

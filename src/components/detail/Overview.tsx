@@ -30,7 +30,7 @@ const Overview : React.FC<OverviewProps> = ({textCategories}) => {
           </Typography>
           {textCategory.presentations?.[0] && ( // Conditional rendering
             <Typography variant="body1" paragraph>
-              {textCategory.presentations[0].text} 
+              {textCategory.presentations?.[0].text}
             </Typography>
           )}
         </div>
