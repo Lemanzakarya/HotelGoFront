@@ -9,22 +9,38 @@ const amenities = [
   { icon: <LocalBar />, name: 'Bar' },
 ];
 
-const Amenities: React.FC = () => {
+type Facility = {
+  name?:string;
+  isPriced:boolean;
+};
+
+interface AmenitiesProps{
+  facilities?:Facility[];
+}
+const Amenities: React.FC<AmenitiesProps> = ({facilities}) => {
+  
+  if (!facilities || facilities.length === 0) {
+    return null; // Don't render the component if there are no facilities
+  }
+
+
   return (
     <Paper elevation={3} style={{ padding: 16 }}>
       <Typography variant="h6" component="h2" gutterBottom>
         Popular Amenities
       </Typography>
-      <Grid container spacing={2}>
-        {amenities.map((amenity, index) => (
+      <Typography>
+        
+      </Typography>
+      { <Grid container spacing={2}>
+        {facilities.map((facility, index) => (
           <Grid item xs={6} sm={3} key={index}>
             <Paper style={{ padding: 8, textAlign: 'center' }}>
-              {amenity.icon}
-              <Typography variant="body1">{amenity.name}</Typography>
+              <Typography variant="body1">{facility.name}</Typography>
             </Paper>
           </Grid>
         ))}
-      </Grid>
+      </Grid>}
     </Paper>
   );
 };

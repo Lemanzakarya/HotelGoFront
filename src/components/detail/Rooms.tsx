@@ -102,6 +102,7 @@ const rooms: Room[] = [
 const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
   const router = useRouter();
 
+
   const handleReserve = () => {
     setIsLoading(true);
     setTimeout(() => {
