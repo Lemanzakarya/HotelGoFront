@@ -58,7 +58,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [guestDialog, setGuestDialog] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
-    const [selectedNationality , setSelectedNationality] = React.useState<string>('TR');
+    const [selectedNationality , setSelectedNationality] = React.useState<string | null>('TR');
 
 
     useEffect(() => {
@@ -143,7 +143,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     children: children.toString(),
                     nights: nights.toString(),
                     childrenAges: childrenAges.join(','),
-                    selectedNationality: selectedNationality,
+                    selectedNationality: selectedNationality || '',
                 }).toString();
                 router.push(`/search?${query}`);
                 setIsLoading(false);

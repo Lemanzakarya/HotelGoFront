@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import {Popper, PopperProps} from "@mui/material";
+import {AutocompleteChangeReason, Popper, PopperProps} from "@mui/material";
 
 
 type CustomPopperProps = PopperProps & {
@@ -30,9 +30,14 @@ export default function CountrySelect({value , onChange}: {
     const getCountryByCode = (value: string) => {
         return countries.find((country) => country.code === value);
     }
-    const handleChange = (event, newValue) => {
+    /*const handleChange = (event, newValue) => {
+        onChange(event, newValue ? newValue.code : null);
+    };*/
+    const handleChange = (event: React.SyntheticEvent<Element, Event>, newValue: CountryType | null, reason: AutocompleteChangeReason) => {
+        //const targetElement = event.target as HTMLInputElement;
         onChange(event, newValue ? newValue.code : null);
     };
+
     const countryValue = getCountryByCode(value || 'TR');
 
     return (
