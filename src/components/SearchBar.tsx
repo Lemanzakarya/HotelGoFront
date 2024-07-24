@@ -53,6 +53,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const [guestDialog, setGuestDialog] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
+    const [location, setLocation]= React.useState<string>('');
 
 
     const handleClick = () => {
@@ -86,32 +87,47 @@ const SearchBar: React.FC<SearchBarProps> = ({
         const newAges = [...childrenAges];
         newAges[index] = age;
         setChildrenAges(newAges);
-    }
+    };
+
+    const handleLocationChange = (location: string) => {
+        setLocation(location);
+        setSnackbarOpen(false);
+    };
+
 
     const handleSearch = () => {
-        let message = '';
         setIsLoading(true);
-        
-        if (!checkInDate && !checkOutDate && adults === 0) {
-            message = 'Please provide check-in date, check-out date, and at least 1 adult.';
-        } else if (!checkInDate) {
-            message = 'Please provide a check-in date.';
-        } else if (!checkOutDate) {
-            message = 'Please provide a check-out date.';
-        } else if (adults === 0) {
-            message = 'Please provide at least 1 adult.';
+        const missingFields = [];
+
+        if (!location) {
+            missingFields.push('location');
         }
-    
-        if (message) {
+        if (!checkInDate) {
+            missingFields.push('check-in date');
+        }
+        if (!checkOutDate) {
+            missingFields.push('check-out date');
+        }
+        if (adults === 0) {
+            missingFields.push('at least 1 adult');
+        }
+
+        if (missingFields.length > 0) {
+            const message = `Please provide ${missingFields.join(', ')}.`;
             setErrorMessage(message);
             setSnackbarOpen(true);
             setIsLoading(false);  // Reset loading state when there is an error
-        } else {
+
+        }
+        //add an else condition to prevent going to next page if there is an error
+        //else{
             setTimeout(() => {
                 router.push('/search');
                 setIsLoading(false);
             }, 2000);
-        }
+        //}
+            
+        
     };
     
     
@@ -178,7 +194,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     height
                 }}
             >
-                <AutoCompleteInputBox />
+                <AutoCompleteInputBox onChange={handleLocationChange} />
+
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
@@ -428,9 +445,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
             color: 'black',
             mt: 8
         }}
-    >
-        {errorMessage}
-    </Alert>
+
+                 >
+                    {errorMessage}
+                </Alert>
             
             </Snackbar>
             
