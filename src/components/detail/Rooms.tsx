@@ -4,6 +4,7 @@ import { Grid, Card, CardContent, CardMedia, Typography, Button, Container } fro
 import { styled } from '@mui/system';
 import Link from 'next/link';
 import { Wifi as WifiIcon, KingBed as KingBedIcon, AttachMoney as AttachMoneyIcon } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 const RootCard = styled(Card)({
   maxWidth: 345,
@@ -106,6 +107,14 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
       setIsLoading(false);
     }, 2000);
   }
+
+    const router = useRouter();
+
+    
+  const handleReserve = () => {
+    router.push(`/reservation`);
+  };
+  
   return (
     <Container>
       <Grid container spacing={3}>
@@ -149,7 +158,6 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
                 <ReserveButton variant="contained" fullWidth onClick={handleReserve} disabled={isLoading}>
                   Reserve
                 </ReserveButton>
-              </Link>
             </RootCard>
           </Grid>
         ))}
@@ -159,3 +167,8 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
 }
 
 export default Rooms;
+
+
+
+
+
