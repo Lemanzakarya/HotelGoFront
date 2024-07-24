@@ -53,7 +53,7 @@ interface Room {
   description: string;
   imageUrl: string;
   price: string;
-  features: { icon: JSX.Element | null; text: string }[];
+  features: { icon: React.ReactElement | null; text: string }[];
 }
 interface RoomsProps {
   isLoading: boolean;
@@ -100,16 +100,16 @@ const rooms: Room[] = [
 ];
 
 const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
-
   const router = useRouter();
+
+
   const handleReserve = () => {
     setIsLoading(true);
     setTimeout(() => {
-      router.push(`/reservation`);
       setIsLoading(false);
+      router.push(`/reservation`);
     }, 2000);
   }
-
 
 
   return (
@@ -138,7 +138,10 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
                 <FeaturesList>
                   {room.features.map((feature, index) => (
                     <FeatureItem key={index}>
-                      {feature.icon && React.cloneElement(feature.icon, { style: { marginRight: '8px' } })}
+                      {feature.icon && (
+                          /*React.cloneElement(feature.icon, { style: { marginRight: '8px' } })*/
+                          <div style={{ marginRight: '8px' }}>{feature.icon}</div>
+                      )}
                       <Typography variant="body2" color="textPrimary" sx={{ marginLeft: '5px' }}>
                         {feature.text}
                       </Typography>
