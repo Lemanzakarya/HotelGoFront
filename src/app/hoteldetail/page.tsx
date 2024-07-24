@@ -15,6 +15,7 @@ import {
 import Overview from "@/components/detail/Overview";
 import Rooms from "@/components/detail/Rooms";
 import { sendPostRequest } from "../responsemodel/ProductInfoModel";
+import LoadingCircle from "@/components/shared/LoadingCircle";
 
 
 
@@ -60,7 +61,7 @@ type data = {
 
 const HotelDetail: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   // const [error, setError] = useState<string | null>(null);
   // const [name, setName] = useState<string>("")
 
@@ -167,9 +168,24 @@ const HotelDetail: React.FC = () => {
           <Box sx={{ mt: 2 }}>
             <Rooms 
               isLoading={false} 
-              setIsLoading={function (value: React.SetStateAction<boolean>): void {
-                throw new Error("Function not implemented.");
-            } } />
+              setIsLoading={setIsLoading } />
+               {isLoading && (
+                      <Box
+                          sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: '100%',
+                              position: 'fixed',
+                              top:80 ,
+                              right:10,
+                              left:10,
+                              zIndex: 10
+                          }}
+                      >
+                          <LoadingCircle/>
+                      </Box>
+                  )}
           </Box>
         )}
       </Container>

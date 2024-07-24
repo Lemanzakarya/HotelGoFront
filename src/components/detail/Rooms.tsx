@@ -106,8 +106,8 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
   const handleReserve = () => {
     setIsLoading(true);
     setTimeout(() => {
-      setIsLoading(false);
       router.push(`/reservation`);
+      setIsLoading(false);
     }, 2000);
   }
 
