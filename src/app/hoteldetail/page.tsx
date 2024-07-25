@@ -20,6 +20,7 @@ import LoadingCircle from "@/components/shared/LoadingCircle";
 
 
 
+
 type Address ={
   addressLines : string[];
 }
@@ -167,26 +168,25 @@ const HotelDetail: React.FC = () => {
         {tabValue === 2 && (
           <Box sx={{ mt: 2 }}>
             <Rooms 
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-            />
-            {isLoading && (
-                <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      width: '100%',
-                      position: 'fixed',
-                      top:80 ,
-                      right:10,
-                      left:10,
-                      zIndex: 10
-                    }}
-                >
-                  <LoadingCircle/>
-                </Box>
-            )}
+              isLoading={false} 
+              setIsLoading={setIsLoading } />
+               {isLoading && (
+                      <Box
+                          sx={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: '100%',
+                              position: 'fixed',
+                              top:80 ,
+                              right:10,
+                              left:10,
+                              zIndex: 10
+                          }}
+                      >
+                          <LoadingCircle/>
+                      </Box>
+                  )}
           </Box>
         )}
       </Container>

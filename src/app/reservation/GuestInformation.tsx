@@ -1,154 +1,167 @@
-'use client'
-import React from 'react';
-import { Box, Typography, Grid, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, FormHelperText, Select, MenuItem, TextField, Checkbox, FormControlLabel as MuiFormControlLabel } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material';
+import * as React from 'react';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import MuiPhoneNumber from 'mui-phone-number';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-interface GuestInformationProps {
-  formValues: any;
-  formErrors: any;
-  countryCodes: string[];
-  countryCode: string;
-  isCitizen: boolean;
-  handleChange: (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleGenderChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleCitizenChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleCountryCodeChange: (event: SelectChangeEvent<string>) => void;
-  validateField: (field: string) => void;
-  handleNext: () => void;
+const defaultTheme = createTheme();
+
+function handleOnChange(value: any) {
+  console.log(value);
 }
 
-const GuestInformation: React.FC<GuestInformationProps> = ({
-  formValues,
-  formErrors,
-  countryCodes,
-  countryCode,
-  isCitizen,
-  handleChange,
-  handleGenderChange,
-  handleCitizenChange,
-  handleCountryCodeChange,
-  validateField,
-  handleNext
-}) => (
-  <Box>
-    <Typography variant="h6">Guest Information</Typography>
+export default function SignUp() {
+  const [title, setTitle] = React.useState<string>('');
+  const [country, setCountry] = React.useState<string>('');
 
-    {/* Gender Selector */}
-    <FormControl component="fieldset" sx={{ mb: 2 }}>
-      <FormLabel component="legend">Gender</FormLabel>
-      <RadioGroup row value={formValues.gender} onChange={handleGenderChange}>
-        <FormControlLabel value="female" control={<Radio />} label="Female" />
-        <FormControlLabel value="male" control={<Radio />} label="Male" />
-      </RadioGroup>
-      {formErrors.gender && <FormHelperText error>Gender is required</FormHelperText>}
-    </FormControl>
+  const handleTitleChange = (event: SelectChangeEvent<string>) => {
+    setTitle(event.target.value);
+  };
 
-    {/* Name and Surname */}
-    <Grid container spacing={2}>
-      <Grid item xs={12} sm={6}>
-        <TextField
-          label="Name"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formValues.name}
-          onChange={handleChange('name')}
-          onBlur={() => validateField('name')}
-          error={formErrors.name}
-          helperText={formErrors.name ? 'Name is required' : ''}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <TextField
-          label="Surname"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formValues.surname}
-          onChange={handleChange('surname')}
-          onBlur={() => validateField('surname')}
-          error={formErrors.surname}
-          helperText={formErrors.surname ? 'Surname is required' : ''}
-        />
-      </Grid>
-    </Grid>
+  const handleCountryChange = (event: SelectChangeEvent<string>) => {
+    setCountry(event.target.value);
+  };
 
-    {/* Email and Phone Number */}
-    <Grid container spacing={2}>
-      <Grid item xs={12} sm={6}>
-        <TextField
-          label="Email"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formValues.email}
-          onChange={handleChange('email')}
-          onBlur={() => validateField('email')}
-          error={formErrors.email}
-          helperText={formErrors.email ? 'Email is required' : ''}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <FormControl fullWidth margin="normal">
-              <Select
-                value={countryCode}
-                onChange={handleCountryCodeChange}
-                displayEmpty
-              >
-                {countryCodes.map((code) => (
-                  <MenuItem key={code} value={code}>{code}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      password: data.get('password'),
+    });
+  };
+
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '16px',
+          backgroundColor: 'white',
+        }}
+      >
+        <Typography component="h1" variant="h5" sx={{ color: '#516D87', alignSelf: 'flex-start' }}>
+          Guest Details
+        </Typography>
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={2}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="title-select-label">Title</InputLabel>
+                <Select
+                  labelId="title-select-label"
+                  id="title-select"
+                  value={title}
+                  label="Title"
+                  onChange={handleTitleChange}
+                >
+                  <MenuItem value={10}>Mr</MenuItem>
+                  <MenuItem value={20}>Ms</MenuItem>
+                  <MenuItem value={30}>Mrs</MenuItem>
+                  <MenuItem value={40}>Miss</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={5}>
+              <TextField
+                size="small"
+                autoComplete="given-name"
+                name="firstName"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12} sm={5}>
+              <TextField
+                required
+                size="small"
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="family-name"
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                size="small"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <MuiPhoneNumber
+                fullWidth
+                size="small"
+                label="Phone Number"
+                defaultCountry={'tr'}
+                onChange={handleOnChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Address*"
+                id="address"
+                size="small"
+                name="address"
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Zip code*"
+                id="zipCode"
+                size="small"
+                name="zipCode"
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="City*"
+                id="city"
+                size="small"
+                name="city"
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="country-select-label">Country*</InputLabel>
+                <Select
+                  labelId="country-select-label"
+                  id="country-select"
+                  label="Country"
+                  value={country}
+                  onChange={handleCountryChange}
+                  required
+                >
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
-          <Grid item xs={8}>
-            <TextField
-              label="Phone Number"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              value={formValues.phone}
-              onChange={handleChange('phone')}
-              onBlur={() => validateField('phone')}
-              error={formErrors.phone}
-              helperText={formErrors.phone ? 'Phone number is required and must be valid' : ''}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-
-    {/* ID Number */}
-    <TextField
-      label={isCitizen ? "ID Number" : "Passport Number"}
-      variant="outlined"
-      fullWidth
-      margin="normal"
-      value={formValues.idNumber}
-      onChange={handleChange('idNumber')}
-      onBlur={() => validateField('idNumber')}
-      error={formErrors.idNumber}
-      helperText={formErrors.idNumber ? (isCitizen ? 'ID number must be 11 digits' : 'Passport number must be 6-9 alphanumeric characters') : ''}
-    />
-
-    {/* Citizen Checkbox */}
-    <MuiFormControlLabel
-      control={
-        <Checkbox
-          checked={!isCitizen}
-          onChange={handleCitizenChange}
-        />
-      }
-      label="Not a Citizen"
-    />
-
-    {/* Next Button */}
-    <Button variant="contained" onClick={handleNext} sx={{ mt: 2 }}>
-      Next
-    </Button>
-  </Box>
-);
-
-export default GuestInformation;
+        </Box>
+      </Box>
+    </ThemeProvider>
+  );
+}
