@@ -1,9 +1,10 @@
 'use client'
-import React from 'react';
+import React, {SetStateAction} from 'react';
 import { Grid, Card, CardContent, CardMedia, Typography, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import Link from 'next/link';
 import { Wifi as WifiIcon, KingBed as KingBedIcon, AttachMoney as AttachMoneyIcon } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 const RootCard = styled(Card)({
   maxWidth: 345,
@@ -52,7 +53,11 @@ interface Room {
   description: string;
   imageUrl: string;
   price: string;
-  features: { icon: JSX.Element | null; text: string }[];
+  features: { icon: React.ReactElement | null; text: string }[];
+}
+interface RoomsProps {
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const rooms: Room[] = [
@@ -94,7 +99,19 @@ const rooms: Room[] = [
   },
 ];
 
-const Rooms: React.FC = () => {
+const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
+  const router = useRouter();
+
+
+  const handleReserve = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      router.push(`/reservation`);
+    }, 2000);
+  }
+
+
   return (
     <Container>
       <Grid container spacing={3}>
@@ -121,7 +138,10 @@ const Rooms: React.FC = () => {
                 <FeaturesList>
                   {room.features.map((feature, index) => (
                     <FeatureItem key={index}>
-                      {feature.icon && React.cloneElement(feature.icon, { style: { marginRight: '8px' } })}
+                      {feature.icon && (
+                          /*React.cloneElement(feature.icon, { style: { marginRight: '8px' } })*/
+                          <div style={{ marginRight: '8px' }}>{feature.icon}</div>
+                      )}
                       <Typography variant="body2" color="textPrimary" sx={{ marginLeft: '5px' }}>
                         {feature.text}
                       </Typography>
@@ -134,11 +154,9 @@ const Rooms: React.FC = () => {
                   View Details
                 </ViewDetailsLink>
               </Link>
-              <Link href={`/reservation/${room.id}`} passHref>
-                <ReserveButton variant="contained" fullWidth>
+                <ReserveButton variant="contained" fullWidth onClick={handleReserve} disabled={isLoading}>
                   Reserve
                 </ReserveButton>
-              </Link>
             </RootCard>
           </Grid>
         ))}
@@ -148,3 +166,8 @@ const Rooms: React.FC = () => {
 }
 
 export default Rooms;
+
+
+
+
+

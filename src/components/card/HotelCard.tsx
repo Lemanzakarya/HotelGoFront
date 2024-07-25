@@ -17,6 +17,8 @@ interface HotelCardProps {
   price: string;
   tags?: string[];
   stars : number;
+  isLoading: boolean;
+  setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -26,29 +28,20 @@ const HotelCard: React.FC<HotelCardProps> = ({
   price: initialPrice,
   tags,
   stars = 0,
+  isLoading,
+  setIsLoading
 }) => {
   const [price, setPrice] = useState<string>(initialPrice);
   const isSmallScreen = useMediaQuery('(max-width:900px)');
   const router = useRouter();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(apiEndpoint);
-  //       if (!response.ok) {
-  //         throw new Error('Data could not be fetched');
-  //       }
-  //       const data = await response.json();
-  //       setPrice(data.price); 
-  //     } catch (error) {
-  //       console.error('Data fetch error', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [apiEndpoint]);
 
   const handleLookThrough = () => {
-    router.push('/hoteldetail');
+    setIsLoading(true);
+    setTimeout(() => {
+      router.push('/hoteldetail');
+      setIsLoading(false);
+    }, 2000);
   };
 
   return (
@@ -79,7 +72,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <Typography fontWeight="bold" textColor="text.primary" fontSize={27}>
           {title}
         </Typography>
-        <Rating name=" card-rating"  value={stars} readOnly={true} size={"medium"}  precision={0.5}/>
+        <Rating name=" card-rating"  value={stars} readOnly={true} size="medium"  precision={0.5}/>
         <Typography textColor="text.secondary" mt={5}>
           {location}
         </Typography>
@@ -98,6 +91,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
           size="lg"
           sx={{ mt: 3, width: isSmallScreen ? '100%' : 'auto', alignSelf: isSmallScreen ? 'center' : 'flex-end',backgroundColor:'orange','&:hover': { backgroundColor: 'darkorange' }}}
           onClick={handleLookThrough}
+          disabled={isLoading}
         >
           Look Through
         </Button>
