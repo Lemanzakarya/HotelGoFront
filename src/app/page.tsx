@@ -46,7 +46,7 @@ const LoadingContainer = styled.div`
 
 const Page: React.FC = () => {
     const [isLoading , setIsLoading] = React.useState(false);
-    const [videoUrl, setVideoUrl] = useState(null);
+    const [videoUrl, setVideoUrl] = useState('');
 
     useEffect(() => {
         const fetchVideoUrl = async () => {
