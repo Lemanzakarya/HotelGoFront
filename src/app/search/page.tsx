@@ -8,6 +8,7 @@ import FilterSidebar from "../../components/filtering/FilterSideBar";
 import {useSearchParams} from "next/navigation";
 import dayjs, {Dayjs} from "dayjs";
 import LoadingCircle from "@/components/shared/LoadingCircle";
+import useCurrencyStore from "@/stores/useCurrencyStore";
 
 interface Hotel {
   id: string;
@@ -49,6 +50,7 @@ const hotel: Hotel[] = [
 ];
 
 const SearchPageServer: React.FC = () => {
+  const {selectedCurrency} = useCurrencyStore();
   const [hotelData, setHotelData] = useState<Hotel[]>([]);
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
