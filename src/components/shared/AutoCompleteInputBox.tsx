@@ -39,7 +39,7 @@ interface AutoCompleteResponse {
 interface AutoCompleteInputBoxProps {
     onChange: (location: string) => void;
 }
-export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxProps)  {
+export default function AutoCompleteInputBox({ onChange}: AutoCompleteInputBoxProps)  {
     const [options, setOptions] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({

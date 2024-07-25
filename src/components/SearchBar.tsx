@@ -33,7 +33,6 @@ interface SearchBarProps {
     checkInSx?: React.CSSProperties;
     checkOutSx?: React.CSSProperties;
     guestsSx?: React.CSSProperties;
-    locationSx?: React.CSSProperties;
     searchButtonSx?: React.CSSProperties;
     containerSx?: React.CSSProperties;
 }
@@ -54,7 +53,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
     checkInSx,
     checkOutSx,
     guestsSx,
-    locationSx,
     searchButtonSx,
     containerSx
 }) => {
@@ -241,7 +239,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     ...containerSx
                 }}
             >
-                <AutoCompleteInputBox onChange={handleLocationChange} sx={{...locationSx}}/>
+                <AutoCompleteInputBox onChange={handleLocationChange}/>
 
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -251,7 +249,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             value={checkInDate}
                             label={"Check-in"}
                             minDate={dayjs()}
-                            checkInSx={checkInSx}
                         />
                 </LocalizationProvider>
 
