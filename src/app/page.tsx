@@ -8,13 +8,12 @@ import LoadingCircle from "@/components/shared/LoadingCircle";
 
 
 const PageContainer = styled.div`
-   
     position: fixed;
     width: 100%;
     height: 100vh;
-    display: flex; /* Keep flexbox for overall layout */
-    align-items: center; /* Center videos vertically */
-    justify-content: center; /* Center videos horizontally */
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
     overflow: hidden;
     margin: 0;
     padding-bottom: 18vh;
@@ -27,8 +26,8 @@ const VideoOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100vh;
-  display: flex; /* Keep flexbox for overall layout */
-  align-items: end; /* Center videos vertically */
+  display: flex;
+  align-items: end;
   justify-content: center;
   z-index: -1;
 `;
@@ -65,7 +64,15 @@ const Page: React.FC = () => {
                   <video src={videoUrl} autoPlay loop muted></video>
               </VideoOverlay>
           )}
-        <SearchBar isLoading={isLoading} setIsLoading={setIsLoading} sx={{ backgroundColor:'rgba(255,255,255,0)'}}/>
+        <SearchBar
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            sx={{ backgroundColor:'rgba(255,255,255,0)'}}
+            containerSx={{backgroundColor:'rgba(255,255,255,0.64)'}}
+            checkInSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
+            checkOutSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
+            guestsSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
+        />
           {isLoading && (
                 <LoadingContainer>
                     <LoadingCircle/>
