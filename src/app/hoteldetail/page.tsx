@@ -16,7 +16,7 @@ import Overview from "@/components/detail/Overview";
 import Rooms from "@/components/detail/Rooms";
 import { sendPostRequest } from "../responsemodel/ProductInfoModel";
 import LoadingCircle from "@/components/shared/LoadingCircle";
-import LoadingCircle from "@/components/shared/LoadingCircle";
+
 
 
 
@@ -62,7 +62,6 @@ type data = {
 
 const HotelDetail: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   // const [error, setError] = useState<string | null>(null);
   // const [name, setName] = useState<string>("")
