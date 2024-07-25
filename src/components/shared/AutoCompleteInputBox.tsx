@@ -142,7 +142,7 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
                 <TextField
                     {...params}
                     label="Location"
-                    sx={{ width: '100%' }}
+                    sx={{ width: '100%' , backgroundColor:'rgba(255,255,255,0.75)', borderRadius: '5px'}}
                     inputProps={{
                         ...params.inputProps,
                         autoComplete: 'new-password'
