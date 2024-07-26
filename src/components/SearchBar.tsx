@@ -15,22 +15,13 @@ import {useEffect} from "react";
 import useSearchStore from '@/stores/useSearchStore';
 
 
-
-
-
 interface SearchBarProps {
     sx?: React.CSSProperties;
     backgroundColor?: string;
     height?: string | number;
     width?: string | number;
-    checkOutDateParam?: Dayjs | null;
-    checkInDateParam?: Dayjs | null;
-    nationalityParam?: string;
-    adultsParam?: number;
-    childrenParam?: number;
-    childrenAgesParam?: number[];
     isLoading: boolean;
-    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -38,51 +29,46 @@ const SearchBar: React.FC<SearchBarProps> = ({
     backgroundColor = '#fffefe',
     height = 'auto',
     width = '100%',
-    checkOutDateParam,
-    checkInDateParam,
-    nationalityParam,
-    adultsParam,
-    childrenParam,
-    childrenAgesParam,
     isLoading,
     setIsLoading
 }) => {
+    const {
+        adults,
+        setAdults,
+        children,
+        setChildren,
+        childrenAges,
+        setChildrenAges,
+        checkInDate,
+        setCheckInDate,
+        checkOutDate,
+        setCheckOutDate,
+        nights,
+        setNights,
+        location,
+        setLocation,
+        selectedNationality,
+        setSelectedNationality
+    } = useSearchStore();
 
-    const {adults, setAdults} = useSearchStore();
-    const {children, setChildren} = useSearchStore();
     const router = useRouter();
-    const {childrenAges, setChildrenAges} = useSearchStore();
-    const {checkInDate, setCheckInDate } = useSearchStore();
-    const {checkOutDate, setCheckOutDate} = useSearchStore();
-    const {nights, setNights} = useSearchStore();
+    
     const isSmallScreen = useMediaQuery('(max-width: 900px)');
     const [guestDialog, setGuestDialog] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
-    const {location, setLocation} = useSearchStore();
-    const {selectedNationality, setSelectedNationality} = useSearchStore();
-
-    useEffect(() => {
-        // Update state with props if they are provided, but only if they haven't been set already
-        if (checkInDateParam && !checkInDate) {
-            setCheckInDate(dayjs(checkInDateParam));
-        }
-        if (checkOutDateParam && !checkOutDate) {
-            setCheckOutDate(dayjs(checkOutDateParam));
-        }
-        if (adultsParam !== undefined && adults === 0) {
-            setAdults(adultsParam);
-        }
-        if (childrenParam !== undefined && children === 0) {
-            setChildren(childrenParam);
-        }
-        if (childrenAgesParam && childrenAges.length === 0) {
-            setChildrenAges(childrenAgesParam);
-        }
-        if (nationalityParam && selectedNationality === 'TR') {
-            setSelectedNationality(nationalityParam);
-        }
-    }, [checkInDateParam, checkOutDateParam, adultsParam, childrenParam, childrenAgesParam, nationalityParam]);
+    const storeState = useSearchStore.getState();
+   
+    useEffect(() => {     
+        setAdults(storeState.adults);
+        setChildren(storeState.children);
+        setCheckInDate(storeState.checkInDate);
+        setCheckOutDate(storeState.checkOutDate);
+        setChildrenAges(storeState.childrenAges);
+        setNights(storeState.nights);
+        setLocation(storeState.location);
+        setSelectedNationality(storeState.selectedNationality);
+    }, []);
 
     const handleClick = () => {
         setGuestDialog(!guestDialog);
@@ -100,24 +86,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
 
     const handleChildrenChange = (amount: number) => {
-        const { children, setChildren, setChildrenAges } = useSearchStore.getState();
-        
         if (amount >= 0 && amount <= 4) {
             setChildren(amount);
-            
             const currentChildrenAges = useSearchStore.getState().childrenAges;
-            
+    
             if (amount > children) {
-                setChildrenAges([
-                    ...currentChildrenAges,
-                    ...new Array(amount - children).fill(0)
-                ]);
+                setChildrenAges([...currentChildrenAges, ...new Array(amount - children).fill(0)]);
             } else {
                 setChildrenAges(currentChildrenAges.slice(0, amount));
             }
         }
     };
-
+    
 
     const handleChildrenAgesChange = (index: number, age: number) => {
         const newAges = [...childrenAges];
@@ -125,8 +105,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
         setChildrenAges(newAges);
     };
 
-    const handleLocationChange = (location: string) => {
-        setLocation(location);
+    const handleLocationChange = (newLocation: string) => {
+        setLocation(newLocation);
         setSnackbarOpen(false);
     };
 
@@ -226,7 +206,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     height
                 }}
             >
-                <AutoCompleteInputBox onChange={handleLocationChange} />
+                <AutoCompleteInputBox onChange={handleLocationChange}/>
 
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
