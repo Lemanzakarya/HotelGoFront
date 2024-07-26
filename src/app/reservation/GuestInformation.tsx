@@ -9,6 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import useSearchStore from '../../stores/useSearchStore';
 
 const defaultTheme = createTheme();
 
@@ -16,25 +17,21 @@ function handleOnChange(value: any) {
   console.log(value);
 }
 
-export default function SignUp() {
+export default function Reservation() {
   const [title, setTitle] = React.useState<string>('');
-  const [country, setCountry] = React.useState<string>('');
+  const { selectedNationality, setSelectedNationality, adults, children } = useSearchStore();
 
   const handleTitleChange = (event: SelectChangeEvent<string>) => {
     setTitle(event.target.value);
   };
 
   const handleCountryChange = (event: SelectChangeEvent<string>) => {
-    setCountry(event.target.value);
+    setSelectedNationality(event.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    // Implement form submission logic if needed
   };
 
   return (
@@ -53,72 +50,122 @@ export default function SignUp() {
         </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={2}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="title-select-label">Title</InputLabel>
-                <Select
-                  labelId="title-select-label"
-                  id="title-select"
-                  value={title}
-                  label="Title"
-                  onChange={handleTitleChange}
-                >
-                  <MenuItem value={10}>Mr</MenuItem>
-                  <MenuItem value={20}>Ms</MenuItem>
-                  <MenuItem value={30}>Mrs</MenuItem>
-                  <MenuItem value={40}>Miss</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <TextField
-                size="small"
-                autoComplete="given-name"
-                name="firstName"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <TextField
-                required
-                size="small"
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="family-name"
-              />
-            </Grid>
+            {/* Generate sections for each adult */}
+            {Array.from({ length: adults }).map((_, index) => (
+              <React.Fragment key={`adult-${index}`}>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Adult {index + 1}</Typography>
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id={`title-select-label-${index}`}>Title</InputLabel>
+                    <Select
+                      labelId={`title-select-label-${index}`}
+                      id={`title-select-${index}`}
+                      label="Title"
+                      value={title}
+                      onChange={handleTitleChange}
+                    >
+                      <MenuItem value="Mr">Mr</MenuItem>
+                      <MenuItem value="Ms">Ms</MenuItem>
+                      <MenuItem value="Mrs">Mrs</MenuItem>
+                      <MenuItem value="Miss">Miss</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={5}>
+                  <TextField
+                    size="small"
+                    autoComplete="given-name"
+                    name={`firstName-adult-${index}`}
+                    required
+                    fullWidth
+                    id={`firstName-adult-${index}`}
+                    label="First Name"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item xs={12} sm={5}>
+                  <TextField
+                    required
+                    size="small"
+                    fullWidth
+                    id={`lastName-adult-${index}`}
+                    label="Last Name"
+                    name={`lastName-adult-${index}`}
+                    autoComplete="family-name"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    size="small"
+                    required
+                    fullWidth
+                    id={`email-adult-${index}`}
+                    label="Email Address"
+                    name={`email-adult-${index}`}
+                    autoComplete="email"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <MuiPhoneNumber
+                    fullWidth
+                    size="small"
+                    label="Phone Number"
+                    defaultCountry={'tr'}
+                    onChange={handleOnChange}
+                    variant="outlined"
+                  />
+                </Grid>
+              </React.Fragment>
+            ))}
 
+            {/* Generate sections for each child */}
+            {Array.from({ length: children }).map((_, index) => (
+              <React.Fragment key={`child-${index}`}>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">Child {index + 1}</Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    size="small"
+                    autoComplete="given-name"
+                    name={`firstName-child-${index}`}
+                    required
+                    fullWidth
+                    id={`firstName-child-${index}`}
+                    label="First Name"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    size="small"
+                    fullWidth
+                    id={`lastName-child-${index}`}
+                    label="Last Name"
+                    name={`lastName-child-${index}`}
+                    autoComplete="family-name"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    size="small"
+                    fullWidth
+                    id={`age-child-${index}`}
+                    label="Age"
+                    name={`age-child-${index}`}
+                  />
+                </Grid>
+              </React.Fragment>
+            ))}
+
+            {/* Address and other details common for all */}
             <Grid item xs={12} sm={6}>
               <TextField
-                size="small"
-                required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <MuiPhoneNumber
-                fullWidth
-                size="small"
-                label="Phone Number"
-                defaultCountry={'tr'}
-                onChange={handleOnChange}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Address*"
+                label="Address"
                 id="address"
                 size="small"
                 name="address"
@@ -128,7 +175,7 @@ export default function SignUp() {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Zip code*"
+                label="Zip code"
                 id="zipCode"
                 size="small"
                 name="zipCode"
@@ -138,7 +185,7 @@ export default function SignUp() {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="City*"
+                label="City"
                 id="city"
                 size="small"
                 name="city"
@@ -152,10 +199,10 @@ export default function SignUp() {
                   labelId="country-select-label"
                   id="country-select"
                   label="Country"
-                  value={country}
                   onChange={handleCountryChange}
                   required
                 >
+                  <MenuItem value="tr">Turkey</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

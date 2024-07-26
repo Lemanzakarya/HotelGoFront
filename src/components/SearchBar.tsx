@@ -12,6 +12,7 @@ import Select from "@mui/material/Select";
 import dayjs, { Dayjs } from 'dayjs';
 import {MobileDatePicker} from "@mui/x-date-pickers";
 import {useEffect} from "react";
+import useSearchStore from '@/stores/useSearchStore';
 
 
 
@@ -57,20 +58,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
     containerSx
 }) => {
 
-    const [adults, setAdults] = React.useState<number>(0);
-    const [children, setChildren] = React.useState<number>(0);
+    const {adults, setAdults} = useSearchStore();
+    const {children, setChildren} = useSearchStore();
     const router = useRouter();
-    const [childrenAges, setChildrenAges] = React.useState<number[]>([]);
-    const [checkInDate, setCheckInDate] = React.useState<Dayjs | null>(null);
-    const [checkOutDate, setCheckOutDate] = React.useState<Dayjs | null>(null);
-    const [nights, setNights] = React.useState<number>(0);
+    const {childrenAges, setChildrenAges} = useSearchStore();
+    const {checkInDate, setCheckInDate } = useSearchStore();
+    const {checkOutDate, setCheckOutDate} = useSearchStore();
+    const {nights, setNights} = useSearchStore();
     const isSmallScreen = useMediaQuery('(max-width: 900px)');
     const [guestDialog, setGuestDialog] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
-    const [location, setLocation]= React.useState<string>('');
-    const [selectedNationality , setSelectedNationality] = React.useState<string | null>('TR');
-
+    const {location, setLocation} = useSearchStore();
+    const {selectedNationality, setSelectedNationality} = useSearchStore();
 
     useEffect(() => {
         // Update state with props if they are provided, but only if they haven't been set already
@@ -108,16 +108,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
         }
     };
 
+
     const handleChildrenChange = (amount: number) => {
+        const { children, setChildren, setChildrenAges } = useSearchStore.getState();
+        
         if (amount >= 0 && amount <= 4) {
             setChildren(amount);
+            
+            const currentChildrenAges = useSearchStore.getState().childrenAges;
+            
             if (amount > children) {
-                setChildrenAges(prevAges => [...prevAges, ...new Array(amount - children).fill(0)]);
+                setChildrenAges([
+                    ...currentChildrenAges,
+                    ...new Array(amount - children).fill(0)
+                ]);
             } else {
-                setChildrenAges(prevAges => prevAges.slice(0, amount));
+                setChildrenAges(currentChildrenAges.slice(0, amount));
             }
         }
-
     };
 
 
@@ -154,21 +162,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
             const message = `Please provide ${missingFields.join(', ')}.`;
             setErrorMessage(message);
             setSnackbarOpen(true);
-            //setIsLoading(false);  // Reset loading state when there is an error
 
         }
-        //add an else condition to prevent going to next page if there is an error
+
         setTimeout(() => {
-            const query = new URLSearchParams({
-                checkInDate: checkInDate ? checkInDate.toISOString() : '',
-                checkOutDate: checkOutDate ? checkOutDate.toISOString() : '',
-                adults: adults.toString(),
-                children: children.toString(),
-                nights: nights.toString(),
-                childrenAges: childrenAges.join(','),
-                selectedNationality: selectedNationality || '',
-            }).toString();
-            router.push(`/search?${query}`);
+            router.push(`/search`);
             setIsLoading(false);
         },3000);
 
@@ -507,3 +505,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }
 
 export default SearchBar;
+
+
+
