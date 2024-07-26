@@ -29,7 +29,12 @@ interface SearchBarProps {
     childrenParam?: number;
     childrenAgesParam?: number[];
     isLoading: boolean;
-    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
+    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>;
+    checkInSx?: React.CSSProperties;
+    checkOutSx?: React.CSSProperties;
+    guestsSx?: React.CSSProperties;
+    searchButtonSx?: React.CSSProperties;
+    containerSx?: React.CSSProperties;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -44,7 +49,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
     childrenParam,
     childrenAgesParam,
     isLoading,
-    setIsLoading
+    setIsLoading,
+    checkInSx,
+    checkOutSx,
+    guestsSx,
+    searchButtonSx,
+    containerSx
 }) => {
 
     const [adults, setAdults] = React.useState<number>(0);
@@ -225,15 +235,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     borderRadius: 6,
                     boxShadow: '0px 2px 5px rgba(4,7,10,1)',
                     width,
-                    height
+                    height,
+                    ...containerSx
                 }}
             >
-                <AutoCompleteInputBox onChange={handleLocationChange} />
+                <AutoCompleteInputBox onChange={handleLocationChange}/>
 
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
-                            sx={{width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0}}
+                            sx={{width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0, ...checkInSx}}
                             onChange={(newDateValue) => {handleCheckInChange(newDateValue)}}
                             value={checkInDate}
                             label={"Check-in"}
@@ -250,7 +261,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             label={'Check-out'}
                             disabled={checkInDate === null}
                             minDate={checkInDate ? checkInDate.add(1, 'day'): undefined}
-                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0  }}
+                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0  , ...checkOutSx}}
                     />
                 </LocalizationProvider>
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
@@ -270,6 +281,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         width: isSmallScreen ? '100%' : '20%',
                         cursor: 'pointer',
                         height: 55,
+                        ...guestsSx
                     }}
                 >
 
@@ -459,6 +471,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         color: '#ffffff',
                         width: isSmallScreen ? '100%' : '20%',
                         height: 55,
+                        ...searchButtonSx
                     }}
                     disabled={isLoading}
                 >
