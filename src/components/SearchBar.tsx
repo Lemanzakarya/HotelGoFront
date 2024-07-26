@@ -217,8 +217,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     ...containerSx
                 }}
             >
-                <AutoCompleteInputBox onChange={handleLocationChange}/>
-                <AutoCompleteInputBox onChange={handleLocationChange}/>
+                <AutoCompleteInputBox onChange={handleLocationChange} />
 
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
