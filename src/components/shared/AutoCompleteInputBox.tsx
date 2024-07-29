@@ -5,6 +5,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Paper from '@mui/material/Paper';
+import useSearchStore from '@/stores/useSearchStore';
 
 interface Option {
     label: string;
@@ -39,15 +40,27 @@ interface AutoCompleteResponse {
 interface AutoCompleteInputBoxProps {
     onChange: (location: string) => void;
 }
-export default function AutoCompleteInputBox({ onChange}: AutoCompleteInputBoxProps)  {
+
+export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxProps) {
     const [options, setOptions] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState('');
+    const {location,setLocation} = useSearchStore();
+
     const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({
         City: true,
         Hotel: true
     });
 
     const apiUrl = "http://localhost:5083/Tourvisio/PostAutoComplete";
+
+    useEffect(()=>{
+        const storeState = useSearchStore.getState();
+
+        setLocation(storeState.location);
+        console.log("location",location)
+    },[location]
+)
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -108,7 +121,7 @@ export default function AutoCompleteInputBox({ onChange}: AutoCompleteInputBoxPr
             }}
             groupBy={(option) => option.type === 1 ? 'Location' : 'Hotel'}
             PaperComponent={({ children }) => (
-                <Paper style={{ maxHeight: 400, overflow: 'auto', width: '128%' }}>{children}</Paper> 
+                <Paper style={{ maxHeight: 400, overflow: 'auto', width: '128%' }}>{children}</Paper>
             )}
             renderGroup={(params) => (
                 <div key={params.key}>
@@ -125,7 +138,7 @@ export default function AutoCompleteInputBox({ onChange}: AutoCompleteInputBoxPr
                         }}
                         onClick={() => toggleGroup(params.group)}
                     >
-                        <Box sx={{ fontWeight: 'bold'}}>
+                        <Box sx={{ fontWeight: 'bold' }}>
                             {params.group} ({Array.isArray(params.children) ? params.children.length : 0})
                         </Box>
                         {expandedGroups[params.group] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -141,7 +154,7 @@ export default function AutoCompleteInputBox({ onChange}: AutoCompleteInputBoxPr
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Location"
+                    label={location || 'Location'}
                     sx={{ width: '100%' , backgroundColor:'rgba(255,255,255,0.75)', borderRadius: '5px'}}
                     inputProps={{
                         ...params.inputProps,
