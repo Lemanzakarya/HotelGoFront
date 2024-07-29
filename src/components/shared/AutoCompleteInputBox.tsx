@@ -57,7 +57,6 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
         const storeState = useSearchStore.getState();
 
         setLocation(storeState.location);
-        console.log("location",location)
     },[location]
 )
 
