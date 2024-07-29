@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import useSearchStore from '../../stores/useSearchStore';
+import CountrySelect from '@/components/shared/CountrySelector';
 
 const defaultTheme = createTheme();
 
@@ -19,11 +20,18 @@ function handleOnChange(value: any) {
 
 export default function Reservation() {
   const [title, setTitle] = React.useState<string>('');
-  const { selectedNationality, setSelectedNationality, adults, children } = useSearchStore();
+  const [gender, setGender] = React.useState<string>('');
+  const { selectedNationality, adults, children, childrenAges, setSelectedNationality } = useSearchStore();
+
+  // Ensure at least one adult is present
+  const adultCount = Math.max(adults, 1);
 
   const handleTitleChange = (event: SelectChangeEvent<string>) => {
     setTitle(event.target.value);
-    console.log("nationality",selectedNationality);
+  };
+
+  const handleGenderChange = (event: SelectChangeEvent<string>) => {
+    setGender(event.target.value);
   };
 
   return (
@@ -37,7 +45,7 @@ export default function Reservation() {
           backgroundColor: 'white',
         }}
       >
-        {Array.from({ length: adults }).map((_, index) => (
+        {Array.from({ length: adultCount }).map((_, index) => (
           <Box key={`adult-${index}`} sx={{ mb: 4, width: '100%' }}>
             <Typography component="h1" variant="h5" sx={{ color: '#516D87', mb: 2 }}>
               Adult {index + 1}
@@ -88,16 +96,31 @@ export default function Reservation() {
                   autoComplete="family-name"
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={2}>
                 <FormControl fullWidth size="small">
-                  <InputLabel id={`nationality-select-label-${index}`}>Nationality</InputLabel>
+                  <InputLabel id={`gender-select-label-${index}`}>Gender</InputLabel>
                   <Select
-                    labelId={`nationality-select-label-${index}`}
-                    id={`nationality-select-${index}`}
-                    label={selectedNationality}
+                    labelId={`gender-select-label-${index}`}
+                    id={`gender-select-${index}`}
+                    label="Gender"
+                    value={gender}
+                    onChange={handleGenderChange}
                   >
+                    <MenuItem value="Male">Male</MenuItem>
+                    <MenuItem value="Female">Female</MenuItem>
                   </Select>
                 </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  size="small"
+                  fullWidth
+                  label={`Nationality`}
+                  value={selectedNationality || ''}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
               </Grid>
             </Grid>
 
@@ -134,7 +157,7 @@ export default function Reservation() {
               Passport/ID Information
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   size="small"
                   fullWidth
@@ -143,7 +166,7 @@ export default function Reservation() {
                   name={`serialNumber-adult-${index}`}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   size="small"
                   fullWidth
@@ -152,7 +175,7 @@ export default function Reservation() {
                   name={`passportNumber-adult-${index}`}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   size="small"
                   fullWidth
@@ -165,18 +188,12 @@ export default function Reservation() {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <FormControl fullWidth size="small">
-                  <InputLabel id={`issue-country-label-${index}`}>Issue Country</InputLabel>
-                  <Select
-                    labelId={`issue-country-label-${index}`}
-                    id={`issue-country-select-${index}`}
-                    label="Issue Country"
-                  >
-                    <MenuItem value="tr">Turkey</MenuItem>
-                    {/* Diğer ülkeleri ekleyebilirsiniz */}
-                  </Select>
-                </FormControl>
+              <Grid item xs={12} sm={5}>
+                <CountrySelect
+                  value={selectedNationality}
+                  onChange={(e, newValue) => setSelectedNationality(newValue)}
+                  label={"Issue Country"}
+                />
               </Grid>
             </Grid>
           </Box>
@@ -219,62 +236,34 @@ export default function Reservation() {
               <Grid item xs={12} sm={2}>
                 <TextField
                   size="small"
-                  required
                   fullWidth
-                  id={`age-child-${index}`}
                   label="Age"
-                  name={`age-child-${index}`}
                   type="number"
-                  defaultValue={0} // default age
+                  defaultValue={childrenAges}
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <FormControl fullWidth size="small">
-                  <InputLabel id={`nationality-select-label-child-${index}`}>{selectedNationality}</InputLabel>
-                  <Select
-                    labelId={`nationality-select-label-child-${index}`}
-                    id={`nationality-select-child-${index}`}
-                    label={selectedNationality}
-                  >
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-
-            {/* Contact Information */}
-            <Typography component="h2" variant="h6" sx={{ color: '#516D87', alignSelf: 'flex-start', mt: 3, mb: 1 }}>
-              Contact Information
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
                 <TextField
                   size="small"
-                  required
                   fullWidth
-                  id={`email-child-${index}`}
-                  label="Email Address"
-                  name={`email-child-${index}`}
-                  autoComplete="email"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <MuiPhoneNumber
-                  fullWidth
-                  size="small"
-                  label="Phone Number"
-                  defaultCountry={'tr'}
-                  onChange={handleOnChange}
-                  variant="outlined"
+                  label={`Nationality`}
+                  value={selectedNationality || ''}
+                  InputProps={{
+                    readOnly: true,
+                  }}
                 />
               </Grid>
             </Grid>
 
             {/* Passport/ID Information */}
             <Typography component="h2" variant="h6" sx={{ color: '#516D87', alignSelf: 'flex-start', mt: 3, mb: 1 }}>
-              Passport/ID Information
+              Passport Information
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   size="small"
                   fullWidth
@@ -283,7 +272,7 @@ export default function Reservation() {
                   name={`serialNumber-child-${index}`}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   size="small"
                   fullWidth
@@ -292,7 +281,7 @@ export default function Reservation() {
                   name={`passportNumber-child-${index}`}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   size="small"
                   fullWidth
@@ -305,18 +294,12 @@ export default function Reservation() {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <FormControl fullWidth size="small">
-                  <InputLabel id={`issue-country-label-child-${index}`}>Issue Country</InputLabel>
-                  <Select
-                    labelId={`issue-country-label-child-${index}`}
-                    id={`issue-country-select-child-${index}`}
-                    label="Issue Country"
-                  >
-                    <MenuItem value="tr">Turkey</MenuItem>
-                    {/* Diğer ülkeleri ekleyebilirsiniz */}
-                  </Select>
-                </FormControl>
+              <Grid item xs={12} sm={5}>
+                  <CountrySelect
+                  value={selectedNationality}
+                  onChange={(e, newValue) => setSelectedNationality(newValue)}
+                  label={"Issue Country"}
+                />
               </Grid>
             </Grid>
           </Box>

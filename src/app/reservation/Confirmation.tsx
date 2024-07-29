@@ -24,13 +24,12 @@ const ReservationConfirmation: React.FC = () => {
     nights: state.nights,
   }));
 
-  // Format dates
   const formattedCheckInDate = checkInDate ? dayjs(checkInDate).format('YYYY-MM-DD') : 'N/A';
   const formattedCheckOutDate = checkOutDate ? dayjs(checkOutDate).format('YYYY-MM-DD') : 'N/A';
 
   return (
     <Container>
-      <Box mt={4} p={2} border={1} borderColor="grey.300" borderRadius={2}>
+      <Box mt={1}>
         <Typography variant="h5" gutterBottom>
           Reservation Confirmation
         </Typography>
