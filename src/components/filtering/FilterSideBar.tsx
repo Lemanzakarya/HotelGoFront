@@ -5,6 +5,9 @@ import {
 } from "@mui/material";
 import CheckBox from "@mui/material/Checkbox";
 import { CheckBoxTwoTone, ExpandMoreTwoTone, FilterList } from "@mui/icons-material";
+import HotelCard from '../card/HotelCard';
+import { json } from 'stream/consumers';
+import SearchPage from '@/app/search/page';
 
 const style = {
   width: 'auto',
@@ -46,6 +49,7 @@ interface PriceSearchHotel {
   city?: HotelProductSimpleCity;
   offers?: HotelOffer[];
   provider?: number;
+  thumbnailFull?: string;
   id?: string;
 }
 
@@ -69,10 +73,17 @@ function valuetext(value: number) {
   return `${value} TL`;
 }
 
-const FilterSidebar = () => {
+interface FilterSidebarProps {
+  id: string | null;
+  onFilteredResults: (results: PriceSearchHotel[] | undefined) => void;
+  currency: string | undefined;
+}
+
+const FilterSidebar = (props: FilterSidebarProps) => {
+  const { id, onFilteredResults , currency } = props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
+ 
   const [priceRange, setPriceRange] = useState<number[]>([]);
   const [priceState , setPriceState] = useState<number[]>([]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
@@ -81,12 +92,15 @@ const FilterSidebar = () => {
   const [allBoards, setAllBoards] = useState<PagingDataOptions[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [results, setResults] = useState<GetPagingDataResponseModel | null>(null);
+  const [results, setResults] = useState<PriceSearchHotel[] | undefined>(undefined);
   const [selectedStars, setSelectedStars] = useState<number | null>(null);
+  const [currencyState, setCurrencyState] = useState<string | undefined>(currency);
 
   useEffect(() => {
-    fetchResults();
-  }, [selectedFacilities,selectedBoardOptions,selectedStars,priceState]);
+    if (id) {
+      fetchResults();
+    }
+  }, [id, selectedFacilities, selectedBoardOptions, selectedStars, priceState]);
 
   const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const boardOption = event.target.name;
@@ -109,8 +123,6 @@ const FilterSidebar = () => {
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     setPriceState(newValue as number[]);
-    setTimeout(() => {
-    }, 600);
   }
 
   const handleStarsChange = (event: React.SyntheticEvent, newValue: number | null) => {
@@ -150,7 +162,7 @@ const FilterSidebar = () => {
     }
 
     const params = {
-      currency: "EUR",
+      currency: currency,
       pagingOptions: [
         {
           currentPage: 1,
@@ -161,9 +173,9 @@ const FilterSidebar = () => {
           isNewPagingRequest: true,
         }
       ],
-      searchId: "cbd5894d-884d-48c0-873e-6e3b3df5242c" // temporary static searchid
+      searchId: id 
     };
-
+    
     try { 
       const response = await fetch('http://localhost:5083/Tourvisio/GetPagingData', {
         method: 'POST',
@@ -174,7 +186,8 @@ const FilterSidebar = () => {
       });
       if (response.ok) {  
         const data:GetPagingDataResponseModel = await response.json();
-        setResults(data);
+        setResults(data?.body?.hotels);
+        onFilteredResults(data?.body?.hotels);
         var min = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.from
         var max = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.to
         const facilities: PagingDataOptions[] = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 7)?.options || [];
@@ -183,12 +196,13 @@ const FilterSidebar = () => {
         setAllBoards(boards);
         if (min !== undefined && max !== undefined) {
           const numberArray = [min, max];
-          if(priceState.length ===0){
+          if(priceState.length ===0 || currency != currencyState){
             setPriceState(numberArray);
           }
-          if(priceRange.length===0){
+          if(priceRange.length===0 || currency != currencyState){
             setPriceRange(numberArray);
           }
+          setCurrencyState(currency);
 
       } else {
         console.error('Error:', response.status);
@@ -318,6 +332,9 @@ const FilterSidebar = () => {
     </List>
   );
 
+  var array = results?.map((result) => {
+    return result;
+  });
   return (
     <Box>
       {isMobile ? (
