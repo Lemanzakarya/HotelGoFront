@@ -14,49 +14,12 @@ import {
 } from "@mui/material";
 import Overview from "@/components/detail/Overview";
 import Rooms from "@/components/detail/Rooms";
-import { sendPostRequest } from "../responsemodel/ProductInfoModel";
+import { Facility, ProductInfo, sendPostRequest, TextCategory } from "../responsemodel/ProductInfoModel";
 import LoadingCircle from "@/components/shared/LoadingCircle";
+import { ProductInfoRequestDefault } from "../requestmodel/ProductInfo";
 
 
 
-
-
-type Address ={
-  addressLines : string[];
-}
-
-type Facility = {
-  name:string;
-  isPriced:boolean;
-};
-type TextCategory = {
-  name:string;
-  presentations:{
-    text:string;
-  }[];
-}[];
-
-type mediaFile = {
-  urlFull:string;
-}[];
-
-
-type data = {
-    hotel:{
-      seasons:{
-        mediaFiles : mediaFile[];
-        textCategories : TextCategory[];
-        facilityCategories:{
-          facilities: Facility[];
-        }[];
-      }
-      address:Address;
-      homePage:string;
-      hotelCategory:string;
-      name:string;
-      stars:number;
-    }
-}
 
 
 
@@ -66,21 +29,15 @@ const HotelDetail: React.FC = () => {
   // const [error, setError] = useState<string | null>(null);
   // const [name, setName] = useState<string>("")
 
-  const [hotelData, setHotelData] = useState<data | null>(); 
+  const [hotelData, setHotelData] = useState<ProductInfo | null>(); 
   const [hotelRoomPhotos, setHotelRoomPhotos] = useState<string[] | null>([]); 
   const [textCategory, setTextCategory] = useState<TextCategory | null>([]);
   const [hotelStar, setHotelStar] = useState<number | null>(0);
   const [facilities, setFacilities] = useState<Facility[]>([]); 
-  const postData = {
-    productType: 2,
-    ownerProvider: 2,
-    product: "400088",
-    culture: "en-US"
-  };
   
   useEffect(() => {
     const fetchHotelData = async () => { 
-      const data = await sendPostRequest(postData);
+      const data = await sendPostRequest(ProductInfoRequestDefault,"http://localhost:5083/Tourvisio/ProductInfo");
       setHotelData(data.body);
 
       try{
