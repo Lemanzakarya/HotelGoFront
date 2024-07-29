@@ -21,6 +21,7 @@ import {
   AttachMoney as AttachMoneyIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import { getOffersBody } from "@/app/responsemodel/getOffersModel";
 
 const RootCard = styled(Card)({
   maxWidth: 345,
@@ -74,6 +75,7 @@ interface Room {
 interface RoomsProps {
   isLoading: boolean;
   setIsLoading: React.Dispatch<SetStateAction<boolean>>;
+  offers:getOffersBody | null;
 }
 
 const rooms: Room[] = [
@@ -120,11 +122,11 @@ const rooms: Room[] = [
   },
 ];
 
-const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading }) => {
+const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading , offers}) => {
   const router = useRouter();
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-
+  
   const handleViewDetails = (room: Room) => {
     setSelectedRoom(room);
     setOpenDialog(true);
@@ -140,6 +142,9 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading }) => {
     }, 2000);
   };
 
+  //TODO:for test will be deleted
+  console.log(offers);
+  
   return (
     <Container>
       <Grid container spacing={3}>

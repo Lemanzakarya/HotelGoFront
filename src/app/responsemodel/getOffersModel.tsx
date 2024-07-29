@@ -1,4 +1,4 @@
-type getOffersBody = {
+export type getOffersBody = {
     offers:Offer[];
     information:{
         total:number; //gives how many offer we recieved

@@ -1,11 +1,11 @@
 export const getOffersRequestModelDefault = {
-    searchId: "f9b18c54-8cf4-40f2-a856-4e532766254c",
-    offerId: "1$2$202407260854$TR$1|8545342$1378$$2",
+    searchId: "6a70ac65-2aab-4d76-a528-240689ad478b",
+    offerId: "2$2$TR~^005^~23472~^005^~267.8000~^005^~1504~^005^~294.58~^005^~629f9976-35ec-4dd0-a031-965829bf3418",
     productType: 2,
-    productId: "8728",
+    productId: "104040",
     currency: "EUR",
     culture: "en-US",
-    getRoomInfo: true    
+    getRoomInfo: true
 }
 
 export type getOffersRequestModel = {
@@ -15,5 +15,5 @@ export type getOffersRequestModel = {
     productId:string;
     currency:string;
     culture:string;
-    getRoomInfo:boolean;
+    getRoomInfo:boolean
 }
