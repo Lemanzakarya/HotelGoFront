@@ -14,12 +14,6 @@ import {
   DialogActions,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import Link from "next/link";
-import {
-  Wifi as WifiIcon,
-  KingBed as KingBedIcon,
-  AttachMoney as AttachMoneyIcon,
-} from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { getOffersBody } from "@/app/responsemodel/getOffersModel";
 import { getOfferDetailsBody } from "@/app/responsemodel/getOfferDetailModel";
@@ -71,7 +65,6 @@ interface Room {
   description: string;
   imageUrl: string;
   price: string;
-  features: { icon: React.ReactElement | null; text: string }[];
 }
 interface RoomsProps {
   isLoading: boolean;
@@ -88,11 +81,6 @@ const rooms: Room[] = [
     imageUrl:
       "https://cdn-prod.travelfuse.ro/images/_top_323fce7a9d6cbbfe747e276b3276e313.jpg",
     price: "$150/night",
-    features: [
-      { icon: <KingBedIcon />, text: "King-size bed" },
-      { icon: <WifiIcon />, text: "Free WiFi" },
-      { icon: <AttachMoneyIcon />, text: "Luxury amenities" },
-    ],
   },
   {
     id: 2,
@@ -102,11 +90,6 @@ const rooms: Room[] = [
     imageUrl:
       "https://www.granada.com.tr/images/details/b/konaklama-aile-odalari-071.jpg",
     price: "$100/night",
-    features: [
-      { icon: <KingBedIcon />, text: "Queen-size bed" },
-      { icon: <WifiIcon />, text: "City view" },
-      { icon: <AttachMoneyIcon />, text: "Workspace" },
-    ],
   },
   {
     id: 3,
@@ -116,11 +99,6 @@ const rooms: Room[] = [
     imageUrl:
       "https://i.neredekal.com/i/neredekal/75/585x300/60256b74ff3ffdca374aa015",
     price: "$100/night",
-    features: [
-      { icon: <KingBedIcon />, text: "Queen-size bed" },
-      { icon: <WifiIcon />, text: "City view" },
-      { icon: <AttachMoneyIcon />, text: "Workspace" },
-    ],
   },
 ];
 
@@ -173,24 +151,8 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading , offers}) => {
                 </Typography>
                 <Typography variant="body2" color="textPrimary">
                   Features:
-                </Typography>
-                <FeaturesList>
-                  {room.features.map((feature, index) => (
-                    <FeatureItem key={index}>
-                      {feature.icon && (
-                        /*React.cloneElement(feature.icon, { style: { marginRight: '8px' } })*/
-                        <div style={{ marginRight: "8px" }}>{feature.icon}</div>
-                      )}
-                      <Typography
-                        variant="body2"
-                        color="textPrimary"
-                        sx={{ marginLeft: "5px" }}
-                      >
-                        {feature.text}
-                      </Typography>
-                    </FeatureItem>
-                  ))}
-                </FeaturesList>
+                </Typography>     
+      
               </CardContent>
               <ViewDetailsLink onClick={() => handleViewDetails(room)}>
                 View Details

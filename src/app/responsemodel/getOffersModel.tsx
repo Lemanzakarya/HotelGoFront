@@ -65,11 +65,12 @@ export type getOffersBody ={
 type Offer ={
     night:number;
     rooms:Room[];
-    cancellationPolicies:CancellationPolicy;
+    cancellationPolicies:CancellationPolicy[];
     checkIn:string;
     offerId:string;
     expiresOn:string;
     priceBreakdowns:{
+        [x: string]: any;
         priceBreakdowns:PriceBreakdown[];
     }[];
 }
