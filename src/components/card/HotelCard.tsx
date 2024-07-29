@@ -11,30 +11,33 @@ import { useRouter } from 'next/navigation';
 
 
 interface HotelCardProps {
-  title: string;
-  location: string;
-  apiEndpoint: string;
-  price: string;
-  tags?: string[];
-  stars : number;
-  isLoading: boolean;
+  title: string | undefined;
+  location: string | undefined;
+  price: string | undefined;
+  stars : string | undefined;
+  isLoading: boolean | undefined;
+  thumbnail: string | undefined;
+  nights: number | undefined;
+  currency : string | undefined;
   setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
   title,
   location,
-  apiEndpoint,
   price: initialPrice,
-  tags,
   stars = 0,
   isLoading,
+  thumbnail,
+  nights,
+  currency,
   setIsLoading
 }) => {
-  const [price, setPrice] = useState<string>(initialPrice);
+  const [price, setPrice] = useState<string>(initialPrice || '');
   const isSmallScreen = useMediaQuery('(max-width:900px)');
   const router = useRouter();
 
+  const starnum = parseInt(String(stars));
 
   const handleLookThrough = () => {
     setIsLoading(true);
@@ -43,6 +46,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       setIsLoading(false);
     }, 2000);
   };
+
 
   return (
     <Card
@@ -59,7 +63,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       <CardOverflow>
         <AspectRatio ratio={isSmallScreen ? 2 : 1} sx={{ width: isSmallScreen ? '200' : 200 }} >
           <img
-            src={"https://media.istockphoto.com/id/472899538/tr/foto%C4%9Fraf/downtown-cleveland-hotel-entrance-and-waiting-taxi-cab.jpg?s=612x612&w=0&k=20&c=q9BvQpnL3l4b8t3K_4VRTSS8FkBnv6Pue4tgZucjqIQ="}
+            src={thumbnail}
             alt={title}
             loading="lazy"
             style={{
@@ -72,15 +76,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <Typography fontWeight="bold" textColor="text.primary" fontSize={27}>
           {title}
         </Typography>
-        <Rating name=" card-rating"  value={stars} readOnly={true} size="medium"  precision={0.5}/>
+        <Rating name=" card-rating"  value={starnum} readOnly={true} size="medium"  precision={0.5}/>
         <Typography textColor="text.secondary" mt={5}>
           {location}
         </Typography>
-        {tags && (
-          <Typography textColor="text.secondary" sx={{ mt: 1 }}>
-            {tags.join(', ')}
-          </Typography>
-        )}
       </CardContent>
       <CardContent sx={{}}>
       <Typography fontWeight="bold" textColor="success.plainColor" sx={{ mt:4 ,mr:1 , alignSelf: 'flex-end', fontSize : 30 }}>
