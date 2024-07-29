@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState , Suspense } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from "@mui/material/Box";
 import SearchBar from "@/components/SearchBar";
@@ -7,60 +7,114 @@ import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
 import LoadingCircle from "@/components/shared/LoadingCircle";
 import useCurrencyStore from "@/stores/useCurrencyStore";
+import { useRouter } from "next/navigation";
+import { useStore } from "zustand";
+import useSearchStore from "@/stores/useSearchStore";
+import dayjs from "dayjs";
 
 interface Hotel {
-  id: string;
-  title: string;
-  location: string;
-  price: string;
-  tags?: string[];
+  name?: string;
+  stars?: string;
+  rating?: string;
+  location?: HotelProductSimpleCity;
+  country?: PriceSearchCountry;
+  city?: HotelProductSimpleCity;
+  offers?: HotelOffer[];
+  provider?: number;
+  thumbnailFull?: string;
+  id?: string;
 }
 
-const hotel: Hotel[] = [
-  {
-    id: "1",
-    title: "Hotel 1",
-    location: "Alanya, Antalya",
-    price: "259,99",
-    tags: ["Wifi", "Star", "2.4 km"],
-  },
-  {
-    id: "2",
-    title: "Hotel 2",
-    location: "Manavgat, Antalya",
-    price: "698,99",
-    tags: ["Wifi", "Star", "2.4 km"],
-  },
-  {
-    id: "3",
-    title: "Hotel 3",
-    location: "Cankaya, Ankara",
-    price: "354,99",
-    tags: ["Wifi", "Star", "2.4 km"],
-  },
-  {
-    id: "4",
-    title: "Hotel 4",
-    location: "Merkez, Adana",
-    price: "499,99",
-    tags: ["Wifi", "Star", "2.4 km"],
-  },
-];
+interface HotelProductSimpleCity {
+  id?: string;
+  name?: string;
+}
 
-const SearchPageServer: React.FC = () => {
-  const {selectedCurrency} = useCurrencyStore();
-  const [hotelData, setHotelData] = useState<Hotel[]>([]);
+interface PriceSearchCountry {
+  internationalCode?: string;
+  name?: string;
+}
+
+interface HotelOffer {
+  night?: number;
+  offerId?: string;
+  price?: Price;
+}
+interface Price{
+  currency?: string;
+  amount?: string;
+}
+
+
+const SearchPageServer = () => {
+  const { selectedCurrency } = useCurrencyStore();
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchHotels();
-  }, []);
+  const [searchId, setData] = useState<string | null>(null);
+  const [filteredResults, setFilteredResults] = useState<Hotel[] | undefined>(undefined);
 
-  const fetchHotels = async () => {
-    // Simulated hotel data
-    setHotelData(hotel);
+  const handleFilteredResults = (results: Hotel[] | undefined) => {
+    setFilteredResults(results);
   };
+
+
+
+  useEffect(() => {
+    fetchResults();
+  }, [selectedCurrency]);
+
+
+  const location = useSearchStore((state) => state.location);
+  const adults = useSearchStore((state) => state.adults);
+  const childrenAges = useSearchStore((state) => state.childrenAges);
+  const checkInDate = useSearchStore((state) => state.checkInDate);
+  const checkOutDate = useSearchStore((state) => state.checkOutDate);
+  const night = checkOutDate?.diff(checkInDate, 'days') || 0;
+
+  const fetchResults = async () => {
+    var arrival = location.type === 1 ? [{ id: location.id, type: 2 }] : null;
+    var product = location.type === 2 ? [location.id.toString()] : null;
+    const params = {
+      currency: selectedCurrency,
+      getOnlyBestOffers: true,
+      productType: 2,
+      arrivalLocations: arrival,
+      products: product,
+      roomCriteria: [
+        {
+          adult: adults,
+          childAges: childrenAges,
+        }, 
+      ],
+      pagingOption: {
+        currentPage: 1,
+        pageRowCount: 0,
+      },
+      checkIn: dayjs(checkInDate).format('YYYY-MM-DD'),
+      night: night
+    };
+    try {
+      const response = await fetch('http://localhost:5083/Tourvisio/PriceSearch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setData(data.body.searchId);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+
+    }
+
+  }
+
+
+  //todo currency değiştiğinde cardlardaki fiyat değişmiyor
 
   return (
     <div style={{ marginTop: "20px" }}>
@@ -74,7 +128,7 @@ const SearchPageServer: React.FC = () => {
         <SearchBar
           sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
           backgroundColor={"#F5F5F5"}
-          height={isSmallScreen ? "100%" : 80} 
+          height={isSmallScreen ? "100%" : 80}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           />
@@ -86,23 +140,25 @@ const SearchPageServer: React.FC = () => {
       >
         <Box flex="1" marginLeft="5%">
           {isLoading && (
-              <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '100%',
-                    position: 'fixed',
-                    top: '50%',
-                    right: 10,
-                    left: 10,
-                    zIndex: 10
-                  }}
-              >
-                <LoadingCircle/>
-              </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                position: 'fixed',
+                top: '50%',
+                right: 10,
+                left: 10,
+                zIndex: 10
+              }}
+            >
+              <LoadingCircle />
+            </Box>
           )}
-          <FilterSidebar />
+           <div className="filter">
+        <FilterSidebar id={searchId} onFilteredResults={handleFilteredResults} currency={selectedCurrency} />
+      </div>
         </Box>
         <Box
           flex="3"
@@ -111,17 +167,19 @@ const SearchPageServer: React.FC = () => {
           marginRight="5%"
           marginLeft={isSmallScreen ? "5%" : "0%"}
         >
-          {hotelData.map((hotel, index) => (
+          {filteredResults?.map((hotel, index) => (
+            console.log(hotel),
             <Box key={index}>
               <HotelCard
-                title={hotel.title}
-                location={hotel.location}
-                price={hotel.price}
-                tags={hotel.tags}
-                apiEndpoint={`/api/hotel/${hotel.id}`}
-                stars={3.5}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
+              title={hotel.name}
+              location={hotel?.city?.name + ', ' + hotel?.country?.name}
+              price={hotel.offers?.[0].price?.amount}
+              stars={hotel.stars}
+              isLoading={isLoading}
+              thumbnail={hotel.thumbnailFull}
+              nights={hotel.offers?.[0].night}
+              currency= {hotel.offers?.[0].price?.currency}
+              setIsLoading={setIsLoading}
               />
             </Box>
           ))}
@@ -131,11 +189,13 @@ const SearchPageServer: React.FC = () => {
   );
 };
 const SearchPage = () => {
+
+  console.log("çalıtşım")
   return (
-      <Suspense>
-        <SearchPageServer />
-      </Suspense>
+    <Suspense>
+      <SearchPageServer/>
+    </Suspense>
   );
-}
+};
 
 export default SearchPage;
