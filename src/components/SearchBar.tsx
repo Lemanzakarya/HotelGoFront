@@ -12,9 +12,7 @@ import Select from "@mui/material/Select";
 import dayjs, { Dayjs } from 'dayjs';
 import {MobileDatePicker} from "@mui/x-date-pickers";
 import {useEffect} from "react";
-
-
-
+import useSearchStore from '@/stores/useSearchStore';
 
 
 interface SearchBarProps {
@@ -22,14 +20,13 @@ interface SearchBarProps {
     backgroundColor?: string;
     height?: string | number;
     width?: string | number;
-    checkOutDateParam?: Dayjs | null;
-    checkInDateParam?: Dayjs | null;
-    nationalityParam?: string;
-    adultsParam?: number;
-    childrenParam?: number;
-    childrenAgesParam?: number[];
     isLoading: boolean;
-    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>
+    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>;
+    checkInSx?: React.CSSProperties;
+    checkOutSx?: React.CSSProperties;
+    guestsSx?: React.CSSProperties;
+    searchButtonSx?: React.CSSProperties;
+    containerSx?: React.CSSProperties;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -37,52 +34,51 @@ const SearchBar: React.FC<SearchBarProps> = ({
     backgroundColor = '#fffefe',
     height = 'auto',
     width = '100%',
-    checkOutDateParam,
-    checkInDateParam,
-    nationalityParam,
-    adultsParam,
-    childrenParam,
-    childrenAgesParam,
     isLoading,
-    setIsLoading
+    setIsLoading,
+    checkInSx,
+    checkOutSx,
+    guestsSx,
+    searchButtonSx,
+    containerSx
 }) => {
+    const {
+        adults,
+        setAdults,
+        children,
+        setChildren,
+        childrenAges,
+        setChildrenAges,
+        checkInDate,
+        setCheckInDate,
+        checkOutDate,
+        setCheckOutDate,
+        nights,
+        setNights,
+        location,
+        setLocation,
+        selectedNationality,
+        setSelectedNationality
+    } = useSearchStore();
 
-    const [adults, setAdults] = React.useState<number>(0);
-    const [children, setChildren] = React.useState<number>(0);
     const router = useRouter();
-    const [childrenAges, setChildrenAges] = React.useState<number[]>([]);
-    const [checkInDate, setCheckInDate] = React.useState<Dayjs | null>(null);
-    const [checkOutDate, setCheckOutDate] = React.useState<Dayjs | null>(null);
-    const [nights, setNights] = React.useState<number>(0);
+    
     const isSmallScreen = useMediaQuery('(max-width: 900px)');
     const [guestDialog, setGuestDialog] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
-    const [location, setLocation]= React.useState<string>('');
-    const [selectedNationality , setSelectedNationality] = React.useState<string | null>('TR');
-
-
-    useEffect(() => {
-        // Update state with props if they are provided, but only if they haven't been set already
-        if (checkInDateParam && !checkInDate) {
-            setCheckInDate(dayjs(checkInDateParam));
-        }
-        if (checkOutDateParam && !checkOutDate) {
-            setCheckOutDate(dayjs(checkOutDateParam));
-        }
-        if (adultsParam !== undefined && adults === 0) {
-            setAdults(adultsParam);
-        }
-        if (childrenParam !== undefined && children === 0) {
-            setChildren(childrenParam);
-        }
-        if (childrenAgesParam && childrenAges.length === 0) {
-            setChildrenAges(childrenAgesParam);
-        }
-        if (nationalityParam && selectedNationality === 'TR') {
-            setSelectedNationality(nationalityParam);
-        }
-    }, [checkInDateParam, checkOutDateParam, adultsParam, childrenParam, childrenAgesParam, nationalityParam]);
+    const storeState = useSearchStore.getState();
+   
+    useEffect(() => {     
+        setAdults(storeState.adults);
+        setChildren(storeState.children);
+        setCheckInDate(storeState.checkInDate);
+        setCheckOutDate(storeState.checkOutDate);
+        setChildrenAges(storeState.childrenAges);
+        setNights(storeState.nights);
+        setLocation(storeState.location);
+        setSelectedNationality(storeState.selectedNationality);
+    }, []);
 
     const handleClick = () => {
         setGuestDialog(!guestDialog);
@@ -98,18 +94,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
         }
     };
 
+
     const handleChildrenChange = (amount: number) => {
         if (amount >= 0 && amount <= 4) {
             setChildren(amount);
+            const currentChildrenAges = useSearchStore.getState().childrenAges;
+    
             if (amount > children) {
-                setChildrenAges(prevAges => [...prevAges, ...new Array(amount - children).fill(0)]);
+                setChildrenAges([...currentChildrenAges, ...new Array(amount - children).fill(0)]);
             } else {
-                setChildrenAges(prevAges => prevAges.slice(0, amount));
+                setChildrenAges(currentChildrenAges.slice(0, amount));
             }
         }
-
     };
-
+    
 
     const handleChildrenAgesChange = (index: number, age: number) => {
         const newAges = [...childrenAges];
@@ -117,8 +115,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
         setChildrenAges(newAges);
     };
 
-    const handleLocationChange = (location: string) => {
-        setLocation(location);
+    const handleLocationChange = (newLocation: string) => {
+        setLocation(newLocation);
         setSnackbarOpen(false);
     };
 
@@ -144,21 +142,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
             const message = `Please provide ${missingFields.join(', ')}.`;
             setErrorMessage(message);
             setSnackbarOpen(true);
-            //setIsLoading(false);  // Reset loading state when there is an error
 
         }
-        //add an else condition to prevent going to next page if there is an error
+
         setTimeout(() => {
-            const query = new URLSearchParams({
-                checkInDate: checkInDate ? checkInDate.toISOString() : '',
-                checkOutDate: checkOutDate ? checkOutDate.toISOString() : '',
-                adults: adults.toString(),
-                children: children.toString(),
-                nights: nights.toString(),
-                childrenAges: childrenAges.join(','),
-                selectedNationality: selectedNationality || '',
-            }).toString();
-            router.push(`/search?${query}`);
+            router.push(`/search`);
             setIsLoading(false);
         },3000);
 
@@ -225,7 +213,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     borderRadius: 6,
                     boxShadow: '0px 2px 5px rgba(4,7,10,1)',
                     width,
-                    height
+                    height,
+                    ...containerSx
                 }}
             >
                 <AutoCompleteInputBox onChange={handleLocationChange} />
@@ -233,7 +222,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MobileDatePicker
-                            sx={{width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0}}
+                            sx={{width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0, ...checkInSx}}
                             onChange={(newDateValue) => {handleCheckInChange(newDateValue)}}
                             value={checkInDate}
                             label={"Check-in"}
@@ -250,7 +239,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             label={'Check-out'}
                             disabled={checkInDate === null}
                             minDate={checkInDate ? checkInDate.add(1, 'day'): undefined}
-                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0  }}
+                            sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0  , ...checkOutSx}}
                     />
                 </LocalizationProvider>
                 <Divider orientation="vertical" flexItem sx={{ height: 'auto' }} />
@@ -270,6 +259,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         width: isSmallScreen ? '100%' : '20%',
                         cursor: 'pointer',
                         height: 55,
+                        ...guestsSx
                     }}
                 >
 
@@ -459,6 +449,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         color: '#ffffff',
                         width: isSmallScreen ? '100%' : '20%',
                         height: 55,
+                        ...searchButtonSx
                     }}
                     disabled={isLoading}
                 >
@@ -494,3 +485,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }
 
 export default SearchBar;
+
+
+
