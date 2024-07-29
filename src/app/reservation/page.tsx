@@ -4,6 +4,16 @@ import { Box, Button, Typography, Grid, Step, StepLabel, Stepper } from '@mui/ma
 import GuestInformation from './GuestInformation';
 import Payment from './Payment';
 import { useRouter } from 'next/navigation';
+import {BeginTransactionRequest} from "@/app/responsemodel/BeginTransactionModel";
+import {setReservationInfo} from "@/app/responsemodel/setReservationInfoModel";
+
+type CommitTransactionResponse = {
+    body: {
+        reservationNumber: string;
+        encryptedReservationNumber: string;
+        transactionId: string;
+    }
+}
 
 const steps = ['Guest Information', 'Payment Methods', 'Reservation Confirmation'];
 
@@ -15,7 +25,37 @@ const ReservationPage: React.FC = () => {
 
   const router = useRouter();
 
-  const handleNext = () => setStep((prevStep) => prevStep + 1);
+  const [reservationNumber ,setReservationNumber] = useState('Something went wrong!');
+
+  const handleNext = async () => {
+      setStep((prevStep) => prevStep + 1);
+      const postData: BeginTransactionRequest = {
+          offerIds: ["1"],
+          currency: "USD"
+      }
+      try {
+          const setReservationResponse = await setReservationInfo(postData);
+          const transactionId = setReservationResponse.transactionId;
+          const commitTransactionRequest = {
+                transactionId: transactionId,
+                paymentPlan: 1 // STATIC VALUE (CREDIT CARD)
+          }
+
+          const response = await fetch('https://localhost:7220/Tourvisio/CommitTransaction', {
+              method: 'POST',
+              headers: {
+                  'Accept': 'text/plain',
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(commitTransactionRequest)
+          });
+          const commitTransactionResponse: CommitTransactionResponse = await response.json();
+          setReservationNumber(commitTransactionResponse.body.reservationNumber);
+      }catch (error) {
+          throw new Error('Commit transaction failed: ', error);
+      }
+  }
+
 
   const handleBack = () => setStep((prevStep) => prevStep - 1);
 
@@ -64,6 +104,7 @@ const ReservationPage: React.FC = () => {
             )}
             {isConfirmed && (
               <Box>
+                  <Typography variant="h1">{reservationNumber}</Typography>
                 <Typography variant="h6">Congratulations!</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   Your reservation has been successfully made at the hotel.
