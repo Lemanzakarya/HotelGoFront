@@ -20,6 +20,8 @@ import { ProductInfoRequestDefault } from "../requestmodel/ProductInfo";
 import { getOffersRequestModelDefault } from "../requestmodel/getOffersMode";
 import { getOfferDetailRequestDefault } from "../requestmodel/getOfferDetailModel";
 import { getOffersBody } from "../responsemodel/getOffersModel";
+import { getOfferDetailsBody } from "../responsemodel/getOfferDetailModel";
+import { fetchExternalImage } from "next/dist/server/image-optimizer";
 
 
 
@@ -42,6 +44,8 @@ const HotelDetail: React.FC = () => {
 
   //for getOffers endpoint
   const [offers, setOffers] = useState<getOffersBody | null>(null); 
+
+  const [offerDetails, setOfferDetails] = useState<getOfferDetailsBody | null>(null);
   
   useEffect(() => {
     const fetchHotelData = async () => { 
@@ -87,17 +91,21 @@ const HotelDetail: React.FC = () => {
     fetchOffersData();
   }, [getOffersRequestModelDefault]);
 
-
+  // useEffect(() => {
+  //   const fetchOfferDetailsData = async () => {
+       
+  //     const fetchOfferDetails = await sendPostRequest(getOfferDetailRequestDefault, 'http://localhost:5083/Tourvisio/GetOfferDetails');
+  //     setOfferDetails(fetchOfferDetails.body);
+  //   } 
+  //   fetchOfferDetailsData();
+  // }, [getOfferDetailRequestDefault]);
 
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  // const imageUrls = productInfo?.mediaFile?.map(media => media.urlfull) || [];
-  // const description = productInfo?.description ?? "Description not available."; 
-  //const amenityNames = 
-  //productInfo?.facilityCategories?.map((category) => category.name) || ["Amenities not available"];
+
 
   return (
     <Box>
@@ -146,7 +154,9 @@ const HotelDetail: React.FC = () => {
             <Rooms 
               isLoading={false} 
               setIsLoading={setIsLoading }
-              offers={offers}  />
+              offers={offers}
+              // offerDetails={offerDetails}  
+              />
                {isLoading && (
                       <Box
                           sx={{

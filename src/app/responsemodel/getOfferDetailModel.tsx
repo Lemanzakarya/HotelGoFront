@@ -1,13 +1,26 @@
 
-export type OfferDetail = {
-    hotels:{
-        rooms: {
-            facilities:{
-                name:string;
-            }[];
-        }
-    }[];
+export type getOfferDetailsBody = {
+  offerDetails:OfferDetail[];
 }
+
+type OfferDetail = {
+    hotels:Hotel[];
+  }
+
+
+type Hotel={
+  rooms:Room[];
+}
+
+type Room = {
+  facilities:Facility[];
+}
+
+type Facility={
+  name:string;
+}
+
+
 
 
 const sendPostRequest = async(postData:any,url : string) => {

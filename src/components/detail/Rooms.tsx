@@ -22,6 +22,7 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { getOffersBody } from "@/app/responsemodel/getOffersModel";
+import { getOfferDetailsBody } from "@/app/responsemodel/getOfferDetailModel";
 
 const RootCard = styled(Card)({
   maxWidth: 345,
@@ -76,6 +77,7 @@ interface RoomsProps {
   isLoading: boolean;
   setIsLoading: React.Dispatch<SetStateAction<boolean>>;
   offers:getOffersBody | null;
+  //offerDetails: getOfferDetailsBody | null;
 }
 
 const rooms: Room[] = [
@@ -143,15 +145,18 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading , offers}) => {
   };
 
   //TODO:for test will be deleted
-  console.log(offers);
+  console.log("recieved offers:",offers);
+  //console.log("Recieved details:",offerDetails);
   
+
+
   return (
     <Container>
       <Grid container spacing={3}>
         {rooms.map((room) => (
           <Grid item xs={12} sm={6} md={4} key={room.id}>
             <RootCard>
-              <Media image={room.imageUrl} title={room.title} />
+              
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {room.title}
