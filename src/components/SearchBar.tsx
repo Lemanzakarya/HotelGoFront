@@ -29,6 +29,12 @@ interface SearchBarProps {
     containerSx?: React.CSSProperties;
 }
 
+interface Location {
+    type: number;
+    id: string;
+    name: string;
+}
+
 const SearchBar: React.FC<SearchBarProps> = ({
     sx,
     backgroundColor = '#fffefe',
@@ -115,7 +121,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         setChildrenAges(newAges);
     };
 
-    const handleLocationChange = (newLocation: string) => {
+    const handleLocationChange = (newLocation: Location) => {
         setLocation(newLocation);
         setSnackbarOpen(false);
     };

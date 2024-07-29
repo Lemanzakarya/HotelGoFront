@@ -2,7 +2,7 @@ import {create} from 'zustand';
 import { Dayjs } from 'dayjs';
 
 interface SearchState {
-    location: string;
+    location: Location;
     checkInDate: Dayjs | null;
     checkOutDate: Dayjs | null;
     adults: number;
@@ -10,7 +10,7 @@ interface SearchState {
     childrenAges: number[];
     selectedNationality: string | null;
     nights: number;
-    setLocation: (location: string) => void;
+    setLocation: (location: Location) => void;
     setCheckInDate: (date: Dayjs | null) => void;
     setCheckOutDate: (date: Dayjs | null) => void;
     setAdults: (adults: number) => void;
@@ -20,8 +20,18 @@ interface SearchState {
     setNights: (nights: number) => void;
 }
 
+interface Location{
+    type: number;
+    id: string;
+    name: string;
+}
+
 const useSearchStore = create<SearchState>((set) => ({
-    location: '',
+    location: {
+        type: 0,
+        id: '',
+        name: ''
+    },
     checkInDate: null,
     checkOutDate: null,
     adults: 0,

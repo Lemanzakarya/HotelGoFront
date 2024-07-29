@@ -8,8 +8,8 @@ import Paper from '@mui/material/Paper';
 import useSearchStore from '@/stores/useSearchStore';
 
 interface Option {
-    label: string;
-    value: string;
+    name: string;
+    id: string;
     type: number;
 }
 
@@ -38,7 +38,7 @@ interface AutoCompleteResponse {
     };
 }
 interface AutoCompleteInputBoxProps {
-    onChange: (location: string) => void;
+    onChange: (location: Option) => void;
 }
 
 export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxProps) {
@@ -78,8 +78,8 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
 
                     const data: AutoCompleteResponse = await response.json();
                     const newOptions = data.body.items.map((item) => ({
-                        label: item.type === 1 ? item.city.name : item.hotel.name + " (" + item.city.name + ")",
-                        value: item.type === 1 ? item.city.id : item.hotel.id,
+                        name: item.type === 1 ? item.city.name : item.hotel.name + " (" + item.city.name + ")",
+                        id: item.type === 1 ? item.city.id : item.hotel.id,
                         type: item.type
                     }));
 
@@ -109,13 +109,13 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
             options={options}
             autoHighlight
             noOptionsText={inputValue.length >= 3 ? "No result " : "Type 3 letters at least"}
-            getOptionLabel={(option: Option) => option.label}
+            getOptionLabel={(option: Option) => option.name}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
             onChange={(event, newValue) => {
                 if (newValue) {
-                    onChange(newValue.label);
+                    onChange(newValue);
                 }
             }}
             groupBy={(option) => option.type === 1 ? 'Location' : 'Hotel'}
@@ -146,14 +146,14 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
                 </div>
             )}
             renderOption={(props, option) => (
-                <Box component="li" {...props} key={option.value}>
-                    {option.label}
+                <Box component="li" {...props} key={option.id}>
+                    {option.name}
                 </Box>
             )}
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label={location || 'Location'}
+                    label={location.name || 'Location'}
                     sx={{ width: '100%' , backgroundColor:'rgba(255,255,255,0.75)', borderRadius: '5px'}}
                     inputProps={{
                         ...params.inputProps,
