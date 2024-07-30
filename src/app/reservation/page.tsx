@@ -43,10 +43,8 @@ const ReservationPage: React.FC = () => {
       try {
           const setReservationResponse = await setReservationInfo(postData);
           console.log("setReservationInfo - done");
-          try {
-              setHotelName(setReservationResponse.body.reservationData.services[0].serviceDetails.hotelDetail.name)
-          }catch (error){
-
+          if (setReservationResponse?.body?.reservationData?.services?.[0]?.serviceDetails?.hotelDetail?.name) {
+              setHotelName(setReservationResponse.body.reservationData.services[0].serviceDetails.hotelDetail.name);
           }
           const transactionId = setReservationResponse.body.transactionId;
           console.log('transaction Id fetched');
@@ -67,6 +65,7 @@ const ReservationPage: React.FC = () => {
           setIsFetched(true);
       }catch (error) {
           console.log('ERROR: ', error);
+          throw error;
       }finally {
           setIsConfirmed(true);
           setStep((prevStep) => prevStep + 1);

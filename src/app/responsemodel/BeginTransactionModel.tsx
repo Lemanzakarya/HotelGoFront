@@ -217,11 +217,11 @@ const sendBeginTransactionRequest = async (postData:BeginTransactionRequest) : P
         if (!response.ok) {
             const errorResponse = await response.json();
             console.error('Server Error:', errorResponse);
-            throw new Error(`HTTP error! status: ${response.status}`);
         }
         return await response.json();
     }catch (error){
         console.log('ERROR AMK: ',error);
+        throw error;
     }
 }
 export { sendBeginTransactionRequest };

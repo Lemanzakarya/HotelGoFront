@@ -365,12 +365,11 @@ const setReservationInfo = async (postData : BeginTransactionRequest) : Promise<
         })
         if (response.ok) {
             console.log('Reservation info request done successfully');
-        }else {
-            throw new Error('Reservation info request failed');
         }
         return await response.json();
     }catch (error) {
         console.error('Error sending reservation info request:', error);
+        throw error;
     }
 }
 export { setReservationInfo };
