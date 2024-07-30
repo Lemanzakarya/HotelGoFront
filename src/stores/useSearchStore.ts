@@ -27,7 +27,7 @@ const useSearchStore = create<SearchState>((set) => ({
     adults: 0,
     children: 0,
     childrenAges: [],
-    selectedNationality: 'TR',
+    selectedNationality: 'Turkey',
     nights: 0,
     setLocation: (location) => set({ location }),
     setCheckInDate: (date) => set({ checkInDate: date }),
