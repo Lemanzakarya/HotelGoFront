@@ -1,100 +1,216 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import {
   Accordion, AccordionDetails, AccordionSummary,
   Box, Divider, FormControlLabel, FormGroup, Grid, List, ListItem, ListItemText, Rating, Slider, Typography, Drawer, IconButton, useMediaQuery, useTheme, Popover, Button
 } from "@mui/material";
 import CheckBox from "@mui/material/Checkbox";
 import { CheckBoxTwoTone, ExpandMoreTwoTone, FilterList } from "@mui/icons-material";
+import HotelCard from '../card/HotelCard';
+import { json } from 'stream/consumers';
+import SearchPage from '@/app/search/page';
 
 const style = {
   width: 'auto',
   backgroundColor: '#ffffff',
 };
 
-const facilities = [
-  'Free Wi-Fi',
-  'Parking',
-  'Swimming Pool',
-  'Gym',
-  'Restaurant',
-  'Bar',
-  'Spa',
-  'Room Service',
-  'Pet Friendly',
-  'Business Center',
-];
+interface GetPagingDataResponseModel {
+  body?: GetPagingDataBody;
+}
 
-const rooms = [
-  { id: 'room1', name: 'Single Room' },
-  { id: 'room2', name: 'Double Room' },
-  { id: 'room3', name: 'Suite' },
-  { id: 'room4', name: 'Family Room' },
-  { id: 'room5', name: 'Apartment' },
-];
+interface GetPagingDataBody {
+  hotels?: PriceSearchHotel[];
+  filters?: PagingDataFilters;
+}
 
-const mealOptions = [
-  'Breakfast Included',
-  'All Inclusive',
-  'Half Board',
-  'Full Board',
-];
+interface PagingDataFilters {
+  hotel?: PagingFilters[];
+}
+
+interface PagingFilters {
+  type: number;
+  options?: PagingDataOptions[];
+  from: number;
+  to: number;
+}
+
+interface PagingDataOptions {
+  count: number;
+  name?: string;
+  id?: string;
+}
+
+interface PriceSearchHotel {
+  name?: string;
+  stars?: string;
+  rating?: string;
+  location?: HotelProductSimpleCity;
+  country?: PriceSearchCountry;
+  city?: HotelProductSimpleCity;
+  offers?: HotelOffer[];
+  provider?: number;
+  thumbnailFull?: string;
+  id?: string;
+}
+
+interface HotelProductSimpleCity {
+  id?: string;
+  name?: string;
+}
+
+interface PriceSearchCountry {
+  internationalCode?: string;
+  name?: string;
+}
+
+interface HotelOffer {
+  night?: number;
+  offerId?: string;
+}
+
 
 function valuetext(value: number) {
   return `${value} TL`;
 }
 
-const FilterSidebar = () => {
+interface FilterSidebarProps {
+  id: string | null;
+  onFilteredResults: (results: PriceSearchHotel[] | undefined) => void;
+  currency: string | undefined;
+}
+
+const FilterSidebar = (props: FilterSidebarProps) => {
+  const { id, onFilteredResults , currency } = props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  const [priceRange, setPriceRange] = useState<number[]>([1000, 20000]);
-  const [selectedRooms, setSelectedRooms] = useState<string[]>([]);
+ 
+  const [priceRange, setPriceRange] = useState<number[]>([]);
+  const [priceState , setPriceState] = useState<number[]>([]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
-  const [selectedMealOptions, setSelectedMealOptions] = useState<string[]>([]);
+  const [allFacilities, setAllFacilities] = useState<PagingDataOptions[]>([]);
+  const [selectedBoardOptions, setSelectedBoardOptions] = useState<string[]>([]);
+  const [allBoards, setAllBoards] = useState<PagingDataOptions[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [results, setResults] = useState<PriceSearchHotel[] | undefined>(undefined);
+  const [selectedStars, setSelectedStars] = useState<number | null>(null);
+  const [currencyState, setCurrencyState] = useState<string | undefined>(currency);
 
-  const handleRoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const roomName = event.target.name;
-    if (event.target.checked) {
-      setSelectedRooms([...selectedRooms, roomName]);
-    } else {
-      setSelectedRooms(selectedRooms.filter(room => room !== roomName));
+  useEffect(() => {
+    if (id) {
+      fetchResults();
     }
-  };
+  }, [id, selectedFacilities, selectedBoardOptions, selectedStars, priceState]);
 
-  const handleMealChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const mealOption = event.target.name;
+  const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const boardOption = event.target.name;
     if (event.target.checked) {
-      setSelectedMealOptions([...selectedMealOptions, mealOption]);
+      setSelectedBoardOptions([...selectedBoardOptions, boardOption]);
     } else {
-      setSelectedMealOptions(selectedMealOptions.filter(option => option !== mealOption));
+      setSelectedBoardOptions(selectedBoardOptions.filter(option => option !== boardOption));
     }
   }
 
   const handleFacilityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const facilityName = event.target.name;
+    const facility = event.target.name;
     if (event.target.checked) {
-      setSelectedFacilities([...selectedFacilities, facilityName]);
+      setSelectedFacilities([...selectedFacilities, facility]);
     } else {
-      setSelectedFacilities(selectedFacilities.filter(facility => facility !== facilityName));
+      setSelectedFacilities(selectedFacilities.filter(fac => fac !== facility
+      ));
     }
   }
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setPriceRange(newValue as number[]);
+    setPriceState(newValue as number[]);
   }
 
-  const handleApplyChanges = () => {
-    console.log('Selected Facilities:', selectedFacilities);
-    console.log('Selected Meal Options:', selectedMealOptions);
+  const handleStarsChange = (event: React.SyntheticEvent, newValue: number | null) => {
+    setSelectedStars(newValue);
+    fetchResults();
   };
 
-  const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (event.type === 'keydown' && ((event as React.KeyboardEvent).key === 'Tab' || (event as React.KeyboardEvent).key === 'Shift')) {
-      return;
+  const fetchResults = async () => {
+    const filters = [];
+
+    if (selectedStars) {
+      filters.push({
+        type: 2,
+        values: [selectedStars.toString()],
+      });
     }
-    setDrawerOpen(open);
+    if (!(priceState[0] === priceRange[0] && priceState[1] === priceRange[1])) {
+      filters.push({
+        type: 8,
+        from: priceState[0],
+        to: priceState[1],
+      });
+    }
+
+    if (selectedFacilities.length > 0) {
+      filters.push({
+        type: 7,
+        values: selectedFacilities,
+      });
+    }
+
+    if (selectedBoardOptions.length > 0) {
+      filters.push({
+        type: 6,
+        values: selectedBoardOptions,
+      });
+    }
+
+    const params = {
+      currency: currency,
+      pagingOptions: [
+        {
+          currentPage: 1,
+          pageRowCount: 50,
+          getFilters: true,
+          filters,
+          sort: 0,
+          isNewPagingRequest: true,
+        }
+      ],
+      searchId: id 
+    };
+    
+    try { 
+      const response = await fetch('http://localhost:5083/Tourvisio/GetPagingData', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+      if (response.ok) {  
+        const data:GetPagingDataResponseModel = await response.json();
+        setResults(data?.body?.hotels);
+        onFilteredResults(data?.body?.hotels);
+        var min = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.from
+        var max = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.to
+        const facilities: PagingDataOptions[] = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 7)?.options || [];
+        setAllFacilities(facilities);
+        const boards: PagingDataOptions[] = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 6)?.options || [];
+        setAllBoards(boards);
+        if (min !== undefined && max !== undefined) {
+          const numberArray = [min, max];
+          if(priceState.length ===0 || currency != currencyState){
+            setPriceState(numberArray);
+          }
+          if(priceRange.length===0 || currency != currencyState){
+            setPriceRange(numberArray);
+          }
+          setCurrencyState(currency);
+
+      } else {
+        console.error('Error:', response.status);
+      }
+    }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -105,52 +221,77 @@ const FilterSidebar = () => {
     setAnchorEl(null);
   };
 
+
   const drawerContent = (
     <List sx={style}>
+
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
         <Typography>Stars</Typography>
-        <Rating name="half-rating" defaultValue={2.5} size="medium" precision={0.5} />
+        <Rating
+          name="half-rating"
+          value={selectedStars}
+          onChange={handleStarsChange}
+          size="medium"
+          precision={0.5}
+        />
       </ListItem>
+
       <Divider component="li" />
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
         <Typography>Price Range</Typography>
-        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceRange[0]} TL - ${priceRange[1]} TL`}</Typography>
+        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceState[0]} TL - ${priceState[1]} TL`}</Typography>
         <Slider
           getAriaLabel={() => 'Price range'}
-          value={priceRange}
+          value={priceState}
           onChange={handleSliderChange}
           valueLabelDisplay="off"
           getAriaValueText={valuetext}
-          min={1000}
-          max={30000}
+          disableSwap
+          min={priceRange[0]}
+          max={priceRange[1]} 
         />
       </ListItem>
-      <Divider component="li" />
-      <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-        <Typography>Boards</Typography>
-        <FormGroup>
-          {rooms.map(room => (
-            <FormControlLabel
-              key={room.id}
-              control={
-                <CheckBox
-                  checked={selectedRooms.includes(room.id)}
-                  onChange={handleRoomChange}
-                  name={room.id}
-                  sx={{
-                    color: '#544c4c',
-                    '&.Mui-checked': {
-                      color: 'rgba(24,85,107,0.94)',
-                    }
-                  }}
-                />
-              }
-              label={room.name}
-            />
-          ))}
-        </FormGroup>
+      <Divider component='li' />
+      <ListItem>
+        <Accordion sx={{ width: 360, border: '1px solid #ddd', borderRadius: 2 }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreTwoTone />}
+            aria-controls="panel2-content"
+            id="panel2-header"
+          >
+            <Typography>Boards</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              {allBoards.map((board, index) => (
+                <Grid item xs={12} key={index}>
+                  <Box sx={{ border: '1px solid #ddd', borderRadius: 1, paddingLeft: 1, marginBottom: 1 }}>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <CheckBox
+                            name={board.id}
+                            checked={selectedBoardOptions.includes(board.id || '')}
+                            onChange={handleBoardChange}
+                            sx={{
+                              color: '#544c4c',
+                              '&.Mui-checked': {
+                                color: 'rgba(24,85,107,0.94)',
+                              },
+                            }}
+                          />
+                        }
+                        label={board.name + " (" + board.count + ")"}
+                      />
+                    </FormGroup>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
       </ListItem>
-      <Divider component="li" />
+
       <ListItem>
         <Accordion sx={{ width: 360, border: '1px solid #ddd', borderRadius: 2 }}>
           <AccordionSummary
@@ -162,16 +303,16 @@ const FilterSidebar = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-              {facilities.map((facility, index) => (
+              {allFacilities.map((facility, index) => (
                 <Grid item xs={12} key={index}>
                   <Box sx={{ border: '1px solid #ddd', borderRadius: 1, paddingLeft: 1, marginBottom: 0.4 }}>
                     <FormGroup>
                       <FormControlLabel
                         control={
                           <CheckBox
-                            checked={selectedFacilities.includes(facility)}
+                            checked={selectedFacilities.includes(facility?.id || '')}
                             onChange={handleFacilityChange}
-                            name={facility}
+                            name={facility.id}
                             sx={{
                               color: '#544c4c',
                               '&.Mui-checked': {
@@ -179,7 +320,7 @@ const FilterSidebar = () => {
                               }
                             }}
                           />}
-                        label={facility} />
+                        label={facility.name + " (" + facility.count + ")"} />
                     </FormGroup>
                   </Box>
                 </Grid>
@@ -187,60 +328,13 @@ const FilterSidebar = () => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-      </ListItem>
-      <Divider component='li' />
-      <ListItem>
-        <Accordion sx={{ width: 360, border: '1px solid #ddd', borderRadius: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreTwoTone />}
-            aria-controls="panel2-content"
-            id="panel2-header"
-          >
-            <Typography>Meal Options</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-              {mealOptions.map((meal, index) => (
-                <Grid item xs={12} key={index}>
-                  <Box sx={{ border: '1px solid #ddd', borderRadius: 1, paddingLeft: 1, marginBottom: 1 }}>
-                    <FormGroup>
-                      <FormControlLabel
-                        control={
-                          <CheckBox
-                            name={meal}
-                            checked={selectedMealOptions.includes(meal)}
-                            onChange={handleMealChange}
-                            sx={{
-                              color: '#544c4c',
-                              '&.Mui-checked': {
-                                color: 'rgba(24,85,107,0.94)',
-                              },
-                            }}
-                          />
-                        }
-                        label={meal}
-                      />
-                    </FormGroup>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-      </ListItem>
-      <ListItem sx={{ flexDirection: 'column', alignItems: 'center', marginTop: 1, marginBottom: 1.5 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleApplyChanges}
-          sx={{ boxShadow: '0 2px 4px 0 rgba(0,0,0,2)', width: '50%', borderRadius: 2 }}
-        >
-          Apply Changes
-        </Button>
       </ListItem>
     </List>
   );
 
+  var array = results?.map((result) => {
+    return result;
+  });
   return (
     <Box>
       {isMobile ? (

@@ -4,7 +4,7 @@ const useCurrencyStore = create((set) => ({
   currencies: [
     { code: 'USD', label: 'US Dollar' },
     { code: 'EUR', label: 'Euro' },
-    { code: 'GBP', label: 'British Pound' },
+    { code: 'JPY', label: 'Japanese Yen' },
     { code: 'TRY', label: 'Turkish Lira' },
   ],
   
