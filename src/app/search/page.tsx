@@ -45,7 +45,6 @@ interface Price {
   amount?: string;
 }
 
-// Utility function to format price to 2 decimal places
 const formatPrice = (price: string | undefined) => {
   if (!price) return price;
   const numericPrice = parseFloat(price);
@@ -56,6 +55,7 @@ const SearchPageServer = () => {
   const { selectedCurrency } = useCurrencyStore();
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCleared, setIsCleared] = useState(false);
 
   const [searchId, setData] = useState<string | null>(null);
   const [filteredResults, setFilteredResults] = useState<Hotel[] | undefined>(undefined);
@@ -63,6 +63,9 @@ const SearchPageServer = () => {
   const handleFilteredResults = (results: Hotel[] | undefined) => {
     setFilteredResults(results);
   };
+  const handleClearFilter = () => {
+    setIsCleared(true);
+  }
 
   useEffect(() => {
     fetchResults();
@@ -107,7 +110,9 @@ const SearchPageServer = () => {
       });
       if (response.ok) {
         const data = await response.json();
+        setIsCleared(false);
         setData(data.body.searchId);
+        setFilteredResults(data.body.hotels);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -129,6 +134,7 @@ const SearchPageServer = () => {
           height={isSmallScreen ? "100%" : 80}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
+          fetchFunct={fetchResults}
         />
       </Box>
       <Box
@@ -155,7 +161,12 @@ const SearchPageServer = () => {
             </Box>
           )}
           <div className="filter">
-            <FilterSidebar id={searchId} onFilteredResults={handleFilteredResults} currency={selectedCurrency} />
+            <FilterSidebar id={searchId} 
+            onFilteredResults={handleFilteredResults}
+             currency={selectedCurrency} 
+             isCleared={isCleared} 
+             handleFilter={handleClearFilter}
+             />
           </div>
         </Box>
         <Box
@@ -187,7 +198,6 @@ const SearchPageServer = () => {
 };
 
 const SearchPage = () => {
-  console.log("çalıştım");
   return (
     <Suspense>
       <SearchPageServer />

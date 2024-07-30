@@ -65,14 +65,15 @@ const Page: React.FC = () => {
               </VideoOverlay>
           )}
         <SearchBar
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
-            sx={{ backgroundColor:'rgba(255,255,255,0)'}}
-            containerSx={{backgroundColor:'rgba(255,255,255,0.64)'}}
-            checkInSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
-            checkOutSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
-            guestsSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
-        />
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+              sx={{ backgroundColor: 'rgba(255,255,255,0)' }}
+              containerSx={{ backgroundColor: 'rgba(255,255,255,0.64)' }}
+              checkInSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+              checkOutSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+              guestsSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }} fetchFunct={function (): Promise<void> {
+                  throw new Error('Function not implemented.');
+              } }        />
           {isLoading && (
                 <LoadingContainer>
                     <LoadingCircle/>
