@@ -47,7 +47,7 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
     const {location,setLocation} = useSearchStore();
 
     const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({
-        City: true,
+        Location: true,
         Hotel: true
     });
 

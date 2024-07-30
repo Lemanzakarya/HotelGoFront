@@ -31,7 +31,7 @@ interface HotelProductSimpleCity {
 
 interface PriceSearchCountry {
   internationalCode?: string;
-  name?: string;
+  name?: string ;
 }
 
 interface HotelOffer {
@@ -169,7 +169,7 @@ const SearchPageServer = () => {
             <Box key={index}>
               <HotelCard
                 title={hotel.name}
-                location={hotel?.city?.name + ', ' + hotel?.country?.name}
+                location={`${hotel.city?.name ? hotel.city.name : ''}${hotel.country?.name ? ', ' + hotel.country.name : ''}`}
                 price={formatPrice(hotel.offers?.[0].price?.amount)}
                 stars={hotel.stars}
                 isLoading={isLoading}

@@ -6,7 +6,7 @@ import CardContent from '@mui/joy/CardContent';
 import CardOverflow from '@mui/joy/CardOverflow';
 import Typography from '@mui/joy/Typography';
 import Button from '@mui/joy/Button';
-import { useMediaQuery, Rating } from '@mui/material';
+import { useMediaQuery, Rating, Grid } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
 interface HotelCardProps {
@@ -71,32 +71,31 @@ const HotelCard: React.FC<HotelCardProps> = ({
           />
         </AspectRatio>
       </CardOverflow>
-      <CardContent sx={{ flex: '1 0 auto', ml: 1 }}>
-        <Typography fontWeight="bold" textColor="text.primary" fontSize={25}>
+      <CardContent>
+      <Typography fontWeight="bold" textColor="text.primary" fontSize={25}>
           {title || 'Title Missing'}
         </Typography>
+        <CardContent sx={{flexDirection:"row"}}>
+      <CardContent sx={{ flex: '1 0 auto', ml: 1 }}>
         <Rating name="card-rating" value={starnum} readOnly size="medium" precision={0.5} />
-        <Typography textColor="text.secondary" mt={2}>
+        <Typography textColor="text.secondary" sx={{ mt: 2, fontSize: '1.3rem' }} fontWeight={'500'}>
           {location || 'Location Missing'}
         </Typography>
-        <Typography textColor="text.secondary" mt={2}>
-          {currency ? `Currency: ${currency}` : 'Currency Missing'}
-        </Typography>
-        <Typography textColor="black" sx={{ mt: 1, fontSize: '1.3rem' }}>
+        <Typography textColor="black" sx={{ mt: 2, fontSize: '1.1rem' }}>
           {nights !== undefined ? `Nights: ${nights}` : 'Nights Missing'}
         </Typography>
       </CardContent>
-      <CardContent sx={{}}>
-        <Typography fontWeight="bold" textColor="success.plainColor" sx={{ mt: 4, mr: 1, alignSelf: 'flex-end', fontSize: 28 }}>
+      <CardContent >
+        <Typography fontWeight="bold" textColor="success.plainColor" sx={{ mt: 1, mr: 1, alignSelf: 'flex-end', fontSize: 28 }}>
           {price || 'Price Missing'} {currency || '$'}
         </Typography>
         <Button
           variant="solid"
           size="lg"
           sx={{
-            mt: 4,
+            mt: 3,
             mr: 1,
-            width: isSmallScreen ? '100%' : 'auto',
+            width: isSmallScreen ? '100%' : "auto",
             alignSelf: isSmallScreen ? 'center' : 'flex-end',
             backgroundColor: 'orange',
             '&:hover': { backgroundColor: 'darkorange' },
@@ -106,6 +105,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
         >
           {isLoading ? 'Loading...' : 'Look Through'}
         </Button>
+      </CardContent>
+      </CardContent>
       </CardContent>
     </Card>
   );
