@@ -47,7 +47,7 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
     const {location,setLocation} = useSearchStore();
 
     const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({
-        City: true,
+        Location: true,
         Hotel: true
     });
 
@@ -57,7 +57,6 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
         const storeState = useSearchStore.getState();
 
         setLocation(storeState.location);
-        console.log("location",location)
     },[location]
 )
 
@@ -158,7 +157,7 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
                     sx={{ width: '100%' , backgroundColor:'rgba(255,255,255,0.75)', borderRadius: '5px'}}
                     inputProps={{
                         ...params.inputProps,
-                        autoComplete: 'new-password'
+                        autoComplete: 'off'
                     }}
                 />
             )}
