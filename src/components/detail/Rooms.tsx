@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { useRouter } from "next/navigation";
-import { getOffersBody } from "@/app/responsemodel/getOffersModel";
+import { formatCheckInDate, getOffersBody } from "@/app/responsemodel/getOffersModel";
 import BedIcon from '@mui/icons-material/Bed';
 
 const RootCard = styled(Card)({
@@ -21,6 +21,16 @@ const RootCard = styled(Card)({
   margin: "16px",
   cursor: "pointer",
   transition: "transform 0.2s",
+
+  // Explicitly set box-sizing to border-box
+  boxSizing: 'border-box', 
+
+  // Add border and padding
+  border: '2px solid #ccc', 
+  borderRadius: '8px',
+  padding: '10px', // Add padding to maintain content spacing
+
+  // Keep the existing hover effect
   "&:hover": {
     transform: "scale(1.05)",
   },
@@ -40,11 +50,10 @@ const ViewDetailsLink = styled("a")({
 
 const ReserveButton = styled(Button)({
   marginTop: "8px",
-  backgroundColor: "#1976d2",
-  color: "#fff",
-  "&:hover": {
-    backgroundColor: "#1565c0",
-  },
+  backgroundColor:'#ff8737',
+  '&:hover': { 
+    backgroundColor: '#d45500' 
+  }
 });
 
 const FeaturesList = styled("ul")({
@@ -82,6 +91,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   const router = useRouter();
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
+
 
   const handleViewDetails = (room: Room) => {
     setSelectedRoom(room);
@@ -121,7 +131,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                   <BedIcon /> {offer.rooms.map((room) => room.roomName).join(", ")}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Check-in: {offer.checkIn}
+                  Check-in: {formatCheckInDate(offer)}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Nights: {offer.night}
