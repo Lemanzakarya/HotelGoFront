@@ -1,107 +1,104 @@
-'use client'
-import React, {SetStateAction} from 'react';
-import { Grid, Card, CardContent, CardMedia, Typography, Button, Container } from '@mui/material';
-import { styled } from '@mui/system';
-import Link from 'next/link';
-import { Wifi as WifiIcon, KingBed as KingBedIcon, AttachMoney as AttachMoneyIcon } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import React, { SetStateAction, useState } from "react";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Container,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import { useRouter } from "next/navigation";
+import { formatCheckInDate, getOffersBody } from "@/app/responsemodel/getOffersModel";
+import BedIcon from '@mui/icons-material/Bed';
 
 const RootCard = styled(Card)({
   maxWidth: 345,
-  margin: '16px',
-  cursor: 'default',
-});
+  margin: "16px",
+  cursor: "pointer",
+  transition: "transform 0.2s",
 
-const Media = styled(CardMedia)({
-  height: 200,
-});
+  // Explicitly set box-sizing to border-box
+  boxSizing: 'border-box', 
 
-const ViewDetailsLink = styled('a')({
-  color: '#1976d2',
-  textDecoration: 'underline',
-  '&:hover': {
-    textDecoration: 'none',
+  // Add border and padding
+  border: '2px solid #ccc', 
+  borderRadius: '8px',
+  padding: '10px', // Add padding to maintain content spacing
+
+  // Keep the existing hover effect
+  "&:hover": {
+    transform: "scale(1.05)",
   },
-  marginLeft: '5%',
-  display: 'block',
-  marginTop: '8px'
+});
+
+const ViewDetailsLink = styled("a")({
+  color: "#1976d2",
+  textDecoration: "underline",
+  "&:hover": {
+    textDecoration: "none",
+  },
+  marginLeft: "5%",
+  display: "block",
+  marginTop: "8px",
+  textAlign: "right",
 });
 
 const ReserveButton = styled(Button)({
-  marginTop: '8px',
-  backgroundColor: '#1976d2', 
-  color: '#fff', 
-  '&:hover': {
-    backgroundColor: '#1565c0', 
-  },
+  marginTop: "8px",
+  backgroundColor:'#ff8737',
+  '&:hover': { 
+    backgroundColor: '#d45500' 
+  }
 });
 
-const FeaturesList = styled('ul')({
+const FeaturesList = styled("ul")({
   paddingLeft: 0,
-  listStyleType: 'none',
+  listStyleType: "none",
+  marginTop: "10px",
 });
 
-const FeatureItem = styled('li')({
-  display: 'flex',
-  alignItems: 'center',
-  marginBottom: '8px',
+const FeatureItem = styled("li")({
+  display: "flex",
+  alignItems: "center",
+  marginBottom: "8px",
 });
+
+interface RoomFeature {
+  icon: React.ReactElement | null;
+  text: string;
+}
 
 interface Room {
   id: number;
   title: string;
   description: string;
-  imageUrl: string;
   price: string;
-  features: { icon: React.ReactElement | null; text: string }[];
+  features: RoomFeature[];
 }
+
 interface RoomsProps {
   isLoading: boolean;
   setIsLoading: React.Dispatch<SetStateAction<boolean>>;
+  offers: getOffersBody | null;
 }
 
-const rooms: Room[] = [
-  {
-    id: 1,
-    title: 'Deluxe Room',
-    description: 'Spacious room with a view. Perfect for a luxurious stay.',
-    imageUrl: 'https://cdn-prod.travelfuse.ro/images/_top_323fce7a9d6cbbfe747e276b3276e313.jpg',
-    price: '$150/night',
-    features: [
-      { icon: <KingBedIcon />, text: 'King-size bed' },
-      { icon: <WifiIcon />, text: 'Free WiFi' },
-      { icon: <AttachMoneyIcon />, text: 'Luxury amenities' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Standard Room',
-    description: 'Comfortable room for your stay. Ideal for business travelers.',
-    imageUrl: 'https://www.granada.com.tr/images/details/b/konaklama-aile-odalari-071.jpg',
-    price: '$100/night',
-    features: [
-      { icon: <KingBedIcon />, text: 'Queen-size bed' },
-      { icon: <WifiIcon />, text: 'City view' },
-      { icon: <AttachMoneyIcon />, text: 'Workspace' },
-    ],
-  },
-  {
-    id: 3,
-    title: 'Family Room',
-    description: 'Comfortable room for your stay. Ideal for business travelers.',
-    imageUrl: 'https://i.neredekal.com/i/neredekal/75/585x300/60256b74ff3ffdca374aa015',
-    price: '$100/night',
-    features: [
-      { icon: <KingBedIcon />, text: 'Queen-size bed' },
-      { icon: <WifiIcon />, text: 'City view' },
-      { icon: <AttachMoneyIcon />, text: 'Workspace' },
-    ],
-  },
-];
-
-const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
+const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   const router = useRouter();
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
+
+  const handleViewDetails = (room: Room) => {
+    setSelectedRoom(room);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => setOpenDialog(false);
 
   const handleReserve = () => {
     setIsLoading(true);
@@ -109,65 +106,94 @@ const Rooms: React.FC<RoomsProps> = ({isLoading , setIsLoading}) => {
       router.push(`/reservation`);
       setIsLoading(false);
     }, 2000);
-  }
+  };
 
+  //TODO:for test will be deleted
+  console.log("recieved offers:",offers);
+  //console.log("Recieved details:",offerDetails);
+  
+  if (!offers || !offers.offers || !Array.isArray(offers.offers) || offers.offers.length === 0) {
+    return (
+      <Container>
+        <Typography variant="h6">No offers available.</Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <Grid container spacing={3}>
-        {rooms.map((room) => (
-          <Grid item xs={12} sm={6} md={4} key={room.id}>
+        {offers.offers.map((offer) => (
+          <Grid item xs={12} sm={6} md={4} key={offer.offerId}>
             <RootCard>
-              <Media
-                image={room.imageUrl}
-                title={room.title}
-              />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
-                  {room.title}
+                  <BedIcon /> {offer.rooms.map((room) => room.roomName).join(", ")}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {room.description}
+                  Check-in: {formatCheckInDate(offer)}
                 </Typography>
-                <Typography variant="body1" color="textPrimary" sx={{ marginTop: '10px' }}>
-                  Price: {room.price}
+                <Typography variant="body2" color="textSecondary">
+                  Nights: {offer.night}
                 </Typography>
-                <Typography variant="body2" color="textPrimary">
+                {offer.price && (
+                  <Typography variant="body1" color="textPrimary" sx={{ marginTop: "10px" }}>
+                    Price: {offer.price.amount} {offer.price.currency}
+                  </Typography>
+                )}
+                <Typography variant="body2" color="textPrimary" mt={2}>
                   Features:
                 </Typography>
                 <FeaturesList>
-                  {room.features.map((feature, index) => (
-                    <FeatureItem key={index}>
-                      {feature.icon && (
-                          /*React.cloneElement(feature.icon, { style: { marginRight: '8px' } })*/
-                          <div style={{ marginRight: '8px' }}>{feature.icon}</div>
-                      )}
-                      <Typography variant="body2" color="textPrimary" sx={{ marginLeft: '5px' }}>
-                        {feature.text}
+                  {offer.rooms.map((room, index) => (
+                    <FeatureItem key={index} sx={{mb:0}}>
+                      <Typography variant="body2" color="textPrimary">
+                        {room.roomName} - {room.boardGroups.map(bg => bg.name).join(', ')}
                       </Typography>
                     </FeatureItem>
                   ))}
                 </FeaturesList>
               </CardContent>
-              <Link href={`/rooms/${room.id}`} passHref>
-                <ViewDetailsLink>
-                  View Details
-                </ViewDetailsLink>
-              </Link>
-                <ReserveButton variant="contained" fullWidth onClick={handleReserve} disabled={isLoading}>
-                  Reserve
-                </ReserveButton>
+              <ViewDetailsLink sx={{mr:2}} onClick={() => handleViewDetails({
+                id: parseInt(offer.offerId),
+                title: offer.rooms.map((room) => room.roomName).join(", "),
+                description: `Description for offer ${offer.offerId}`,
+                price: `${offer.price.amount} ${offer.price.currency}`,
+                features: offer.rooms.map((room) => ({
+                  icon: null,
+                  text: `${room.roomName} - ${room.boardGroups.map(bg => bg.name).join(', ')}`
+                }))
+              })}>
+                View Details
+              </ViewDetailsLink>
+              <ReserveButton
+                variant="contained"
+                fullWidth
+                onClick={handleReserve}
+                disabled={isLoading}
+              >
+                Reserve
+              </ReserveButton>
             </RootCard>
           </Grid>
         ))}
+
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+          <DialogTitle>{selectedRoom?.title}</DialogTitle>
+          <DialogContent>
+            <Typography gutterBottom>{selectedRoom?.description}</Typography>
+            <Typography variant="body1">Price: {selectedRoom?.price}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Close</Button>
+            <Button onClick={handleReserve} disabled={isLoading}>
+              Reserve
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Grid>
     </Container>
   );
-}
+};
 
 export default Rooms;
-
-
-
-
-

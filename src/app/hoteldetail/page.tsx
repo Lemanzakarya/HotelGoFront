@@ -14,49 +14,17 @@ import {
 } from "@mui/material";
 import Overview from "@/components/detail/Overview";
 import Rooms from "@/components/detail/Rooms";
-import { sendPostRequest } from "../responsemodel/ProductInfoModel";
+import { Facility, ProductInfo, sendPostRequest, TextCategory } from "../responsemodel/ProductInfoModel";
 import LoadingCircle from "@/components/shared/LoadingCircle";
+import { ProductInfoRequestDefault } from "../requestmodel/ProductInfo";
+import { getOffersRequestModelDefault } from "../requestmodel/getOffersMode";
+import { getOfferDetailRequestDefault } from "../requestmodel/getOfferDetailModel";
+import { getOffersBody } from "../responsemodel/getOffersModel";
+import { getOfferDetailsBody } from "../responsemodel/getOfferDetailModel";
+import { fetchExternalImage } from "next/dist/server/image-optimizer";
 
 
 
-
-
-type Address ={
-  addressLines : string[];
-}
-
-type Facility = {
-  name:string;
-  isPriced:boolean;
-};
-type TextCategory = {
-  name:string;
-  presentations:{
-    text:string;
-  }[];
-}[];
-
-type mediaFile = {
-  urlFull:string;
-}[];
-
-
-type data = {
-    hotel:{
-      seasons:{
-        mediaFiles : mediaFile[];
-        textCategories : TextCategory[];
-        facilityCategories:{
-          facilities: Facility[];
-        }[];
-      }
-      address:Address;
-      homePage:string;
-      hotelCategory:string;
-      name:string;
-      stars:number;
-    }
-}
 
 
 
@@ -66,41 +34,42 @@ const HotelDetail: React.FC = () => {
   // const [error, setError] = useState<string | null>(null);
   // const [name, setName] = useState<string>("")
 
-  const [hotelData, setHotelData] = useState<data | null>(); 
+  const [hotelData, setHotelData] = useState<ProductInfo | null>(); 
   const [hotelRoomPhotos, setHotelRoomPhotos] = useState<string[] | null>([]); 
   const [textCategory, setTextCategory] = useState<TextCategory | null>([]);
   const [hotelStar, setHotelStar] = useState<number | null>(0);
   const [facilities, setFacilities] = useState<Facility[]>([]); 
-  const postData = {
-    productType: 2,
-    ownerProvider: 2,
-    product: "400088",
-    culture: "en-US"
-  };
+
+
+
+  //for getOffers endpoint
+  const [offers, setOffers] = useState<getOffersBody | null>(null); 
+
+  const [offerDetails, setOfferDetails] = useState<getOfferDetailsBody | null>(null);
   
   useEffect(() => {
     const fetchHotelData = async () => { 
-      const data = await sendPostRequest(postData);
-      setHotelData(data.body);
+      const productInfo = await sendPostRequest(ProductInfoRequestDefault,'http://localhost:5083/Tourvisio/ProductInfo');
+      setHotelData(productInfo.body);
 
       try{
-        const urls = data.body.hotel.seasons[0].mediaFiles.map((file: {urlFull: any;}) => file.urlFull);
+        const urls = productInfo.body.hotel.seasons[0].mediaFiles.map((file: {urlFull: any;}) => file.urlFull);
         setHotelRoomPhotos(urls);
       }catch (error) {
         console.log(error);
       }try{
-        const facilities = data.body.hotel.seasons[0].facilityCategories[0].facilities;
+        const facilities = productInfo.body.hotel.seasons[0].facilityCategories[0].facilities;
         setFacilities(facilities);
       }catch (error) {
         console.log(error);
       }try{
-        const textCategory = data.body.hotel.seasons[0].textCategories;
+        const textCategory = productInfo.body.hotel.seasons[0].textCategories;
         //console.log(textCategory)
          setTextCategory(textCategory);
       }catch(error) { 
         console.log(error);
       }try{
-        const star = data.body?.hotel.stars;
+        const star = productInfo.body?.hotel.stars;
         setHotelStar(star);
       }catch(error){
         console.log(error);
@@ -111,17 +80,32 @@ const HotelDetail: React.FC = () => {
     fetchHotelData();
   }, []);
 
+  useEffect(() => {
+    const fetchOffersData = async () => {
 
+        const fetchOffers = await sendPostRequest(getOffersRequestModelDefault, 'http://localhost:5083/Tourvisio/GetOffers');
+        setOffers(fetchOffers.body);
+
+    };
+  
+    fetchOffersData();
+  }, [getOffersRequestModelDefault]);
+
+  // useEffect(() => {
+  //   const fetchOfferDetailsData = async () => {
+       
+  //     const fetchOfferDetails = await sendPostRequest(getOfferDetailRequestDefault, 'http://localhost:5083/Tourvisio/GetOfferDetails');
+  //     setOfferDetails(fetchOfferDetails.body);
+  //   } 
+  //   fetchOfferDetailsData();
+  // }, [getOfferDetailRequestDefault]);
 
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  // const imageUrls = productInfo?.mediaFile?.map(media => media.urlfull) || [];
-  // const description = productInfo?.description ?? "Description not available."; 
-  //const amenityNames = 
-  //productInfo?.facilityCategories?.map((category) => category.name) || ["Amenities not available"];
+
 
   return (
     <Box>
@@ -169,7 +153,10 @@ const HotelDetail: React.FC = () => {
           <Box sx={{ mt: 2 }}>
             <Rooms 
               isLoading={false} 
-              setIsLoading={setIsLoading } />
+              setIsLoading={setIsLoading }
+              offers={offers}
+              // offerDetails={offerDetails}  
+              />
                {isLoading && (
                       <Box
                           sx={{
