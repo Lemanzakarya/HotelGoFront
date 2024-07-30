@@ -1,12 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { Box, Button, Typography, Grid, Step, StepLabel, Stepper } from '@mui/material';
 import GuestInformation from './GuestInformation';
 import Payment from './Payment';
 import { useRouter } from 'next/navigation';
 import {BeginTransactionRequest} from "@/app/responsemodel/BeginTransactionModel";
 import {setReservationInfo} from "@/app/responsemodel/setReservationInfoModel";
-
+import Confirmation from '../reservation/Confirmation';
 type CommitTransactionResponse = {
     body: {
         reservationNumber: string;
@@ -14,55 +14,66 @@ type CommitTransactionResponse = {
         transactionId: string;
     }
 }
+type CommitTransactionRequest = {
+    transactionId: string;
+}
 
 const steps = ['Guest Information', 'Payment Methods', 'Reservation Confirmation'];
 
 
 const ReservationPage: React.FC = () => {
   const [step, setStep] = useState<number>(0);
-
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
-
   const router = useRouter();
+  const [reservationNumber ,setReservationNumber] = useState('');
+  const [offerId ,setOfferId] = useState("");
+  const [hotelName , setHotelName] = useState("Example Hotel Name");
+  const [isFetched , setIsFetched] = useState(false);
 
-  const [reservationNumber ,setReservationNumber] = useState('Something went wrong!');
 
-  const handleNext = async () => {
+  const handleNext = () => {
       setStep((prevStep) => prevStep + 1);
+  }
+  const fetchReservationData = async () => {
+
       const postData: BeginTransactionRequest = {
-          offerIds: ["1"],
-          currency: "USD"
+          offerIds: ["2$2$TR~^005^~23472~^005^~970.20~^005^~1473~^005^~1067.22~^005^~10fb48f4-f69b-46d5-b78b-ee6dcfcbc03f"],
+          currency: "EUR" ,// STATIC FIELD
       }
       try {
           const setReservationResponse = await setReservationInfo(postData);
-          const transactionId = setReservationResponse.transactionId;
-          const commitTransactionRequest = {
-                transactionId: transactionId,
-                paymentPlan: 1 // STATIC VALUE (CREDIT CARD)
-          }
+          console.log("setReservationInfo - done");
+          try {
+              setHotelName(setReservationResponse.body.reservationData.services[0].serviceDetails.hotelDetail.name)
+          }catch (error){
 
-          const response = await fetch('https://localhost:7220/Tourvisio/CommitTransaction', {
+          }
+          const transactionId = setReservationResponse.body.transactionId;
+          console.log('transaction Id fetched');
+          const commitTransactionRequest : CommitTransactionRequest = { transactionId: transactionId }
+          const response = await fetch("https://localhost:7220/Tourvisio/CommitTransaction", {
               method: 'POST',
               headers: {
                   'Accept': 'text/plain',
                   'Content-Type': 'application/json'
               },
               body: JSON.stringify(commitTransactionRequest)
-          });
+          })
+          console.log("Commit Transaction Response status: ", response.status);
+
           const commitTransactionResponse: CommitTransactionResponse = await response.json();
           setReservationNumber(commitTransactionResponse.body.reservationNumber);
+
+          setIsFetched(true);
       }catch (error) {
-          throw new Error('Commit transaction failed: ', error);
+          console.log('ERROR: ', error);
+      }finally {
+          setIsConfirmed(true);
+          setStep((prevStep) => prevStep + 1);
       }
   }
-
-
   const handleBack = () => setStep((prevStep) => prevStep - 1);
 
-  const handleConfirm = () => {
-    setIsConfirmed(true);
-    setTimeout(() => router.push('/search'), 2000);
-  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -92,22 +103,13 @@ const ReservationPage: React.FC = () => {
             )}
             {step === 1 && <Payment />}
             {step === 2 && !isConfirmed && (
+                 <Confirmation /> )}
+            {step === 3 && (
               <Box>
-                <Typography variant="h6">Reservation Confirmation</Typography>
+                  <Typography variant="h1">{isFetched ? reservationNumber : "Something went wrong :("}</Typography>
+                <Typography variant="h6">{isFetched ? "Please try again later" : "Congratulations"}</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>
-                  Please review your information and confirm your reservation.
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>Hotel Name: Example Hotel</Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>Reservation Dates: Check-in Date - Check-out Date</Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>Amount Paid: $Amount</Typography>
-              </Box>
-            )}
-            {isConfirmed && (
-              <Box>
-                  <Typography variant="h1">{reservationNumber}</Typography>
-                <Typography variant="h6">Congratulations!</Typography>
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                  Your reservation has been successfully made at the hotel.
+                    {reservationNumber=== "Something went wrong!" ? "Your reservation could not be completed" : "Your reservation has been confirmed. Your reservation number is shown above. Please keep this number for your records."}
                 </Typography>
               </Box>
             )}
@@ -123,7 +125,7 @@ const ReservationPage: React.FC = () => {
                 </Button>
               )}
               {step === steps.length - 1 && !isConfirmed && (
-                <Button variant="contained" onClick={handleConfirm}>
+                <Button variant="contained" onClick={fetchReservationData}>
                   Confirm
                 </Button>
               )}
@@ -151,7 +153,7 @@ const ReservationPage: React.FC = () => {
               }}
             />
             <Typography variant="h6" sx={{ mb: 2 }}>Hotel Details</Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>Hotel Name: Example Hotel</Typography>
+            <Typography variant="body2" sx={{ mb: 1 }}>Hotel Name: {hotelName}</Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>Location: 123 Example St, City</Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>Rating: 4.5 Stars</Typography>
           </Box>

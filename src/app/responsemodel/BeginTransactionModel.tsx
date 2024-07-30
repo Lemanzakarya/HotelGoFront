@@ -200,10 +200,11 @@ type PaymentPlan = {
 };
 export type  BeginTransactionRequest = {
     offerIds: string[];
-    currency: string;
+    currency : string;
 }
 
 const sendBeginTransactionRequest = async (postData:BeginTransactionRequest) : Promise<BeginTransactionResponse> => {
+    console.log("Begin transaction started...");
     try {
         const response = await fetch('https://localhost:7220/Tourvisio/BeginTransaction', {
             method: 'POST',
@@ -213,10 +214,14 @@ const sendBeginTransactionRequest = async (postData:BeginTransactionRequest) : P
             },
             body: JSON.stringify(postData)
         });
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            console.error('Server Error:', errorResponse);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return await response.json();
     }catch (error){
-        console.log('ERROR: ',error);
-        throw new Error(error.message);
+        console.log('ERROR AMK: ',error);
     }
 }
 export { sendBeginTransactionRequest };

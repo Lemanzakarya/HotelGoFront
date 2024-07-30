@@ -51,9 +51,11 @@ type SetReservationInfoRequestModel = {
 };
 
 interface SetReservationInfoResponse {
-    transactionId: string;
-    expiresOn: string;
-    reservationData: ReservationData;
+    body: {
+        transactionId: string;
+        expiresOn: string;
+        reservationData: ReservationData;
+    }
 }
 
 interface ReservationData {
@@ -251,58 +253,108 @@ interface PaymentPlanPrice {
 }
 
 const setReservationInfo = async (postData : BeginTransactionRequest) : Promise<SetReservationInfoResponse> => {
+    console.log("Set Reservation Info started...")
     try {
         const beginTransactionResponse = await sendBeginTransactionRequest(postData);
         const transactionId = beginTransactionResponse.body.transactionId;
-        const setReservationInfoRequest: SetReservationInfoRequestModel = {
-            transactionId: transactionId,
-            travellers: beginTransactionResponse.body.reservationData.travellers.map((traveller) => ({
-                travellerId: traveller.travellerId,
-                type: traveller.type,
-                title: traveller.title,
-                academicTitle: {
-                    id: 0, // STATIC FIELD
-                },
-                passengerType: traveller.passengerType,
-                name: "input for name",//!!!!!!!!
-                surname: "input for surname",//!!!!!!!!
-                isLeader: traveller.isLeader,
-                birthDate: "input for birthDate",//!!!!!!!!
-                nationality: {
-                    twoLetterCode: "input for twoLetterCode",//!!!!!!!! ???????
-                },
-                identityNumber: traveller.identityNumber,// ???????
-                passportInfo: { // ????? is this much info needed ?????
-                    serial: traveller.passportInfo.serial,
-                    number: traveller.passportInfo.number,
-                    expireDate: traveller.passportInfo.expireDate,
-                    issueDate: traveller.passportInfo.issueDate,
-                    citizenshipCountryCode: traveller.passportInfo.citizenshipCountryCode,
-                    issueCountryCode: traveller.passportInfo.issueCountryCode,
-                },
-                address: {
-                    contactPhone: {
-                        countryCode: "input for country code",//!!!!!!!!
-                        areaCode: "input for area code",//!!!!!!!!
-                        phoneNumber: "input for phone number",//!!!!!!!!
+        console.log('Begin Transaction -> successfully');
+        const setReservationInfoRequest : SetReservationInfoRequestModel = {
+            transactionId : transactionId,
+            travellers : [
+                {
+                    travellerId: "1",
+                    type: 1,
+                    title: 1,
+                    academicTitle: {
+                        id: 1,
                     },
-                    email: traveller.address.email,
-                    address: traveller.address.address,
-                    zipCode: traveller.address.zipCode,
-                    city: {
-                        id: traveller.address.city.id,
-                        name: traveller.address.city.name,
+                    passengerType: 1,
+                    name: "Name",
+                    surname: "Surname",
+                    isLeader: true,
+                    birthDate: "1990-10-10T00:00:00",
+                    nationality: {
+                        twoLetterCode: "DE",//!!!!!!! fetch it
                     },
-                    country: {
-                        id: traveller.address.country.id,
-                        name: traveller.address.country.name,
+                    identityNumber: "",
+                    passportInfo: {
+                        serial: 'a',
+                        number: '13',
+                        expireDate: "2030-01-01T00:00:00",
+                        issueDate: "2020-01-01T00:00:00",
+                        citizenshipCountryCode: "",
+                        issueCountryCode: "21",
                     },
+                    address: {
+                        contactPhone: {
+                            countryCode: "90",
+                            areaCode: "555",
+                            phoneNumber: "5555555",
+                        },
+                        email: "email@test.com",
+                        address: "",
+                        zipCode: "",
+                        city: {
+                            id: "",
+                            name: "",
+                        },
+                        country: {
+                            id: "",
+                            name: "",
+                        },
+                    },
+                    orderNumber: 1,
+                    status: 0,
+                    gender: 0,
                 },
-                orderNumber: traveller.orderNumber,
-                status: traveller.status,
-                gender: 0,//!!!!!!!! INPUT FIELD
-            })),
-        };
+                {
+                    travellerId: "2",
+                    type: 1,
+                    title: 3,
+                    academicTitle: {
+                        id: 1,
+                    },
+                    passengerType: 1,
+                    name: "SecondName",
+                    surname: "Surname",
+                    isLeader: false,
+                    birthDate: "1990-01-01T00:00:00",
+                    nationality: {
+                        twoLetterCode: "DE",
+                    },
+                    identityNumber: "",
+                    passportInfo: {
+                        serial: 'a',
+                        number: '19',
+                        expireDate: "2030-01-01T00:00:00",
+                        issueDate: "2020-01-01T00:00:00",
+                        citizenshipCountryCode: "",
+                        issueCountryCode: "12",
+                    },
+                    address: {
+                        contactPhone: {
+                            countryCode: "90",
+                            areaCode: "555",
+                            phoneNumber: "5555555",
+                        },
+                        email: "email@test.com",
+                        address: "",
+                        zipCode: "",
+                        city: {
+                            id: "",
+                            name: "",
+                        },
+                        country: {
+                            id: "",
+                            name: "",
+                        },
+                    },
+                    orderNumber: 2,
+                    status: 0,
+                    gender: 1,
+                },
+            ]
+        }
         const response = await fetch("https://localhost:7220/Tourvisio/SetReservationInfo", {
             method:'POST',
             headers: {
@@ -311,10 +363,14 @@ const setReservationInfo = async (postData : BeginTransactionRequest) : Promise<
             },
             body : JSON.stringify(setReservationInfoRequest)
         })
+        if (response.ok) {
+            console.log('Reservation info request done successfully');
+        }else {
+            throw new Error('Reservation info request failed');
+        }
         return await response.json();
     }catch (error) {
         console.error('Error sending reservation info request:', error);
-        throw error;
     }
 }
 export { setReservationInfo };
