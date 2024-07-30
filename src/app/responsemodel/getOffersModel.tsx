@@ -73,6 +73,7 @@ type Offer ={
         [x: string]: any;
         priceBreakdowns:PriceBreakdown[];
     }[];
+    price:Price;
 }
 type Room = {
     roomName:string;
