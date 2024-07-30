@@ -1,12 +1,10 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import {AutocompleteChangeReason, Popper, PopperProps} from "@mui/material";
-
+import Autocomplete, { AutocompleteChangeReason } from '@mui/material/Autocomplete';
+import Popper, { PopperProps } from '@mui/material/Popper';
 
 type CustomPopperProps = PopperProps & {
-    // Any additional props if necessary
 };
 
 const CustomPopper: React.FC<CustomPopperProps> = (props) => {
@@ -15,27 +13,27 @@ const CustomPopper: React.FC<CustomPopperProps> = (props) => {
     return (
         <Popper anchorEl={anchorEl} open={open} style={{ width: '200px', zIndex: 1300 }} {...otherProps}>
             <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
-                {children as React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | Iterable<React.ReactNode> | React.ReactPortal | boolean | undefined | null}
+                {children as React.ReactNode}
             </Box>
         </Popper>
     );
 };
 
-
-export default function CountrySelect({value , onChange}: {
+export default function CountrySelect({
+    value,
+    onChange,
+    label
+}: {
     value: string | null;
     onChange: (event: React.SyntheticEvent, newValue: string | null) => void;
+    label : string | null;
 }) {
-
     const getCountryByCode = (value: string) => {
-        return countries.find((country) => country.code === value);
-    }
-    /*const handleChange = (event, newValue) => {
-        onChange(event, newValue ? newValue.code : null);
-    };*/
+        return countries.find((country) => country.label === value);
+    };
+
     const handleChange = (event: React.SyntheticEvent<Element, Event>, newValue: CountryType | null, reason: AutocompleteChangeReason) => {
-        //const targetElement = event.target as HTMLInputElement;
-        onChange(event, newValue ? newValue.code : null);
+        onChange(event, newValue ? newValue.label : null);
     };
 
     const countryValue = getCountryByCode(value || 'TR');
@@ -43,7 +41,8 @@ export default function CountrySelect({value , onChange}: {
     return (
         <Autocomplete
             id="country-select-demo"
-            sx={{ width: 130 }}
+            size="small"
+            sx={{ width: "55%"}}
             options={countries}
             value={countryValue}
             onChange={handleChange}
@@ -52,37 +51,32 @@ export default function CountrySelect({value , onChange}: {
             clearIcon={null}
             getOptionLabel={(option) => option.label}
             PopperComponent={CustomPopper}
-            renderOption={(props, option) => {
-                const { key, ...optionProps } = props;
-                return (
-                    <Box
-                        key={key}
-                        component="li"
-                        sx={{ '& > img': { mr: 2, flexShrink: 0 } , borderRadius:2 , backgroundColor:'white' }}
-                        {...optionProps}
-                    >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            loading="lazy"
-                            width="20"
-                            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                            alt=""
-                        />
-                        {option.label} ({option.code})
-                    </Box>
-                );
-            }}
+            renderOption={(props, option) => (
+                <Box
+                    component="li"
+                    sx={{ '& > img': { mr: 2, flexShrink: 0 }, borderRadius: 2, backgroundColor: 'white' }}
+                    {...props}
+                >
+                    <img
+                        loading="lazy"
+                        width="20"
+                        srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                        src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                        alt=""
+                    />
+                    {option.label} ({option.code})
+                </Box>
+            )}
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Country"
+                    label={label || "Nationality"}
                     InputLabelProps={{
                         sx: { fontSize: 18 }
                     }}
                     inputProps={{
                         ...params.inputProps,
-                        autoComplete: 'new-password',
+                        autoComplete: 'off',
                         style: {
                             fontSize: 13
                         }
@@ -91,6 +85,13 @@ export default function CountrySelect({value , onChange}: {
             )}
         />
     );
+}
+
+interface CountryType {
+    code: string;
+    label: string;
+    phone: string;
+    suggested?: boolean;
 }
 
 interface CountryType {

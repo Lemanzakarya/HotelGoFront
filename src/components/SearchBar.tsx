@@ -330,6 +330,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             <CountrySelect
                                 value={selectedNationality}
                                 onChange={(e , newValue) => setSelectedNationality(newValue)}
+                                label={"Nationality"}
                             />
                         </Box>
 
@@ -343,7 +344,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                 borderRadius: 4,
                                 border: '1px solid #ccc',
                                 backgroundColor: 'rgba(161,213,236,0.3)',
-                                width:130,
+                                width:"55%",
                                 justifyContent:'space-between',
                                 padding:'0 4px'
                             }}>
@@ -372,7 +373,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                 borderRadius: 4,
                                 border: '1px solid #ccc',
                                 backgroundColor: 'rgba(161,213,236,0.3)',
-                                width:130,
+                                width:"55%",
                                 justifyContent:'space-between',
                                 padding:'0 4px'
                             }}>

@@ -239,7 +239,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
       <Divider component="li" />
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
         <Typography>Price Range</Typography>
-        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceState[0]} TL - ${priceState[1]} TL`}</Typography>
+        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceState[0]} ${currency} - ${priceState[1]} ${currency}`}</Typography>
         <Slider
           getAriaLabel={() => 'Price range'}
           value={priceState}

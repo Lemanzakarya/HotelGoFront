@@ -4,6 +4,7 @@ import { Box, Button, Typography, Grid, Step, StepLabel, Stepper } from '@mui/ma
 import GuestInformation from './GuestInformation';
 import Payment from './Payment';
 import { useRouter } from 'next/navigation';
+import Confirmation from '../reservation/Confirmation';
 
 const steps = ['Guest Information', 'Payment Methods', 'Reservation Confirmation'];
 
@@ -52,16 +53,7 @@ const ReservationPage: React.FC = () => {
             )}
             {step === 1 && <Payment />}
             {step === 2 && !isConfirmed && (
-              <Box>
-                <Typography variant="h6">Reservation Confirmation</Typography>
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                  Please review your information and confirm your reservation.
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>Hotel Name: Example Hotel</Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>Reservation Dates: Check-in Date - Check-out Date</Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>Amount Paid: $Amount</Typography>
-              </Box>
-            )}
+                 <Confirmation /> )}
             {isConfirmed && (
               <Box>
                 <Typography variant="h6">Congratulations!</Typography>

@@ -1,4 +1,5 @@
-"use client";
+"use client"
+
 import React, { useEffect, useState, Suspense } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from "@mui/material/Box";
@@ -7,8 +8,6 @@ import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
 import LoadingCircle from "@/components/shared/LoadingCircle";
 import useCurrencyStore from "@/stores/useCurrencyStore";
-import { useRouter } from "next/navigation";
-import { useStore } from "zustand";
 import useSearchStore from "@/stores/useSearchStore";
 import dayjs from "dayjs";
 
@@ -32,7 +31,7 @@ interface HotelProductSimpleCity {
 
 interface PriceSearchCountry {
   internationalCode?: string;
-  name?: string;
+  name?: string ;
 }
 
 interface HotelOffer {
@@ -40,11 +39,18 @@ interface HotelOffer {
   offerId?: string;
   price?: Price;
 }
-interface Price{
+
+interface Price {
   currency?: string;
   amount?: string;
 }
 
+// Utility function to format price to 2 decimal places
+const formatPrice = (price: string | undefined) => {
+  if (!price) return price;
+  const numericPrice = parseFloat(price);
+  return numericPrice.toFixed(2);
+};
 
 const SearchPageServer = () => {
   const { selectedCurrency } = useCurrencyStore();
@@ -58,12 +64,9 @@ const SearchPageServer = () => {
     setFilteredResults(results);
   };
 
-
-
   useEffect(() => {
     fetchResults();
   }, [selectedCurrency]);
-
 
   const location = useSearchStore((state) => state.location);
   const adults = useSearchStore((state) => state.adults);
@@ -108,13 +111,8 @@ const SearchPageServer = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-
     }
-
   }
-
-
-  //todo currency değiştiğinde cardlardaki fiyat değişmiyor
 
   return (
     <div style={{ marginTop: "20px" }}>
@@ -131,7 +129,7 @@ const SearchPageServer = () => {
           height={isSmallScreen ? "100%" : 80}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
-          />
+        />
       </Box>
       <Box
         display="flex"
@@ -156,9 +154,9 @@ const SearchPageServer = () => {
               <LoadingCircle />
             </Box>
           )}
-           <div className="filter">
-        <FilterSidebar id={searchId} onFilteredResults={handleFilteredResults} currency={selectedCurrency} />
-      </div>
+          <div className="filter">
+            <FilterSidebar id={searchId} onFilteredResults={handleFilteredResults} currency={selectedCurrency} />
+          </div>
         </Box>
         <Box
           flex="3"
@@ -168,18 +166,17 @@ const SearchPageServer = () => {
           marginLeft={isSmallScreen ? "5%" : "0%"}
         >
           {filteredResults?.map((hotel, index) => (
-            console.log(hotel),
             <Box key={index}>
               <HotelCard
-              title={hotel.name}
-              location={hotel?.city?.name + ', ' + hotel?.country?.name}
-              price={hotel.offers?.[0].price?.amount}
-              stars={hotel.stars}
-              isLoading={isLoading}
-              thumbnail={hotel.thumbnailFull}
-              nights={hotel.offers?.[0].night}
-              currency= {hotel.offers?.[0].price?.currency}
-              setIsLoading={setIsLoading}
+                title={hotel.name}
+                location={`${hotel.city?.name ? hotel.city.name : ''}${hotel.country?.name ? ', ' + hotel.country.name : ''}`}
+                price={formatPrice(hotel.offers?.[0].price?.amount)}
+                stars={hotel.stars}
+                isLoading={isLoading}
+                thumbnail={hotel.thumbnailFull}
+                nights={hotel.offers?.[0].night}
+                currency={hotel.offers?.[0].price?.currency}
+                setIsLoading={setIsLoading}
               />
             </Box>
           ))}
@@ -188,12 +185,12 @@ const SearchPageServer = () => {
     </div>
   );
 };
-const SearchPage = () => {
 
-  console.log("çalıtşım")
+const SearchPage = () => {
+  console.log("çalıştım");
   return (
     <Suspense>
-      <SearchPageServer/>
+      <SearchPageServer />
     </Suspense>
   );
 };
