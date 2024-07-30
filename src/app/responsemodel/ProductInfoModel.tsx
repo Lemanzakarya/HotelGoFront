@@ -1,25 +1,44 @@
-type Hotel ={
-  hotel:{
-    homePage:string;
-    hotelCategory:string;
-    name:string;
-  };
-};
+export type Address ={
+  addressLines : string[];
+}
 
-type Facilities = {
+export type Facility = {
   name:string;
-  isPRiced:boolean;
-}[];
-
-type TextCategory = {
+  isPriced:boolean;
+};
+export type TextCategory = {
   name:string;
   presentations:{
     text:string;
   }[];
+}[];
+
+export type mediaFile = {
+  urlFull:string;
+}[];
+
+
+export type ProductInfo = {
+    hotel:{
+      seasons:{
+        mediaFiles : mediaFile[];
+        textCategories : TextCategory[];
+        facilityCategories:{
+          facilities: Facility[];
+        }[];
+      }
+      address:Address;
+      homePage:string;
+      hotelCategory:string;
+      name:string;
+      stars:number;
+    }
 }
 
-const sendPostRequest = async(postData:any) => {
-  const response = await fetch('https://localhost:7220/Tourvisio/ProductInfo', {
+
+
+const sendPostRequest = async(postData:any,url : string) => {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Accept' : 'text/plain',
