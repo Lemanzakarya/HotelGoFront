@@ -51,11 +51,16 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const setOfferId = usePriceSearchStore(state => state.setOfferId);
   const setProduct = useProductInfoStore(state => state.setProduct); 
   const setOwnerProvider = useProductInfoStore(state => state.setOwnerProvider);
+  const setProductId = usePriceSearchStore(state => state.setProductId);
+  const setCurrency = usePriceSearchStore(state => state.setCurrency);
+  
 
   const handleLookThrough = () => {
     setIsLoading(true);
 
     setOfferId(offerId);
+    setProductId(productId);
+    setCurrency(currency);
     setProduct(productId);
     setOwnerProvider(ownerProvider);
 

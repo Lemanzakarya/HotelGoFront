@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
 interface PriceSearchState {
-  searchId: string | undefined;
-  offerId: string | undefined;
-  productType: number;
+  searchId: string | undefined; //
+  offerId: string | undefined; //
+  productType: number; 
   productId: string | undefined;
-  currency: string;
+  currency: string | undefined;
   culture: string;
   getRoomInfo: boolean;
 
@@ -13,7 +13,7 @@ interface PriceSearchState {
   setOfferId: (offerId: string | undefined) => void;
   setProductType: (productType: number) => void;
   setProductId: (productId: string | undefined) => void;
-  setCurrency: (currency: string) => void;
+  setCurrency: (currency: string | undefined) => void;
   setCulture: (culture: string) => void;
   setGetRoomInfo: (getRoomInfo: boolean) => void;
 }

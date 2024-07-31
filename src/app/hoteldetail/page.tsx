@@ -19,6 +19,7 @@ import LoadingCircle from "@/components/shared/LoadingCircle";
 import { getOffersRequestModelDefault } from "../requestmodel/getOffersMode";
 import { getOffersBody } from "../responsemodel/getOffersModel";
 import useProductInfoStore from "@/stores/useProductInfoStore";
+import usePriceSearchStore from "@/stores/usePriceSearch";
 
 
 
@@ -41,6 +42,7 @@ const HotelDetail: React.FC = () => {
   const [offers, setOffers] = useState<getOffersBody | null>(null); 
 
   const { productType, ownerProvider, product, culture } = useProductInfoStore();
+  const { searchId,offerId,productId,currency,getRoomInfo} = usePriceSearchStore();
   
   const productInfoReq = {
     productType:productType,
@@ -70,7 +72,7 @@ const HotelDetail: React.FC = () => {
       }catch (error) {
         console.log(error);
       }try{
-        const textCategory = productInfo.body.hotel.seasons[0].textCategories;
+        const textCategory = productInfo.body.hotel.seasons[0]?.textCategories;
         //console.log(textCategory)
          setTextCategory(textCategory);
       }catch(error) { 
@@ -87,10 +89,20 @@ const HotelDetail: React.FC = () => {
     fetchHotelData();
   }, []);
 
+  const getOfferReq ={
+    searchId:searchId,
+    offerId:offerId,
+    productId:productId,
+    productType:productType,
+    currency:currency,
+    culture:culture,
+    getRoomInfo:getRoomInfo
+  }
+
   useEffect(() => {
     const fetchOffersData = async () => {
 
-        const fetchOffers = await sendPostRequest(getOffersRequestModelDefault, 'http://localhost:5083/Tourvisio/GetOffers');
+        const fetchOffers = await sendPostRequest(getOfferReq, 'http://localhost:5083/Tourvisio/GetOffers');
         setOffers(fetchOffers.body);
 
     };
@@ -98,9 +110,7 @@ const HotelDetail: React.FC = () => {
     fetchOffersData();
   }, [getOffersRequestModelDefault]);
 
-  // const getOfferReq ={
 
-  // }
   // useEffect(() => {
   //   const fetchOfferDetailsData = async () => {
        
@@ -132,7 +142,7 @@ const HotelDetail: React.FC = () => {
             precision={0.5}
           />
           <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-            { hotelData?.hotel.address.addressLines.join(',') }
+            { hotelData?.hotel?.address?.addressLines.join(',') }
           </Typography>
         </Box>
         

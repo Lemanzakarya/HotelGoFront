@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import CheckBox from "@mui/material/Checkbox";
 import { CheckBoxTwoTone, ExpandMoreTwoTone, FilterList } from "@mui/icons-material";
+import usePriceSearchStore from '@/stores/usePriceSearch';
 
 const style = {
   width: 'auto',
@@ -93,11 +94,13 @@ const FilterSidebar = (props: FilterSidebarProps) => {
   const [selectedStars, setSelectedStars] = useState<number | null>(null);
   const [currencyState, setCurrencyState] = useState<string | undefined>(currency);
 
+  const setSearchId = usePriceSearchStore(state => state.setSearchId);
 
 
 
   useEffect(() => {
     if (id) {
+      setSearchId(id);
       fetchResults();
     }
   }, [id, selectedFacilities, selectedBoardOptions, selectedStars, priceState]);
