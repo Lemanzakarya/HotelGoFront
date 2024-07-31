@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AspectRatio from '@mui/joy/AspectRatio';
 import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
@@ -8,6 +8,9 @@ import Typography from '@mui/joy/Typography';
 import Button from '@mui/joy/Button';
 import { useMediaQuery, Rating, Grid } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import useSearchStore from '@/stores/useSearchStore';
+import usePriceSearchStore from '@/stores/usePriceSearch';
+import useProductInfoStore from '@/stores/useProductInfoStore';
 
 interface HotelCardProps {
   title: string | undefined;
@@ -19,10 +22,13 @@ interface HotelCardProps {
   nights: number | undefined;
   currency: string | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  offerId:string|undefined;
+  productId:string|undefined;
+  ownerProvider: number | undefined
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
-  title,
+  title, 
   location,
   price: initialPrice,
   stars = '0',
@@ -31,6 +37,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
   nights,
   currency,
   setIsLoading,
+  offerId,
+  productId,
+  ownerProvider
 }) => {
   const [price, setPrice] = useState<string>(initialPrice || '');
   const isSmallScreen = useMediaQuery('(max-width:900px)');
@@ -39,15 +48,26 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const starnum = parseInt(stars);
   const defaultThumbnail = 'https://orinter.com.br/public/img/hotel-default.jpg';
 
+  const setOfferId = usePriceSearchStore(state => state.setOfferId);
+  const setProduct = useProductInfoStore(state => state.setProduct); 
+  const setOwnerProvider = useProductInfoStore(state => state.setOwnerProvider);
+
   const handleLookThrough = () => {
     setIsLoading(true);
+
+    setOfferId(offerId);
+    setProduct(productId);
+    setOwnerProvider(ownerProvider);
+
     setTimeout(() => {
       router.push('/hoteldetail');
       setIsLoading(false);
     }, 2000);
   };
 
+
   return (
+
     <Card
       orientation={isSmallScreen ? 'vertical' : 'horizontal'}
       variant="outlined"

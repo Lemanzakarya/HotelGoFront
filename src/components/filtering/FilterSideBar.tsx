@@ -5,9 +5,6 @@ import {
 } from "@mui/material";
 import CheckBox from "@mui/material/Checkbox";
 import { CheckBoxTwoTone, ExpandMoreTwoTone, FilterList } from "@mui/icons-material";
-import HotelCard from '../card/HotelCard';
-import { json } from 'stream/consumers';
-import SearchPage from '@/app/search/page';
 
 const style = {
   width: 'auto',
@@ -95,6 +92,9 @@ const FilterSidebar = (props: FilterSidebarProps) => {
   const [results, setResults] = useState<PriceSearchHotel[] | undefined>(undefined);
   const [selectedStars, setSelectedStars] = useState<number | null>(null);
   const [currencyState, setCurrencyState] = useState<string | undefined>(currency);
+
+
+
 
   useEffect(() => {
     if (id) {
@@ -186,6 +186,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
       });
       if (response.ok) {  
         const data:GetPagingDataResponseModel = await response.json();
+        console.log(data)
         setResults(data?.body?.hotels);
         onFilteredResults(data?.body?.hotels);
         var min = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.from

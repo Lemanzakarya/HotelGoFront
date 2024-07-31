@@ -16,12 +16,9 @@ import Overview from "@/components/detail/Overview";
 import Rooms from "@/components/detail/Rooms";
 import { Facility, ProductInfo, sendPostRequest, TextCategory } from "../responsemodel/ProductInfoModel";
 import LoadingCircle from "@/components/shared/LoadingCircle";
-import { ProductInfoRequestDefault } from "../requestmodel/ProductInfo";
 import { getOffersRequestModelDefault } from "../requestmodel/getOffersMode";
-import { getOfferDetailRequestDefault } from "../requestmodel/getOfferDetailModel";
 import { getOffersBody } from "../responsemodel/getOffersModel";
-import { getOfferDetailsBody } from "../responsemodel/getOfferDetailModel";
-import { fetchExternalImage } from "next/dist/server/image-optimizer";
+import useProductInfoStore from "@/stores/useProductInfoStore";
 
 
 
@@ -40,25 +37,35 @@ const HotelDetail: React.FC = () => {
   const [hotelStar, setHotelStar] = useState<number | null>(0);
   const [facilities, setFacilities] = useState<Facility[]>([]); 
 
-
-
   //for getOffers endpoint
   const [offers, setOffers] = useState<getOffersBody | null>(null); 
 
-  const [offerDetails, setOfferDetails] = useState<getOfferDetailsBody | null>(null);
+  const { productType, ownerProvider, product, culture } = useProductInfoStore();
   
+  const productInfoReq = {
+    productType:productType,
+    ownerProvider:ownerProvider,
+    product:product,
+    culture:culture
+  };
   useEffect(() => {
+    console.log(productType)
+    console.log(ownerProvider)
+    console.log(product)
+    console.log(culture)
     const fetchHotelData = async () => { 
-      const productInfo = await sendPostRequest(ProductInfoRequestDefault,'http://localhost:5083/Tourvisio/ProductInfo');
+      const productInfo = await sendPostRequest( productInfoReq ,'https://localhost:7220/Tourvisio/ProductInfo');
+
+      console.log(productInfo)
       setHotelData(productInfo.body);
 
       try{
-        const urls = productInfo.body.hotel.seasons[0].mediaFiles.map((file: {urlFull: any;}) => file.urlFull);
+        const urls = productInfo.body.hotel.seasons[0]?.mediaFiles.map((file: {urlFull: any;}) => file.urlFull);
         setHotelRoomPhotos(urls);
       }catch (error) {
         console.log(error);
       }try{
-        const facilities = productInfo.body.hotel.seasons[0].facilityCategories[0].facilities;
+        const facilities = productInfo.body.hotel.seasons[0]?.facilityCategories[0].facilities;
         setFacilities(facilities);
       }catch (error) {
         console.log(error);
@@ -91,10 +98,13 @@ const HotelDetail: React.FC = () => {
     fetchOffersData();
   }, [getOffersRequestModelDefault]);
 
+  // const getOfferReq ={
+
+  // }
   // useEffect(() => {
   //   const fetchOfferDetailsData = async () => {
        
-  //     const fetchOfferDetails = await sendPostRequest(getOfferDetailRequestDefault, 'http://localhost:5083/Tourvisio/GetOfferDetails');
+  //     const fetchOfferDetails = await sendPostRequest(getOfferReq, 'http://localhost:5083/Tourvisio/GetOfferDetails');
   //     setOfferDetails(fetchOfferDetails.body);
   //   } 
   //   fetchOfferDetailsData();

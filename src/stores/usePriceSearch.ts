@@ -1,18 +1,18 @@
 import { create } from "zustand";
 
 interface PriceSearchState {
-  searchId: string;
-  offerId: string;
+  searchId: string | undefined;
+  offerId: string | undefined;
   productType: number;
-  productId: string;
+  productId: string | undefined;
   currency: string;
   culture: string;
   getRoomInfo: boolean;
 
-  setSearchId: (searchId: string) => void;
-  setOfferId: (offerId: string) => void;
+  setSearchId: (searchId: string | undefined) => void;
+  setOfferId: (offerId: string | undefined) => void;
   setProductType: (productType: number) => void;
-  setProductId: (productId: string) => void;
+  setProductId: (productId: string | undefined) => void;
   setCurrency: (currency: string) => void;
   setCulture: (culture: string) => void;
   setGetRoomInfo: (getRoomInfo: boolean) => void;

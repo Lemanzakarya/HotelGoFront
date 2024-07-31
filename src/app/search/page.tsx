@@ -112,6 +112,7 @@ const SearchPageServer = () => {
     } catch (error) {
       console.error('Error:', error);
     }
+    
   }
 
   return (
@@ -177,6 +178,9 @@ const SearchPageServer = () => {
                 nights={hotel.offers?.[0].night}
                 currency={hotel.offers?.[0].price?.currency}
                 setIsLoading={setIsLoading}
+                offerId={hotel.offers?.[0].offerId}
+                productId={hotel.id}
+                ownerProvider={hotel.provider}
               />
             </Box>
           ))}
