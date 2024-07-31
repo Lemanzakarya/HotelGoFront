@@ -27,7 +27,7 @@ interface SearchBarProps {
     guestsSx?: React.CSSProperties;
     searchButtonSx?: React.CSSProperties;
     containerSx?: React.CSSProperties;
-    fetchFunct: () => Promise<void>;
+    fetchFunct?: () => Promise<void>;
 }
 
 interface Location {
@@ -153,7 +153,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         }
         router.push(`/search`);
-        fetchFunct();
+        if (fetchFunct) {
+          fetchFunct();
+        }
         setIsLoading(false);
 
     };

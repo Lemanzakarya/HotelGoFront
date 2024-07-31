@@ -56,31 +56,30 @@ const Page: React.FC = () => {
         };
         fetchVideoUrl();
     }, []);
-  return (
+    return (
 
-      <PageContainer>
-          {videoUrl && (
-              <VideoOverlay>
-                  <video src={videoUrl} autoPlay loop muted></video>
-              </VideoOverlay>
-          )}
-        <SearchBar
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              sx={{ backgroundColor: 'rgba(255,255,255,0)' }}
-              containerSx={{ backgroundColor: 'rgba(255,255,255,0.64)' }}
-              checkInSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
-              checkOutSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
-              guestsSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }} fetchFunct={function (): Promise<void> {
-                  throw new Error('Function not implemented.');
-              } }        />
-          {isLoading && (
+        <PageContainer>
+            {videoUrl && (
+                <VideoOverlay>
+                    <video src={videoUrl} autoPlay loop muted></video>
+                </VideoOverlay>
+            )}
+            <SearchBar
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                sx={{ backgroundColor: 'rgba(255,255,255,0)' }}
+                containerSx={{ backgroundColor: 'rgba(255,255,255,0.64)' }}
+                checkInSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+                checkOutSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+                guestsSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+            />
+            {isLoading && (
                 <LoadingContainer>
-                    <LoadingCircle/>
+                    <LoadingCircle />
                 </LoadingContainer>
-          ) }
-      </PageContainer>
-  );
+            )}
+        </PageContainer>
+    );
 };
 
 export default Page;
