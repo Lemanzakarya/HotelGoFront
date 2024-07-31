@@ -60,7 +60,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       }}
     >
       <CardOverflow>
-        <AspectRatio ratio={isSmallScreen ? 2 : 1} sx={{ width: isSmallScreen ? 550 : 230 }}>
+        <AspectRatio ratio={isSmallScreen ? 2 : 1} sx={{ width: isSmallScreen ? "auto" : 230 }}>
           <img
             src={thumbnail || defaultThumbnail}
             alt={title}
