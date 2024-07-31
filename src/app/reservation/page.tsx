@@ -1,21 +1,23 @@
 'use client';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Typography, Grid, Step, StepLabel, Stepper } from '@mui/material';
 import GuestInformation from './GuestInformation';
 import Payment from './Payment';
 import { useRouter } from 'next/navigation';
-import {BeginTransactionRequest} from "@/app/responsemodel/BeginTransactionModel";
-import {setReservationInfo} from "@/app/responsemodel/setReservationInfoModel";
+import { BeginTransactionRequest } from "@/app/responsemodel/BeginTransactionModel";
+import { setReservationInfo } from "@/app/responsemodel/setReservationInfoModel";
 import Confirmation from '../reservation/Confirmation';
+import useFormStore from '@/stores/useFormStore';
+
 type CommitTransactionResponse = {
-    body: {
-        reservationNumber: string;
-        encryptedReservationNumber: string;
-        transactionId: string;
-    }
+  body: {
+    reservationNumber: string;
+    encryptedReservationNumber: string;
+    transactionId: string;
+  }
 }
 type CommitTransactionRequest = {
-    transactionId: string;
+  transactionId: string;
 }
 
 const steps = ['Guest Information', 'Payment Methods', 'Reservation Confirmation'];
@@ -25,51 +27,51 @@ const ReservationPage: React.FC = () => {
   const [step, setStep] = useState<number>(0);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const router = useRouter();
-  const [reservationNumber ,setReservationNumber] = useState('');
-  const [offerId ,setOfferId] = useState("");
-  const [hotelName , setHotelName] = useState("Example Hotel Name");
-  const [isFetched , setIsFetched] = useState(false);
-
+  const [reservationNumber, setReservationNumber] = useState('');
+  const [offerId, setOfferId] = useState("");
+  const [hotelName, setHotelName] = useState("Example Hotel Name");
+  const [isFetched, setIsFetched] = useState(false);
+  const formSubmitted = useFormStore(state => state.formSubmitted);
 
   const handleNext = () => {
-      setStep((prevStep) => prevStep + 1);
+    setStep((prevStep) => prevStep + 1);
   }
   const fetchReservationData = async () => {
 
-      const postData: BeginTransactionRequest = {
-          offerIds: ["2$2$TR~^005^~23472~^005^~970.20~^005^~1473~^005^~1067.22~^005^~10fb48f4-f69b-46d5-b78b-ee6dcfcbc03f"],
-          currency: "EUR" ,// STATIC FIELD
+    const postData: BeginTransactionRequest = {
+      offerIds: ["2$2$TR~^005^~23472~^005^~970.20~^005^~1473~^005^~1067.22~^005^~10fb48f4-f69b-46d5-b78b-ee6dcfcbc03f"],
+      currency: "EUR",// STATIC FIELD
+    }
+    try {
+      const setReservationResponse = await setReservationInfo(postData);
+      console.log("setReservationInfo - done");
+      if (setReservationResponse?.body?.reservationData?.services?.[0]?.serviceDetails?.hotelDetail?.name) {
+        setHotelName(setReservationResponse.body.reservationData.services[0].serviceDetails.hotelDetail.name);
       }
-      try {
-          const setReservationResponse = await setReservationInfo(postData);
-          console.log("setReservationInfo - done");
-          if (setReservationResponse?.body?.reservationData?.services?.[0]?.serviceDetails?.hotelDetail?.name) {
-              setHotelName(setReservationResponse.body.reservationData.services[0].serviceDetails.hotelDetail.name);
-          }
-          const transactionId = setReservationResponse.body.transactionId;
-          console.log('transaction Id fetched');
-          const commitTransactionRequest : CommitTransactionRequest = { transactionId: transactionId }
-          const response = await fetch("https://localhost:7220/Tourvisio/CommitTransaction", {
-              method: 'POST',
-              headers: {
-                  'Accept': 'text/plain',
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(commitTransactionRequest)
-          })
-          console.log("Commit Transaction Response status: ", response.status);
+      const transactionId = setReservationResponse.body.transactionId;
+      console.log('transaction Id fetched');
+      const commitTransactionRequest: CommitTransactionRequest = { transactionId: transactionId }
+      const response = await fetch("https://localhost:7220/Tourvisio/CommitTransaction", {
+        method: 'POST',
+        headers: {
+          'Accept': 'text/plain',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(commitTransactionRequest)
+      })
+      console.log("Commit Transaction Response status: ", response.status);
 
-          const commitTransactionResponse: CommitTransactionResponse = await response.json();
-          setReservationNumber(commitTransactionResponse.body.reservationNumber);
+      const commitTransactionResponse: CommitTransactionResponse = await response.json();
+      setReservationNumber(commitTransactionResponse.body.reservationNumber);
 
-          setIsFetched(true);
-      }catch (error) {
-          console.log('ERROR: ', error);
-          throw error;
-      }finally {
-          setIsConfirmed(true);
-          setStep((prevStep) => prevStep + 1);
-      }
+      setIsFetched(true);
+    } catch (error) {
+      console.log('ERROR: ', error);
+      throw error;
+    } finally {
+      setIsConfirmed(true);
+      setStep((prevStep) => prevStep + 1);
+    }
   }
   const handleBack = () => setStep((prevStep) => prevStep - 1);
 
@@ -98,17 +100,17 @@ const ReservationPage: React.FC = () => {
             }}
           >
             {step === 0 && (
-              <GuestInformation/>
+              <GuestInformation />
             )}
             {step === 1 && <Payment />}
             {step === 2 && !isConfirmed && (
-                 <Confirmation /> )}
+              <Confirmation />)}
             {step === 3 && (
               <Box>
-                  <Typography variant="h1">{isFetched ? reservationNumber : "Something went wrong :("}</Typography>
+                <Typography variant="h1">{isFetched ? reservationNumber : "Something went wrong :("}</Typography>
                 <Typography variant="h6">{isFetched ? "Please try again later" : "Congratulations"}</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>
-                    {reservationNumber=== "Something went wrong!" ? "Your reservation could not be completed" : "Your reservation has been confirmed. Your reservation number is shown above. Please keep this number for your records."}
+                  {reservationNumber === "Something went wrong!" ? "Your reservation could not be completed" : "Your reservation has been confirmed. Your reservation number is shown above. Please keep this number for your records."}
                 </Typography>
               </Box>
             )}
@@ -119,9 +121,11 @@ const ReservationPage: React.FC = () => {
                 </Button>
               )}
               {step < steps.length - 1 && !isConfirmed && (
-                <Button variant="contained" onClick={handleNext}>
-                  Next
-                </Button>
+                <Box sx={{ ml: 'auto'}}> 
+                  <Button variant="contained" onClick={handleNext} disabled={!formSubmitted} >
+                    Next
+                  </Button>
+                </Box>
               )}
               {step === steps.length - 1 && !isConfirmed && (
                 <Button variant="contained" onClick={fetchReservationData}>

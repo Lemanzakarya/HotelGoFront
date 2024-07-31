@@ -22,7 +22,7 @@ const CustomPopper: React.FC<CustomPopperProps> = (props) => {
 export default function CountrySelect({
     value,
     onChange,
-    label
+    label,
 }: {
     value: string | null;
     onChange: (event: React.SyntheticEvent, newValue: string | null) => void;
@@ -46,6 +46,7 @@ export default function CountrySelect({
             options={countries}
             value={countryValue}
             onChange={handleChange}
+            aria-required={true}
             autoHighlight
             clearOnEscape={false}
             clearIcon={null}
@@ -72,7 +73,7 @@ export default function CountrySelect({
                     {...params}
                     label={label || "Nationality"}
                     InputLabelProps={{
-                        sx: { fontSize: 18 }
+                        sx: { fontSize: 16 }
                     }}
                     inputProps={{
                         ...params.inputProps,

@@ -57,7 +57,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       }}
     >
       <CardOverflow>
-        <AspectRatio ratio={isSmallScreen ? 2 : 1} sx={{ width: isSmallScreen ? '200' : 200 }} >
+        <AspectRatio ratio={isSmallScreen ? 2 : 1} sx={{ width: isSmallScreen ? 'auto' : 230 }} >
           <img
             src={"https://media.istockphoto.com/id/472899538/tr/foto%C4%9Fraf/downtown-cleveland-hotel-entrance-and-waiting-taxi-cab.jpg?s=612x612&w=0&k=20&c=q9BvQpnL3l4b8t3K_4VRTSS8FkBnv6Pue4tgZucjqIQ="}
             alt={title}

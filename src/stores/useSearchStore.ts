@@ -9,6 +9,7 @@ interface SearchState {
     children: number;
     childrenAges: number[];
     selectedNationality: string | null;
+    selectedIssueCountry: string | null;
     nights: number;
     setLocation: (location: string) => void;
     setCheckInDate: (date: Dayjs | null) => void;
@@ -17,6 +18,7 @@ interface SearchState {
     setChildren: (children: number) => void;
     setChildrenAges: (ages: number[]) => void;
     setSelectedNationality: (selectedNationality: string | null) => void;
+    setSelectedIssueCountry: (selectedIssueCountry: string | null) => void;
     setNights: (nights: number) => void;
 }
 
@@ -28,6 +30,7 @@ const useSearchStore = create<SearchState>((set) => ({
     children: 0,
     childrenAges: [],
     selectedNationality: 'Turkey',
+    selectedIssueCountry: '',
     nights: 0,
     setLocation: (location) => set({ location }),
     setCheckInDate: (date) => set({ checkInDate: date }),
@@ -36,6 +39,7 @@ const useSearchStore = create<SearchState>((set) => ({
     setChildren: (children) => set({ children }),
     setChildrenAges: (ages) => set({ childrenAges: ages }),
     setSelectedNationality: (selectedNationality) => set({ selectedNationality }),
+    setSelectedIssueCountry: (selectedIssueCountry) => set({    selectedIssueCountry }),
     setNights: (nights) => set({ nights }),
 }));
 
