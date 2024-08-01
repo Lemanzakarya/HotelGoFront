@@ -199,13 +199,14 @@ const SearchPageServer = () => {
                 adults={adults}
                 checkInDate={checkInDate}
                 setIsLoading={setIsLoading}
-              >
-                {children}
-              </HotelCard>
                 offerId={hotel.offers?.[0].offerId}
                 productId={hotel.id}
                 ownerProvider={hotel.provider}
-              />
+              >
+                {children}
+              
+
+              </HotelCard>
             </Box>
           ))}
         </Box>

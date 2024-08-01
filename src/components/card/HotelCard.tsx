@@ -135,7 +135,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
             </Typography>
             <Typography textColor="black" sx={{ mt: 0.7, fontSize: '1rem' }} display="flex" alignItems="center">
               <EventIcon sx={{ mr: 1 }} />
-              {checkInDate ? `Check-in: ${dayjs(checkInDate).format('YYYY-MM-DD')}` : 'Check-in Date Missing'}
+              {checkInDate ? `Check-in: ${dayjs(checkInDate).format('MM-DD-YYYY')}` : 'Check-in Date Missing'}
             </Typography>
           </CardContent>
           <CardContent>
