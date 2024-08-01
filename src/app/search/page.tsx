@@ -1,9 +1,8 @@
 'use client'
 
-import React, { useEffect, useState, Suspense, use } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from "@mui/material/Box";
-import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
 import LoadingCircle from "@/components/shared/LoadingCircle";
@@ -32,7 +31,7 @@ interface HotelProductSimpleCity {
 
 interface PriceSearchCountry {
   internationalCode?: string;
-  name?: string ;
+  name?: string;
 }
 
 interface HotelOffer {
@@ -57,13 +56,13 @@ const SearchPageServer = () => {
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
   const [isCleared, setIsCleared] = useState(false);
-
   const [searchId, setData] = useState<string | null>(null);
   const [filteredResults, setFilteredResults] = useState<Hotel[] | undefined>(undefined);
 
   const handleFilteredResults = (results: Hotel[] | undefined) => {
     setFilteredResults(results);
   };
+
   const handleClearFilter = () => {
     setIsCleared(true);
   }
@@ -74,6 +73,7 @@ const SearchPageServer = () => {
 
   const location = useSearchStore((state) => state.location);
   const adults = useSearchStore((state) => state.adults);
+  const children = useSearchStore((state) => state.children);
   const childrenAges = useSearchStore((state) => state.childrenAges);
   const checkInDate = useSearchStore((state) => state.checkInDate);
   const checkOutDate = useSearchStore((state) => state.checkOutDate);
@@ -168,12 +168,13 @@ const SearchPageServer = () => {
             </Box>
           )}
           <div className="filter">
-            <FilterSidebar id={searchId} 
-            onFilteredResults={handleFilteredResults}
-             currency={selectedCurrency} 
-             isCleared={isCleared} 
-             handleFilter={handleClearFilter}
-             />
+            <FilterSidebar 
+              id={searchId} 
+              onFilteredResults={handleFilteredResults}
+              currency={selectedCurrency} 
+              isCleared={isCleared} 
+              handleFilter={handleClearFilter}
+            />
           </div>
         </Box>
         <Box
@@ -194,6 +195,9 @@ const SearchPageServer = () => {
                 thumbnail={hotel.thumbnailFull}
                 nights={hotel.offers?.[0].night}
                 currency={hotel.offers?.[0].price?.currency}
+                adults={adults}
+                children={children}
+                checkInDate={checkInDate}
                 setIsLoading={setIsLoading}
               />
             </Box>
