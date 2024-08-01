@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { Box, Button, Dialog, Divider, IconButton, Typography, useMediaQuery, Snackbar, Slide, Alert } from '@mui/material';
 import AutoCompleteInputBox from "../components/shared/AutoCompleteInputBox";
@@ -232,7 +233,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     <MobileDatePicker
                         sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0, ...checkInSx }}
                         onChange={(newDateValue) => { handleCheckInChange(newDateValue) }}
-                        value={checkInDate}
+                        value={checkInDate ? dayjs(checkInDate) : null}
                         label={"Check-in"}
                         minDate={dayjs()}
                     />
@@ -243,10 +244,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <MobileDatePicker
                         onChange={(newDateValue) => { handleCheckOutChange(newDateValue) }}
-                        value={checkOutDate}
+                        value={checkOutDate ? dayjs(checkOutDate) : null}
                         label={'Check-out'}
                         disabled={checkInDate === null}
-                        minDate={checkInDate ? checkInDate.add(1, 'day') : undefined}
+                        minDate= {checkInDate ? dayjs(checkInDate).add(1, 'day') : dayjs()}
                         sx={{ width: isSmallScreen ? '100%' : '20%', fontSize: '10px', padding: 0, ...checkOutSx }}
                     />
                 </LocalizationProvider>
