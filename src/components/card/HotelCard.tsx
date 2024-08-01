@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import useSearchStore from '@/stores/useSearchStore';
 import usePriceSearchStore from '@/stores/usePriceSearch';
 import useProductInfoStore from '@/stores/useProductInfoStore';
+import useOfferStore from '@/stores/useOfferStore';
 
 interface HotelCardProps {
   title: string | undefined;
@@ -53,6 +54,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const setOwnerProvider = useProductInfoStore(state => state.setOwnerProvider);
   const setProductId = usePriceSearchStore(state => state.setProductId);
   const setCurrency = usePriceSearchStore(state => state.setCurrency);
+  const setThumbnailFull = useOfferStore(state => state.setThumbnailFull);
   
 
   const handleLookThrough = () => {
@@ -63,6 +65,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
     setCurrency(currency);
     setProduct(productId);
     setOwnerProvider(ownerProvider);
+    setThumbnailFull(thumbnail);
 
     setTimeout(() => {
       router.push('/hoteldetail');

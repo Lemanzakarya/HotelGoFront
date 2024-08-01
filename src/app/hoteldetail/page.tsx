@@ -20,6 +20,7 @@ import { getOffersRequestModelDefault } from "../requestmodel/getOffersMode";
 import { getOffersBody } from "../responsemodel/getOffersModel";
 import useProductInfoStore from "@/stores/useProductInfoStore";
 import usePriceSearchStore from "@/stores/usePriceSearch";
+import useOfferStore from "@/stores/useOfferStore";
 
 
 
@@ -43,7 +44,8 @@ const HotelDetail: React.FC = () => {
 
   const { productType, ownerProvider, product, culture } = useProductInfoStore();
   const { searchId,offerId,productId,currency,getRoomInfo} = usePriceSearchStore();
-  
+
+
   const productInfoReq = {
     productType:productType,
     ownerProvider:ownerProvider,

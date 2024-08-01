@@ -67,7 +67,7 @@ type Offer ={
     rooms:Room[];
     cancellationPolicies:CancellationPolicy[];
     checkIn:string;
-    offerId:string;
+    offerID:string;
     expiresOn:string;
     priceBreakdowns:{
         priceBreakdowns:PriceBreakdown[];
