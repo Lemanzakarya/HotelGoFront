@@ -85,7 +85,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       }}
     >
       <CardOverflow>
-        <AspectRatio ratio={isSmallScreen ? 2 : 1} sx={{ width: isSmallScreen ? 550 : 230 }}>
+        <AspectRatio ratio={isSmallScreen ? 2 : 1} sx={{ width: isSmallScreen ? "auto" : 230 }}>
           <img
             src={thumbnail || defaultThumbnail}
             alt={title}
@@ -112,7 +112,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       </CardContent>
       <CardContent >
         <Typography fontWeight="bold" textColor="success.plainColor" sx={{ mt: 1, mr: 1, alignSelf: 'flex-end', fontSize: 28 }}>
-          {price || 'Price Missing'} {currency || '$'}
+          {initialPrice || 'Price Missing'} {currency || '$'}
         </Typography>
         <Button
           variant="solid"

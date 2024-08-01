@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, use } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from "@mui/material/Box";
 import SearchBar from "@/components/SearchBar";
@@ -10,6 +10,7 @@ import LoadingCircle from "@/components/shared/LoadingCircle";
 import useCurrencyStore from "@/stores/useCurrencyStore";
 import useSearchStore from "@/stores/useSearchStore";
 import dayjs from "dayjs";
+import dynamic from "next/dynamic";
 
 interface Hotel {
   name?: string;
@@ -45,7 +46,6 @@ interface Price {
   amount?: string;
 }
 
-// Utility function to format price to 2 decimal places
 const formatPrice = (price: string | undefined) => {
   if (!price) return price;
   const numericPrice = parseFloat(price);
@@ -56,6 +56,7 @@ const SearchPageServer = () => {
   const { selectedCurrency } = useCurrencyStore();
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCleared, setIsCleared] = useState(false);
 
   const [searchId, setData] = useState<string | null>(null);
   const [filteredResults, setFilteredResults] = useState<Hotel[] | undefined>(undefined);
@@ -63,6 +64,9 @@ const SearchPageServer = () => {
   const handleFilteredResults = (results: Hotel[] | undefined) => {
     setFilteredResults(results);
   };
+  const handleClearFilter = () => {
+    setIsCleared(true);
+  }
 
   useEffect(() => {
     fetchResults();
@@ -73,7 +77,7 @@ const SearchPageServer = () => {
   const childrenAges = useSearchStore((state) => state.childrenAges);
   const checkInDate = useSearchStore((state) => state.checkInDate);
   const checkOutDate = useSearchStore((state) => state.checkOutDate);
-  const night = checkOutDate?.diff(checkInDate, 'days') || 0;
+  const night = dayjs(checkOutDate)?.diff(checkInDate, 'days') || 0;
 
   const fetchResults = async () => {
     var arrival = location.type === 1 ? [{ id: location.id, type: 2 }] : null;
@@ -107,13 +111,19 @@ const SearchPageServer = () => {
       });
       if (response.ok) {
         const data = await response.json();
+        setIsCleared(false);
         setData(data.body.searchId);
+        setFilteredResults(data.body.hotels);
       }
     } catch (error) {
       console.error('Error:', error);
     }
     
   }
+
+  const SearchBar = dynamic(() => import('@/components/SearchBar'), {
+    ssr: false,
+  });
 
   return (
     <div style={{ marginTop: "20px" }}>
@@ -124,13 +134,16 @@ const SearchPageServer = () => {
           zIndex: 10,
         }}
       >
+        <div>
         <SearchBar
           sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
           backgroundColor={"#F5F5F5"}
           height={isSmallScreen ? "100%" : 80}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
+          fetchFunct={fetchResults}
         />
+        </div>
       </Box>
       <Box
         display="flex"
@@ -156,7 +169,12 @@ const SearchPageServer = () => {
             </Box>
           )}
           <div className="filter">
-            <FilterSidebar id={searchId} onFilteredResults={handleFilteredResults} currency={selectedCurrency} />
+            <FilterSidebar id={searchId} 
+            onFilteredResults={handleFilteredResults}
+             currency={selectedCurrency} 
+             isCleared={isCleared} 
+             handleFilter={handleClearFilter}
+             />
           </div>
         </Box>
         <Box
@@ -191,7 +209,6 @@ const SearchPageServer = () => {
 };
 
 const SearchPage = () => {
-  console.log("çalıştım");
   return (
     <Suspense>
       <SearchPageServer />
