@@ -102,7 +102,7 @@ const HotelDetail: React.FC = () => {
   useEffect(() => {
     const fetchOffersData = async () => {
 
-        const fetchOffers = await sendPostRequest(getOfferReq, 'http://localhost:5083/Tourvisio/GetOffers');
+        const fetchOffers = await sendPostRequest(getOfferReq, 'https://localhost:7220/Tourvisio/GetOffers');
         setOffers(fetchOffers.body);
 
     };
