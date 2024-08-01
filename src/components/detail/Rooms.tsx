@@ -17,23 +17,34 @@ import { formatCheckInDate, getOffersBody } from "@/app/responsemodel/getOffersM
 import BedIcon from '@mui/icons-material/Bed';
 
 const RootCard = styled(Card)({
-  maxWidth: 345,
+  maxWidth: 350,
+  width: "auto",
   margin: "16px",
   cursor: "pointer",
   transition: "transform 0.2s",
-
-  // Explicitly set box-sizing to border-box
-  boxSizing: 'border-box', 
-
-  // Add border and padding
-  border: '2px solid #ccc', 
+  boxSizing: 'border-box',
+  border: '2px solid #ccc',
   borderRadius: '8px',
-  padding: '10px', // Add padding to maintain content spacing
-
-  // Keep the existing hover effect
+  padding: '10px',
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
   "&:hover": {
     transform: "scale(1.05)",
   },
+});
+
+const CardContentStyled = styled(CardContent)({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+});
+
+const RoomsContainer = styled(Container)({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
 });
 
 const ViewDetailsLink = styled("a")({
@@ -50,9 +61,9 @@ const ViewDetailsLink = styled("a")({
 
 const ReserveButton = styled(Button)({
   marginTop: "8px",
-  backgroundColor:'#ff8737',
-  '&:hover': { 
-    backgroundColor: '#d45500' 
+  backgroundColor: '#ff8737',
+  '&:hover': {
+    backgroundColor: '#d45500'
   }
 });
 
@@ -109,9 +120,9 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   };
 
   //TODO:for test will be deleted
-  console.log("recieved offers:",offers);
+  console.log("recieved offers:", offers);
   //console.log("Recieved details:",offerDetails);
-  
+
   if (!offers || !offers.offers || !Array.isArray(offers.offers) || offers.offers.length === 0) {
     return (
       <Container>
@@ -121,12 +132,12 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   }
 
   return (
-    <Container>
+    <RoomsContainer>
       <Grid container spacing={3}>
         {offers.offers.map((offer) => (
           <Grid item xs={12} sm={6} md={4} key={offer.offerId}>
             <RootCard>
-              <CardContent>
+              <CardContentStyled>
                 <Typography gutterBottom variant="h5" component="div">
                   <BedIcon /> {offer.rooms.map((room) => room.roomName).join(", ")}
                 </Typography>
@@ -146,15 +157,15 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                 </Typography>
                 <FeaturesList>
                   {offer.rooms.map((room, index) => (
-                    <FeatureItem key={index} sx={{mb:0}}>
+                    <FeatureItem key={index} sx={{ mb: 0 }}>
                       <Typography variant="body2" color="textPrimary">
                         {room.roomName} - {room.boardGroups.map(bg => bg.name).join(', ')}
                       </Typography>
                     </FeatureItem>
                   ))}
                 </FeaturesList>
-              </CardContent>
-              <ViewDetailsLink sx={{mr:2}} onClick={() => handleViewDetails({
+              </CardContentStyled>
+              <ViewDetailsLink sx={{ mr: 2 }} onClick={() => handleViewDetails({
                 id: parseInt(offer.offerId),
                 title: offer.rooms.map((room) => room.roomName).join(", "),
                 description: `Description for offer ${offer.offerId}`,
@@ -192,7 +203,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
           </DialogActions>
         </Dialog>
       </Grid>
-    </Container>
+    </RoomsContainer>
   );
 };
 
