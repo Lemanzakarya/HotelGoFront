@@ -196,10 +196,11 @@ const SearchPageServer = () => {
                 nights={hotel.offers?.[0].night}
                 currency={hotel.offers?.[0].price?.currency}
                 adults={adults}
-                children={children}
                 checkInDate={checkInDate}
                 setIsLoading={setIsLoading}
-              />
+              >
+                {children}
+              </HotelCard>
             </Box>
           ))}
         </Box>
