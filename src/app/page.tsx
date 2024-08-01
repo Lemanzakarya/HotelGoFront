@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import SearchBar from '../components/SearchBar';
 import LoadingCircle from "@/components/shared/LoadingCircle";
+import dynamic from 'next/dynamic';
 
 
 
@@ -56,6 +57,10 @@ const Page: React.FC = () => {
         };
         fetchVideoUrl();
     }, []);
+
+    const SearchBar = dynamic(() => import('../components/SearchBar'), {
+        ssr: false,
+      });
     return (
 
         <PageContainer>
@@ -64,6 +69,7 @@ const Page: React.FC = () => {
                     <video src={videoUrl} autoPlay loop muted></video>
                 </VideoOverlay>
             )}
+            <div>
             <SearchBar
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
@@ -73,6 +79,7 @@ const Page: React.FC = () => {
                 checkOutSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
                 guestsSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
             />
+            </div>
             {isLoading && (
                 <LoadingContainer>
                     <LoadingCircle />

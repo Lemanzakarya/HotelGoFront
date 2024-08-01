@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, use } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from "@mui/material/Box";
 import SearchBar from "@/components/SearchBar";
@@ -10,6 +10,7 @@ import LoadingCircle from "@/components/shared/LoadingCircle";
 import useCurrencyStore from "@/stores/useCurrencyStore";
 import useSearchStore from "@/stores/useSearchStore";
 import dayjs from "dayjs";
+import dynamic from "next/dynamic";
 
 interface Hotel {
   name?: string;
@@ -76,7 +77,7 @@ const SearchPageServer = () => {
   const childrenAges = useSearchStore((state) => state.childrenAges);
   const checkInDate = useSearchStore((state) => state.checkInDate);
   const checkOutDate = useSearchStore((state) => state.checkOutDate);
-  const night = checkOutDate?.diff(checkInDate, 'days') || 0;
+  const night = dayjs(checkOutDate)?.diff(checkInDate, 'days') || 0;
 
   const fetchResults = async () => {
     var arrival = location.type === 1 ? [{ id: location.id, type: 2 }] : null;
@@ -119,6 +120,10 @@ const SearchPageServer = () => {
     }
   }
 
+  const SearchBar = dynamic(() => import('@/components/SearchBar'), {
+    ssr: false,
+  });
+
   return (
     <div style={{ marginTop: "20px" }}>
       <Box
@@ -128,6 +133,7 @@ const SearchPageServer = () => {
           zIndex: 10,
         }}
       >
+        <div>
         <SearchBar
           sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
           backgroundColor={"#F5F5F5"}
@@ -136,6 +142,7 @@ const SearchPageServer = () => {
           setIsLoading={setIsLoading}
           fetchFunct={fetchResults}
         />
+        </div>
       </Box>
       <Box
         display="flex"
