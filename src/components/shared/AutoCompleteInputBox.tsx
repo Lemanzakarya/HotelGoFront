@@ -44,7 +44,9 @@ interface AutoCompleteInputBoxProps {
 export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxProps) {
     const [options, setOptions] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState('');
-    const {location,setLocation} = useSearchStore();
+
+    const location = useSearchStore(state => state.location);
+
 
     const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({
         Location: true,
@@ -53,12 +55,6 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
 
     const apiUrl = "http://localhost:5083/Tourvisio/PostAutoComplete";
 
-    useEffect(()=>{
-        const storeState = useSearchStore.getState();
-
-        setLocation(storeState.location);
-    },[location]
-)
 
 
     useEffect(() => {

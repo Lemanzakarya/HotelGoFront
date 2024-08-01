@@ -77,10 +77,13 @@ interface FilterSidebarProps {
   id: string | null;
   onFilteredResults: (results: PriceSearchHotel[] | undefined) => void;
   currency: string | undefined;
+  isCleared: boolean;
+  handleFilter: () => void;
 }
 
 const FilterSidebar = (props: FilterSidebarProps) => {
-  const { id, onFilteredResults , currency } = props;
+  const { id, onFilteredResults , currency , handleFilter } = props;
+  var isCleared = props.isCleared;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
  
@@ -100,6 +103,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
     if (id) {
       fetchResults();
     }
+    onFilteredResults(results);
   }, [id, selectedFacilities, selectedBoardOptions, selectedStars, priceState]);
 
   const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +126,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
   }
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setPriceState(newValue as number[]);
+      setPriceState(newValue as number[]);
   }
 
   const handleStarsChange = (event: React.SyntheticEvent, newValue: number | null) => {
@@ -130,9 +134,18 @@ const FilterSidebar = (props: FilterSidebarProps) => {
     fetchResults();
   };
 
+  
+  
   const fetchResults = async () => {
     const filters = [];
 
+    if(!isCleared){
+      setPriceState([]);
+      setPriceRange([]);
+      setSelectedBoardOptions([]);
+      setSelectedFacilities([]);
+      handleFilter();
+    }
     if (selectedStars) {
       filters.push({
         type: 2,
@@ -203,7 +216,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
             setPriceRange(numberArray);
           }
           setCurrencyState(currency);
-
+          handleFilter();
       } else {
         console.error('Error:', response.status);
       }
