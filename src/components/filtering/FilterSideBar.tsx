@@ -193,7 +193,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
     };
     
     try { 
-      const response = await fetch('http://localhost:5083/Tourvisio/GetPagingData', {
+      const response = await fetch('https://localhost:7220/Tourvisio/GetPagingData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
