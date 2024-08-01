@@ -32,14 +32,14 @@ const ReservationPage: React.FC = () => {
   const [hotelName, setHotelName] = useState("Example Hotel Name");
   const [isFetched, setIsFetched] = useState(false);
   const formSubmitted = useFormStore(state => state.formSubmitted);
-
+  const [hotelImg, setHotelImg] = useState("");
   const handleNext = () => {
     setStep((prevStep) => prevStep + 1);
   }
   const fetchReservationData = async () => {
 
     const postData: BeginTransactionRequest = {
-      offerIds: ["2$2$TR~^005^~23472~^005^~970.20~^005^~1473~^005^~1067.22~^005^~10fb48f4-f69b-46d5-b78b-ee6dcfcbc03f"],
+      offerIds: ["offerId"],
       currency: "EUR",// STATIC FIELD
     }
     try {
@@ -92,8 +92,8 @@ const ReservationPage: React.FC = () => {
             sx={{
               border: '1px solid lightgrey',
               borderRadius: '8px',
-              p: 3,
-              backgroundColor: '#f9f9f9',
+              p: 1,
+              backgroundColor: '#ded9d9',
               display: 'flex',
               flexDirection: 'column',
               minHeight: '300px',
@@ -146,7 +146,7 @@ const ReservationPage: React.FC = () => {
           >
             <Box
               component="img"
-              src="https://cdn-prod.travelfuse.ro/images/_top_323fce7a9d6cbbfe747e276b3276e313.jpg"
+              src={hotelImg}//FROM API
               alt="Hotel"
               sx={{
                 width: '100%',
