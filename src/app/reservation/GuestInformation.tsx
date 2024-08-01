@@ -15,6 +15,7 @@ import CountrySelect from '@/components/shared/CountrySelector';
 import useFormStore from '@/stores/useFormStore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider } from "@mui/material";
 import { ExpandMoreTwoTone } from "@mui/icons-material";
+import {ChangeEvent} from "react";
 
 const defaultTheme = createTheme();
 
@@ -56,12 +57,20 @@ export default function Reservation() {
   })));
 
   const handleInputChange = (index: number, field: string, value: string, isChild: boolean = false) => {
-    const updatedDetails = isChild ? [...childDetails] : [...adultDetails];
-    updatedDetails[index] = {
-      ...updatedDetails[index],
-      [field]: value,
+    const updateDetails = (details: any[], setDetails: React.Dispatch<React.SetStateAction<any[]>>) => {
+      const updatedDetails = [...details];
+      updatedDetails[index] = {
+        ...updatedDetails[index],
+        [field]: value,
+      };
+      setDetails(updatedDetails);
     };
-    isChild ? setChildDetails(updatedDetails) : setAdultDetails(updatedDetails);
+
+    if (isChild) {
+      updateDetails(childDetails, setChildDetails);
+    } else {
+      updateDetails(adultDetails, setAdultDetails);
+    }
   };
 
   const validateForm = () => {
@@ -161,6 +170,13 @@ export default function Reservation() {
     })));
   };
 
+  if(adults === 0) {
+    return (
+        <Typography variant="h3" sx={{ color: '#516D87', mb: 2 }}>
+          Bad request.<br/> Please go back to homepage and try again.
+        </Typography>
+    )
+  }
   return (
       <ThemeProvider theme={defaultTheme}>
         <Box
@@ -193,7 +209,7 @@ export default function Reservation() {
                                 id={`title-select-${index}`}
                                 label="Title"
                                 value={adult.title}
-                                onChange={(e) => handleInputChange(index, 'title', e.target.value, false)}
+                                onChange={(e : SelectChangeEvent<string>) => handleInputChange(index, 'title', e.target.value, false)}
                                 error={Boolean(errors[`adult-${index}-title`])}
                             >
                               <MenuItem value="Mr">Mr</MenuItem>
@@ -235,7 +251,7 @@ export default function Reservation() {
                                 id={`gender-select-${index}`}
                                 label="Gender"
                                 value={adult.gender}
-                                onChange={(e) => {handleInputChange(index, "gender", e.target.value, false);}}
+                                onChange={(e : SelectChangeEvent<string>) => {handleInputChange(index, "gender", e.target.value, false);}}
                                 error={Boolean(errors[`adult-${index}-gender`])}
                             >
                               <MenuItem value="male">Male</MenuItem>
@@ -263,7 +279,13 @@ export default function Reservation() {
                               defaultCountry={"tr"}
                               label="Phone Number"
                               value={adult.phone}
-                              onChange={(value) => handleInputChange(index, 'phone', value)}
+                              onChange={(value: string | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                                if (typeof value === 'string') {
+                                  handleInputChange(index, 'phone', value);
+                                } else {
+                                  handleInputChange(index, 'phone', value.target.value);
+                                }
+                              }}
                               error={Boolean(errors[`adult-${index}-phone`])}
                               helperText={errors[`adult-${index}-phone`]}
                           />
@@ -328,10 +350,8 @@ export default function Reservation() {
                         <Grid item xs={12} sm={7}>
                           <CountrySelect
                               value={adult.issueCountry}
-                              onChange={(value) => handleInputChange(index, 'issueCountry', value)}
+                              onChange={(e , newValue) => handleInputChange(index, 'issueCountry', newValue ?? '')}
                               label="Issue Country"
-                              error={Boolean(errors[`adult-${index}-issueCountry`])}
-                              helperText={errors[`adult-${index}-issueCountry`]}
                           />
                         </Grid>
                       </Grid>
@@ -369,7 +389,7 @@ export default function Reservation() {
                                     id={`title-select-${index}`}
                                     label="Title"
                                     value={adult.title}
-                                    onChange={(e) => handleInputChange(index, 'title', e.target.value, false)}
+                                    onChange={(e : SelectChangeEvent<string>) => handleInputChange(index, 'title', e.target.value, false)}
                                     error={Boolean(errors[`adult-${index}-title`])}
                                 >
                                   <MenuItem value="Mr">Mr</MenuItem>
@@ -411,7 +431,7 @@ export default function Reservation() {
                                     id={`gender-select-${index}`}
                                     label="Gender"
                                     value={adult.gender}
-                                    onChange={(e) => {handleInputChange(index, "gender", e.target.value, false);}}
+                                    onChange={(e: SelectChangeEvent<string>) => {handleInputChange(index, "gender", e.target.value, false);}}
                                     error={Boolean(errors[`adult-${index}-gender`])}
                                 >
                                   <MenuItem value="male">Male</MenuItem>
@@ -439,7 +459,13 @@ export default function Reservation() {
                                   defaultCountry={"tr"}
                                   label="Phone Number"
                                   value={adult.phone}
-                                  onChange={(value) => handleInputChange(index, 'phone', value)}
+                                  onChange={(value: string | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                                    if (typeof value === 'string') {
+                                      handleInputChange(index, 'phone', value);
+                                    } else {
+                                      handleInputChange(index, 'phone', value.target.value);
+                                    }
+                                  }}
                                   error={Boolean(errors[`adult-${index}-phone`])}
                                   helperText={errors[`adult-${index}-phone`]}
                               />
@@ -495,10 +521,8 @@ export default function Reservation() {
                             <Grid item xs={12} sm={7}>
                               <CountrySelect
                                   value={adult.issueCountry}
-                                  onChange={(value) => handleInputChange(index, 'issueCountry', value)}
+                                  onChange={(e, newValue) => handleInputChange(index, 'issueCountry', newValue ?? '')}
                                   label="Issue Country"
-                                  error={Boolean(errors[`adult-${index}-issueCountry`])}
-                                  helperText={errors[`adult-${index}-issueCountry`]}
                               />
                             </Grid>
                           </Grid>
@@ -639,10 +663,8 @@ export default function Reservation() {
                     <Grid item xs={12} sm={7}>
                       <CountrySelect
                           value={child.issueCountry}
-                          onChange={(value) => handleInputChange(index, 'issueCountry', value, true)}
+                          onChange={(e , newValue) => handleInputChange(index, 'issueCountry', newValue ?? '' ,true)}
                           label="Issue Country"
-                          error={Boolean(errors[`child-${index}-issueCountry`])}
-                          helperText={errors[`child-${index}-issueCountry`]}
                       />
                     </Grid>
                   </Grid>
