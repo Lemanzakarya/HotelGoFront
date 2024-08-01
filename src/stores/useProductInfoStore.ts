@@ -10,13 +10,23 @@ interface ProductInfoState {
 
 }
 
-const useProductInfoStore = create<ProductInfoState>((set) => ({
-  productType: 2,
-  ownerProvider:0,
-  product: '',
-  culture: 'en-US',
-  setProduct: (product) => set({product}),
-  setOwnerProvider: (ownerProvider) => set({ownerProvider}),
-}));
+const useProductInfoStore = create(
+  persist<ProductInfoState>(
+    (set) => ({
+      productType: 2,
+      ownerProvider:0,
+      product: '',
+      culture: 'en-US',
+      setProduct: (product) => set({product}),
+      setOwnerProvider: (ownerProvider) => set({ownerProvider}),
+    }),
+    {
+      name: 'product-info',
+      getStorage: () => localStorage,
+    }
+  
+  
+  )
+);
 
 export default useProductInfoStore;

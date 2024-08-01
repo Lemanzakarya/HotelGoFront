@@ -18,22 +18,30 @@ interface PriceSearchState {
   setGetRoomInfo: (getRoomInfo: boolean) => void;
 }
 
-const usePriceSearchStore = create<PriceSearchState>((set) => ({
-  searchId: '',
-  offerId: '',
-  productType: 2,
-  productId: '',
-  currency: '',
-  culture: 'en-US',
-  getRoomInfo: true,
-  
-  setSearchId: (searchId) => set({ searchId }),
-  setOfferId: (offerId) => set({ offerId }),
-  setProductType: (productType) => set({ productType }),
-  setProductId: (productId) => set({ productId }),
-  setCurrency: (currency) => set({ currency }),
-  setCulture: (culture) => set({ culture }),
-  setGetRoomInfo: (getRoomInfo) => set({ getRoomInfo }),
-}));
+const usePriceSearchStore = create(
+  persist<PriceSearchState>(
+    (set) => ({
+      searchId: '',
+      offerId: '',
+      productType: 2,
+      productId: '',
+      currency: '',
+      culture: 'en-US',
+      getRoomInfo: true,
+      
+      setSearchId: (searchId) => set({ searchId }),
+      setOfferId: (offerId) => set({ offerId }),
+      setProductType: (productType) => set({ productType }),
+      setProductId: (productId) => set({ productId }),
+      setCurrency: (currency) => set({ currency }),
+      setCulture: (culture) => set({ culture }),
+      setGetRoomInfo: (getRoomInfo) => set({ getRoomInfo }),
+    }),
+    {
+      name:'price-search',
+      getStorage: () => localStorage,
+    }
+  )
+);
 
 export default usePriceSearchStore;
