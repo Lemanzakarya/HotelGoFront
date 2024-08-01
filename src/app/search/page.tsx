@@ -102,7 +102,7 @@ const SearchPageServer = () => {
       night: night
     };
     try {
-      const response = await fetch('http://localhost:5083/Tourvisio/PriceSearch', {
+      const response = await fetch('https://localhost:7220/Tourvisio/PriceSearch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,6 +118,7 @@ const SearchPageServer = () => {
     } catch (error) {
       console.error('Error:', error);
     }
+    
   }
 
   const SearchBar = dynamic(() => import('@/components/SearchBar'), {
@@ -198,8 +199,13 @@ const SearchPageServer = () => {
                 adults={adults}
                 checkInDate={checkInDate}
                 setIsLoading={setIsLoading}
+                offerId={hotel.offers?.[0].offerId}
+                productId={hotel.id}
+                ownerProvider={hotel.provider}
               >
                 {children}
+              
+
               </HotelCard>
             </Box>
           ))}

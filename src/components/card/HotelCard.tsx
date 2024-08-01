@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AspectRatio from '@mui/joy/AspectRatio';
 import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
@@ -13,6 +13,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PeopleIcon from '@mui/icons-material/People';
 import EventIcon from '@mui/icons-material/Event';
 import HotelIcon from '@mui/icons-material/Hotel';
+import useSearchStore from '@/stores/useSearchStore';
+import usePriceSearchStore from '@/stores/usePriceSearch';
+import useProductInfoStore from '@/stores/useProductInfoStore';
+import useOfferStore from '@/stores/useOfferStore';
 
 interface HotelCardProps {
   title: string | undefined;
@@ -27,10 +31,13 @@ interface HotelCardProps {
   nights: number | undefined;
   currency: string | undefined;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  offerId:string|undefined;
+  productId:string|undefined;
+  ownerProvider: number | undefined
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
-  title,
+  title, 
   location,
   price: initialPrice,
   stars = '0',
@@ -42,6 +49,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
   children,
   checkInDate,
   setIsLoading,
+  offerId,
+  productId,
+  ownerProvider
 }) => {
   const [price, setPrice] = useState<string>(initialPrice || '');
   const isSmallScreen = useMediaQuery('(max-width:900px)');
@@ -50,15 +60,33 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const starnum = parseInt(stars);
   const defaultThumbnail = 'https://orinter.com.br/public/img/hotel-default.jpg';
 
+  const setOfferId = usePriceSearchStore(state => state.setOfferId);
+  const setProduct = useProductInfoStore(state => state.setProduct); 
+  const setOwnerProvider = useProductInfoStore(state => state.setOwnerProvider);
+  const setProductId = usePriceSearchStore(state => state.setProductId);
+  const setCurrency = usePriceSearchStore(state => state.setCurrency);
+  const setThumbnailFull = useOfferStore(state => state.setThumbnailFull);
+  
+
   const handleLookThrough = () => {
     setIsLoading(true);
+
+    setOfferId(offerId);
+    setProductId(productId);
+    setCurrency(currency);
+    setProduct(productId);
+    setOwnerProvider(ownerProvider);
+    setThumbnailFull(thumbnail);
+
     setTimeout(() => {
       router.push('/hoteldetail');
       setIsLoading(false);
     }, 2000);
   };
 
+
   return (
+
     <Card
       orientation={isSmallScreen ? 'vertical' : 'horizontal'}
       variant="outlined"
@@ -107,7 +135,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
             </Typography>
             <Typography textColor="black" sx={{ mt: 0.7, fontSize: '1rem' }} display="flex" alignItems="center">
               <EventIcon sx={{ mr: 1 }} />
-              {checkInDate ? `Check-in: ${dayjs(checkInDate).format('YYYY-MM-DD')}` : 'Check-in Date Missing'}
+              {checkInDate ? `Check-in: ${dayjs(checkInDate).format('MM-DD-YYYY')}` : 'Check-in Date Missing'}
             </Typography>
           </CardContent>
           <CardContent>

@@ -5,15 +5,19 @@ import GuestInformation from './GuestInformation';
 import Payment from './Payment';
 import { useRouter } from 'next/navigation';
 import Confirmation from '../reservation/Confirmation';
+import useOfferStore from '@/stores/useOfferStore';
 
 const steps = ['Guest Information', 'Payment Methods', 'Reservation Confirmation'];
 
 
 const ReservationPage: React.FC = () => {
+
+
   const [step, setStep] = useState<number>(0);
 
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
-
+  const {thumbnailFull,offerIds,currency} = useOfferStore();
+  console.log(thumbnailFull,offerIds , currency)
   const router = useRouter();
 
   const handleNext = () => setStep((prevStep) => prevStep + 1);

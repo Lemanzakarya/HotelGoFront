@@ -15,6 +15,8 @@ import { styled } from "@mui/system";
 import { useRouter } from "next/navigation";
 import { formatCheckInDate, getOffersBody } from "@/app/responsemodel/getOffersModel";
 import BedIcon from '@mui/icons-material/Bed';
+import useOfferStore from "@/stores/useOfferStore";
+import usePriceSearchStore from "@/stores/usePriceSearch";
 
 const RootCard = styled(Card)({
   maxWidth: 345,
@@ -92,6 +94,9 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
+  const setOfferIds = useOfferStore(state => state.setOfferIds);
+  const setCurrency = useOfferStore(state => state.setCurrency); 
+ const currency = usePriceSearchStore(state => state.currency);
 
   const handleViewDetails = (room: Room) => {
     setSelectedRoom(room);
@@ -100,8 +105,9 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
 
   const handleCloseDialog = () => setOpenDialog(false);
 
-  const handleReserve = () => {
+  const handleReserve = (offerId:string) => {
     setIsLoading(true);
+    setOfferIds([offerId]);
     setTimeout(() => {
       router.push(`/reservation`);
       setIsLoading(false);
@@ -124,7 +130,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
     <Container>
       <Grid container spacing={3}>
         {offers.offers.map((offer) => (
-          <Grid item xs={12} sm={6} md={4} key={offer.offerId}>
+          <Grid item xs={12} sm={6} md={4} key={offer.offerID}>
             <RootCard>
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
@@ -155,21 +161,24 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                 </FeaturesList>
               </CardContent>
               <ViewDetailsLink sx={{mr:2}} onClick={() => handleViewDetails({
-                id: parseInt(offer.offerId),
+                id: parseInt(offer.offerID),
                 title: offer.rooms.map((room) => room.roomName).join(", "),
-                description: `Description for offer ${offer.offerId}`,
+                description: `Description for offer ${offer.offerID}`,
                 price: `${offer.price.amount} ${offer.price.currency}`,
                 features: offer.rooms.map((room) => ({
                   icon: null,
                   text: `${room.roomName} - ${room.boardGroups.map(bg => bg.name).join(', ')}`
                 }))
               })}>
-                View Details
+                View Detail
               </ViewDetailsLink>
+              
+              
+              
               <ReserveButton
                 variant="contained"
                 fullWidth
-                onClick={handleReserve}
+                onClick={() => handleReserve(offer.offerID)}
                 disabled={isLoading}
               >
                 Reserve
@@ -186,9 +195,6 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseDialog}>Close</Button>
-            <Button onClick={handleReserve} disabled={isLoading}>
-              Reserve
-            </Button>
           </DialogActions>
         </Dialog>
       </Grid>
