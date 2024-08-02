@@ -113,9 +113,10 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   const handleViewDetails = (offer: any) => {
     const formattedCancellationPolicies = offer.cancellationPolicies.map((policy: any) => {
       const dueDate = new Date(policy.dueDate).toLocaleDateString();
-      const price = formatPrice(policy.price.percent);
-      return `Due date: ${dueDate}\nPrice: ${price}%`; // Use template literal for cleaner formatting
-    }).join(",\n"); // Two newlines for proper separation
+      const percent = policy.price.percent || policy.price.amount;
+      const isPercent = !!policy.price.percent
+      return `Due date: ${dueDate}\nPrice: ${isPercent? `${percent}%` : percent}`;
+    }).join(",\n"); 
   
     setSelectedRoom({
       id: parseInt(offer.offerID),
