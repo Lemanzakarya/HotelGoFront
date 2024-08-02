@@ -131,8 +131,8 @@ const HotelDetail: React.FC = () => {
 
   return (
     <Box>
-      <Container maxWidth="lg" sx={{ mt: 8 }}>
-        <Box mt={4}>
+      <Container maxWidth="lg" sx={{ mt: 2 }}>
+        <Box>
           <Typography variant="h3" component="h1" marginBottom={0} gutterBottom>
             {hotelData?.hotel.name}
           </Typography>
