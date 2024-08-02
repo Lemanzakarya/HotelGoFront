@@ -16,6 +16,7 @@ import useFormStore from '@/stores/useFormStore';
 import { Accordion, AccordionDetails, AccordionSummary, Divider } from "@mui/material";
 import { ExpandMoreTwoTone } from "@mui/icons-material";
 import {ChangeEvent} from "react";
+import useGuestStore from "@/stores/useGuestStore";
 
 const defaultTheme = createTheme();
 
@@ -131,7 +132,7 @@ export default function Reservation() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  /*const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (validateForm()) {
       setFormSubmitted(true);
@@ -139,7 +140,45 @@ export default function Reservation() {
     } else {
       console.log('Form validation failed');
     }
+  };*/
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (validateForm()) {
+      const extractedAdults = adultDetails.map(adult => ({
+        title: adult.title,
+        firstName: adult.firstName,
+        lastName: adult.lastName,
+        gender: adult.gender,
+        email: adult.email,
+        phone: adult.phone,
+        passportNumber: adult.passportNumber,
+        serialNumber: adult.serialNumber,
+        expiryDate: adult.expiryDate,
+        issueCountry: adult.issueCountry
+      }));
+
+      const extractedChildren = childDetails.map(child => ({
+        firstName: child.firstName,
+        lastName: child.lastName,
+        age: child.age,
+        passportNumber: child.passportNumber,
+        serialNumber: child.serialNumber,
+        expiryDate: child.expiryDate,
+        issueCountry: child.issueCountry
+      }));
+
+      useGuestStore.getState?.().setAdultDetails(extractedAdults);
+      useGuestStore.getState?.().setChildDetails(extractedChildren);
+      console.log("guest information saved", extractedAdults, extractedChildren);
+
+      setFormSubmitted(true);
+      console.log('Form submitted');
+    } else {
+      console.log('Form validation failed');
+    }
+
   };
+
 
   const handleReset = () => {
     setErrors({});

@@ -1,4 +1,5 @@
 import {BeginTransactionRequest, sendBeginTransactionRequest} from "@/app/responsemodel/BeginTransactionModel";
+import useGuestStore from "@/stores/useGuestStore";
 
 type SetReservationInfoRequestModel = {
     transactionId: string;
@@ -252,124 +253,109 @@ interface PaymentPlanPrice {
     currency: string;
 }
 
-const setReservationInfo = async (postData : BeginTransactionRequest) : Promise<SetReservationInfoResponse> => {
-    console.log("Set Reservation Info started...")
+
+const setReservationInfo = async (transactionId: string): Promise<SetReservationInfoResponse> => {
+    const { adultDetails, childDetails } = useGuestStore.getState?.();
+    console.log("data from zustand: ", adultDetails, childDetails);
+    // Transform store data to match the request model
+    const travellers = [
+        ...adultDetails.map((adult, index) => ({
+            travellerId: (index + 1).toString(), // Assuming IDs are sequential and start from 1
+            type: 1, // Set default type or map if needed
+            title: 1, // Map title if necessary
+            academicTitle: { id: 1 }, // Map academic title if needed
+            passengerType: 1, // Set default or map if needed
+            name: adult.firstName,
+            surname: adult.lastName,
+            isLeader: index === 0, // Assuming the first adult is the leader
+            birthDate: "", // Fetch or derive birth date if available
+            nationality: { twoLetterCode: "DE" }, // Fetch or derive nationality code if available
+            identityNumber: "", // Map if needed
+            passportInfo: {
+                serial: adult.serialNumber,
+                number: adult.passportNumber,
+                expireDate: adult.expiryDate,
+                issueDate: "", // Fetch or derive issue date if available
+                citizenshipCountryCode: "",
+                issueCountryCode: "DE", // Fetch or derive issue country code if available
+            },
+            address: {
+                contactPhone: {
+                    countryCode: "", // Map or derive country code
+                    areaCode: "", // Map or derive area code
+                    phoneNumber: adult.phone,
+                },
+                email: adult.email,
+                address: "", // Map or derive address if available
+                zipCode: "", // Map or derive zip code if available
+                city: { id: "", name: "" }, // Map or derive city details if available
+                country: { id: "", name: "" }, // Map or derive country details if available
+            },
+            orderNumber: index + 1,
+            status: 0, // Set default or map if needed
+            gender: adult.gender === "male" ? 0 : 1, // Assuming 0 for male and 1 for female
+        })),
+        ...childDetails.map((child, index) => ({
+            travellerId: (adultDetails.length + index + 1).toString(),
+            type: 2, // Assuming type 2 for children
+            title: 1, // Map title if necessary
+            academicTitle: { id: 1 }, // Map academic title if needed
+            passengerType: 2, // Assuming type 2 for children
+            name: child.firstName,
+            surname: child.lastName,
+            isLeader: false,
+            birthDate: "", // Fetch or derive birth date if available
+            nationality: { twoLetterCode: "DE" }, // Fetch or derive nationality code if available
+            identityNumber: "", // Map if needed
+            passportInfo: {
+                serial: child.serialNumber,
+                number: child.passportNumber,
+                expireDate: child.expiryDate,
+                issueDate: "", // Fetch or derive issue date if available
+                citizenshipCountryCode: child.issueCountry,
+                issueCountryCode: "", // Fetch or derive issue country code if available
+            },
+            address: {
+                contactPhone: {
+                    countryCode: "", // Map or derive country code
+                    areaCode: "", // Map or derive area code
+                    phoneNumber: "", // Children might not have phone numbers
+                },
+                email: "", // Children might not have email addresses
+                address: "", // Map or derive address if available
+                zipCode: "", // Map or derive zip code if available
+                city: { id: "", name: "" }, // Map or derive city details if available
+                country: { id: "", name: "" }, // Map or derive country details if available
+            },
+            orderNumber: adultDetails.length + index + 1,
+            status: 0, // Set default or map if needed
+            gender: 1, // Assuming 1 for children (not strictly necessary)
+        }))
+    ];
+    console.log("TRAVELLERS: ", travellers);
+    const setReservationInfoRequest: SetReservationInfoRequestModel = {
+        transactionId: transactionId,
+        travellers: travellers
+    };
+
     try {
-        const beginTransactionResponse = await sendBeginTransactionRequest(postData);
-        const transactionId = beginTransactionResponse.body.transactionId;
-        console.log('Begin Transaction -> successfully');
-        const setReservationInfoRequest : SetReservationInfoRequestModel = {
-            transactionId : transactionId,
-            travellers : [
-                {
-                    travellerId: "1",
-                    type: 1,
-                    title: 1,
-                    academicTitle: {
-                        id: 1,
-                    },
-                    passengerType: 1,
-                    name: "Name",
-                    surname: "Surname",
-                    isLeader: true,
-                    birthDate: "1990-10-10T00:00:00",
-                    nationality: {
-                        twoLetterCode: "DE",//!!!!!!! fetch it
-                    },
-                    identityNumber: "",
-                    passportInfo: {
-                        serial: 'a',
-                        number: '13',
-                        expireDate: "2030-01-01T00:00:00",
-                        issueDate: "2020-01-01T00:00:00",
-                        citizenshipCountryCode: "",
-                        issueCountryCode: "21",
-                    },
-                    address: {
-                        contactPhone: {
-                            countryCode: "90",
-                            areaCode: "555",
-                            phoneNumber: "5555555",
-                        },
-                        email: "email@test.com",
-                        address: "",
-                        zipCode: "",
-                        city: {
-                            id: "",
-                            name: "",
-                        },
-                        country: {
-                            id: "",
-                            name: "",
-                        },
-                    },
-                    orderNumber: 1,
-                    status: 0,
-                    gender: 0,
-                },
-                {
-                    travellerId: "2",
-                    type: 1,
-                    title: 3,
-                    academicTitle: {
-                        id: 1,
-                    },
-                    passengerType: 1,
-                    name: "SecondName",
-                    surname: "Surname",
-                    isLeader: false,
-                    birthDate: "1990-01-01T00:00:00",
-                    nationality: {
-                        twoLetterCode: "DE",
-                    },
-                    identityNumber: "",
-                    passportInfo: {
-                        serial: 'a',
-                        number: '19',
-                        expireDate: "2030-01-01T00:00:00",
-                        issueDate: "2020-01-01T00:00:00",
-                        citizenshipCountryCode: "",
-                        issueCountryCode: "12",
-                    },
-                    address: {
-                        contactPhone: {
-                            countryCode: "90",
-                            areaCode: "555",
-                            phoneNumber: "5555555",
-                        },
-                        email: "email@test.com",
-                        address: "",
-                        zipCode: "",
-                        city: {
-                            id: "",
-                            name: "",
-                        },
-                        country: {
-                            id: "",
-                            name: "",
-                        },
-                    },
-                    orderNumber: 2,
-                    status: 0,
-                    gender: 1,
-                },
-            ]
-        }
         const response = await fetch("https://localhost:7220/Tourvisio/SetReservationInfo", {
-            method:'POST',
+            method: 'POST',
             headers: {
                 'Accept': 'text/plain',
                 'Content-Type': 'application/json'
             },
-            body : JSON.stringify(setReservationInfoRequest)
-        })
+            body: JSON.stringify(setReservationInfoRequest)
+        });
+
         if (response.ok) {
             console.log('Reservation info request done successfully');
         }
         return await response.json();
-    }catch (error) {
+    } catch (error) {
         console.error('Error sending reservation info request:', error);
         throw error;
     }
 }
+
 export { setReservationInfo };

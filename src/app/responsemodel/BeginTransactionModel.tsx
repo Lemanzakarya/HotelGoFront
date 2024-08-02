@@ -214,11 +214,12 @@ const sendBeginTransactionRequest = async (postData:BeginTransactionRequest) : P
             },
             body: JSON.stringify(postData)
         });
+        const responseBody = await response.json();
+
         if (!response.ok) {
-            const errorResponse = await response.json();
-            console.error('Server Error:', errorResponse);
+            console.error('Server Error:', responseBody);
         }
-        return await response.json();
+        return responseBody;
     }catch (error){
         console.log('ERROR AMK: ',error);
         throw error;

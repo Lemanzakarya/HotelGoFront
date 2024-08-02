@@ -1,10 +1,9 @@
 'use client';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Button, Typography, Grid, Step, StepLabel, Stepper } from '@mui/material';
 import GuestInformation from './GuestInformation';
 import Payment from './Payment';
-import { useRouter } from 'next/navigation';
-import { BeginTransactionRequest } from "@/app/responsemodel/BeginTransactionModel";
+import {BeginTransactionRequest, sendBeginTransactionRequest} from "@/app/responsemodel/BeginTransactionModel";
 import { setReservationInfo } from "@/app/responsemodel/setReservationInfoModel";
 import Confirmation from '../reservation/Confirmation';
 import useOfferStore from '@/stores/useOfferStore';
@@ -29,54 +28,86 @@ const ReservationPage: React.FC = () => {
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const {thumbnailFull,offerIds,currency} = useOfferStore();
   console.log(thumbnailFull,offerIds , currency)
-  const router = useRouter();
   const [reservationNumber, setReservationNumber] = useState('');
-  const [offerId, setOfferId] = useState("");
-  const [hotelName, setHotelName] = useState("Hotel name could not be loaded");
+  const { hotelName , hotelLocation } = useOfferStore();
   const [isFetched, setIsFetched] = useState(false);
   const formSubmitted = useFormStore(state => state.formSubmitted);
   const [hotelImg, setHotelImg] = useState("");
-  const [hotelLocation, setHotelLocation] = useState("Location could not be loaded");
-  const [hotelStars, setHotelStars] = useState(0);
-  const handleNext = () => {
+  const [transactionId, setTransactionId] = useState("");
+  const [isSetReservationDone , setIsSetReservationDone] = useState(false);
+
+  const handleNext = async () => {
+      if (step === 0){
+         await fetchSetReservationInfo();
+      }
+      if (isSetReservationDone){
+          fetchCommitTransaction();
+          if (isFetched) {
+              console.log('Everything is fetched , OK')
+          }
+      }
     setStep((prevStep) => prevStep + 1);
   }
-  const fetchReservationData = async () => {
+ const handleConfirm = () => {
+    if (isFetched){
+        setIsConfirmed(true);
+        handleNext()
+    }
+ }
 
+  useEffect(() => {
+    setHotelImg(thumbnailFull);
+    fetchBeginTransaction();
+  }, [offerIds, thumbnailFull]);
+
+  const fetchBeginTransaction = async () => {
     const postData: BeginTransactionRequest = {
-      offerIds: [offerId],// STATIC FIELD
-      currency: "EUR",// STATIC FIELD
+      offerIds: [offerIds[0]],// STATIC FIELD
+      currency: `${currency}`,// STATIC FIELD
     }
     try {
-      const setReservationResponse = await setReservationInfo(postData);
-      console.log("setReservationInfo - done");
-      if (setReservationResponse?.body?.reservationData?.services?.[0]?.serviceDetails?.hotelDetail?.name) {
-        setHotelName(setReservationResponse.body.reservationData.services[0].serviceDetails.hotelDetail.name);
-      }
-      const transactionId = setReservationResponse.body.transactionId;
-      console.log('transaction Id fetched');
-      const commitTransactionRequest: CommitTransactionRequest = { transactionId: transactionId }
-      const response = await fetch("https://localhost:7220/Tourvisio/CommitTransaction", {
-        method: 'POST',
-        headers: {
-          'Accept': 'text/plain',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(commitTransactionRequest)
-      })
-      console.log("Commit Transaction Response status: ", response.status);
-
-      const commitTransactionResponse: CommitTransactionResponse = await response.json();
-      setReservationNumber(commitTransactionResponse.body.reservationNumber);
-
-      setIsFetched(true);
+      const beginTransactionResponse = await sendBeginTransactionRequest(postData);
+      console.log('Begin Transaction -> successfully : ', beginTransactionResponse.body.transactionId);
+      setTransactionId(beginTransactionResponse.body.transactionId);
     } catch (error) {
       console.log('ERROR: ', error);
       throw error;
-    } finally {
-      setIsConfirmed(true);
-      setStep((prevStep) => prevStep + 1);
     }
+  }
+  const fetchSetReservationInfo = async () => {
+      try {
+          const setReservationInfoResponse = await setReservationInfo(transactionId);
+          if (!setReservationInfoResponse.ok) {
+                console.error('Server Error:', setReservationInfoResponse);
+          }
+          console.log("setReservationInfo - done");
+          setIsSetReservationDone(true);
+      }catch (e){
+            console.log('ERROR setReservationInfo: ', e);
+            throw e;
+      }
+  }
+  const fetchCommitTransaction = async () => {
+        const commitTransactionRequest: CommitTransactionRequest = { transactionId: transactionId }
+        try {
+            const response = await fetch("https://localhost:7220/Tourvisio/CommitTransaction", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(commitTransactionRequest)
+            })
+            console.log("Commit Transaction Response status: ", response.status);
+
+            const commitTransactionResponse: CommitTransactionResponse = await response.json();
+            console.log(commitTransactionResponse.body.reservationNumber)
+            setReservationNumber(commitTransactionResponse.body.reservationNumber);
+            setIsFetched(true);
+        }catch (e){
+            console.log('ERROR commitTransactionRequest: ', e);
+            throw e;
+        }
   }
   const handleBack = () => setStep((prevStep) => prevStep - 1);
 
@@ -95,10 +126,10 @@ const ReservationPage: React.FC = () => {
         <Grid item xs={12} sm={8}>
           <Box
             sx={{
-              border: '1px solid lightgrey',
+              border: '2px solid #000000',
               borderRadius: '8px',
               p: 1,
-              backgroundColor: '#ded9d9',
+              backgroundColor: '#ffffff',
               display: 'flex',
               flexDirection: 'column',
               minHeight: '300px',
@@ -111,9 +142,9 @@ const ReservationPage: React.FC = () => {
             {step === 2 && !isConfirmed && (
               <Confirmation />)}
             {step === 3 && (
-              <Box>
-                <Typography variant="h1">{isFetched ? reservationNumber : "Something went wrong :("}</Typography>
-                <Typography variant="h6">{isFetched ? "Please try again later" : "Congratulations"}</Typography>
+              <Box sx={{m:2,ml:2}}>
+                <Typography variant="h2">{isFetched ? reservationNumber : "Something went wrong :("}</Typography>
+                <Typography variant="h6">{isFetched ? "Congratulations" : "Please try again"}</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   {reservationNumber === "Something went wrong!" ? "Your reservation could not be completed" : "Your reservation has been confirmed. Your reservation number is shown above. Please keep this number for your records."}
                 </Typography>
@@ -135,7 +166,7 @@ const ReservationPage: React.FC = () => {
                 </Box>
               )}
               {step === steps.length - 1 && !isConfirmed && (
-                <Button variant="contained" onClick={fetchReservationData} sx={{borderRadius:2 ,backgroundColor: '#279d21', '&:hover': { backgroundColor: '#46a432'}}}>
+                <Button variant="contained" onClick={handleConfirm} disabled={!isFetched} sx={{borderRadius:2 ,backgroundColor: '#279d21', '&:hover': { backgroundColor: '#46a432'}}}>
                   Confirm
                 </Button>
               )}
@@ -158,14 +189,14 @@ const ReservationPage: React.FC = () => {
               sx={{
                 width: '100%',
                 height: 'auto',
+                maxHeight:'400px',
                 borderRadius: '8px',
                 mb: 2,
               }}
             />
-            <Typography variant="h6" sx={{ mb: 2 }}>Hotel Details</Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>Hotel Name: {hotelName}</Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>Location: {hotelLocation}</Typography> {/*//LOCATION TO BE FETCHED*/}
-            <Typography variant="body2" sx={{ mb: 1 }}>Rating: {hotelStars}</Typography> {/*//STARS TO BE FETCHED*/}
+            <Typography variant="h5" sx={{ mb: 2 }}>Hotel Details</Typography>
+            <Typography variant="h6" sx={{ mb: 1 }}>Hotel Name: {hotelName}</Typography>
+            <Typography variant="h6" sx={{ mb: 1 }}>Hotel Address: {hotelLocation}</Typography>
           </Box>
         </Grid>
       </Grid>
