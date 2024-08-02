@@ -51,6 +51,7 @@ const RoomsContainer = styled(Container)({
 
 const ViewDetailsLink = styled("a")({
   color: "#1976d2",
+  flexDirection:"column",
   textDecoration: "underline",
   "&:hover": {
     textDecoration: "none",
@@ -107,22 +108,41 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
 
   const setOfferIds = useOfferStore(state => state.setOfferIds);
   const setCurrency = useOfferStore(state => state.setCurrency); 
- const currency = usePriceSearchStore(state => state.currency);
+  const currency = usePriceSearchStore(state => state.currency);
 
-  const handleViewDetails = (room: Room) => {
-    setSelectedRoom(room);
+  const handleViewDetails = (offer: any) => {
+    const formattedCancellationPolicies = offer.cancellationPolicies.map((policy: any) => {
+      const dueDate = new Date(policy.dueDate).toLocaleDateString();
+      const price = formatPrice(policy.price.percent);
+      return `Due date: ${dueDate}\nPrice: ${price}%`; // Use template literal for cleaner formatting
+    }).join(",\n"); // Two newlines for proper separation
+  
+    setSelectedRoom({
+      id: parseInt(offer.offerID),
+      title: offer.rooms.map((room: { roomName: any; }) => room.roomName).join(", "),
+      description: `Cancellation Policies:\n${formattedCancellationPolicies}`,
+      price: `${formatPrice(offer.price.amount)} ${offer.price.currency}`,
+      features: offer.rooms.map((room: { roomName: any; boardGroups: any[]; }) => ({
+        icon: null,
+        text: `${room.roomName} - ${room.boardGroups.map((bg: { name: any; }) => bg.name).join(', ')}`
+      }))
+    });
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => setOpenDialog(false);
 
-  const handleReserve = (offerId:string) => {
+  const handleReserve = (offerId: string) => {
     setIsLoading(true);
     setOfferIds([offerId]);
     setTimeout(() => {
       router.push(`/reservation`);
       setIsLoading(false);
     }, 2000);
+  };
+
+  const formatPrice = (price: number) => {
+    return price.toFixed(2);
   };
 
   //TODO:for test will be deleted
@@ -155,7 +175,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                 </Typography>
                 {offer.price && (
                   <Typography variant="body1" color="textPrimary" sx={{ marginTop: "10px" }}>
-                    Price: {offer.price.amount} {offer.price.currency}
+                    Price: {formatPrice(offer.price.amount)} {offer.price.currency}
                   </Typography>
                 )}
                 <Typography variant="body2" color="textPrimary" mt={2}>
@@ -171,21 +191,9 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                   ))}
                 </FeaturesList>
               </CardContentStyled>
-              <ViewDetailsLink sx={{ mr: 2 }} onClick={() => handleViewDetails({
-                id: parseInt(offer.offerID),
-                title: offer.rooms.map((room) => room.roomName).join(", "),
-                description: `Description for offer ${offer.offerID}`,
-                price: `${offer.price.amount} ${offer.price.currency}`,
-                features: offer.rooms.map((room) => ({
-                  icon: null,
-                  text: `${room.roomName} - ${room.boardGroups.map(bg => bg.name).join(', ')}`
-                }))
-              })}>
+              <ViewDetailsLink sx={{ mr: 2 }} onClick={() => handleViewDetails(offer)}>
                 View Detail
               </ViewDetailsLink>
-              
-              
-              
               <ReserveButton
                 variant="contained"
                 fullWidth
