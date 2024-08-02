@@ -5,9 +5,7 @@ import {
 } from "@mui/material";
 import CheckBox from "@mui/material/Checkbox";
 import { CheckBoxTwoTone, ExpandMoreTwoTone, FilterList } from "@mui/icons-material";
-import HotelCard from '../card/HotelCard';
-import { json } from 'stream/consumers';
-import SearchPage from '@/app/search/page';
+import usePriceSearchStore from '@/stores/usePriceSearch';
 
 const style = {
   width: 'auto',
@@ -77,10 +75,13 @@ interface FilterSidebarProps {
   id: string | null;
   onFilteredResults: (results: PriceSearchHotel[] | undefined) => void;
   currency: string | undefined;
+  isCleared: boolean;
+  handleFilter: () => void;
 }
 
 const FilterSidebar = (props: FilterSidebarProps) => {
-  const { id, onFilteredResults , currency } = props;
+  const { id, onFilteredResults , currency , handleFilter } = props;
+  var isCleared = props.isCleared;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
  
@@ -96,10 +97,16 @@ const FilterSidebar = (props: FilterSidebarProps) => {
   const [selectedStars, setSelectedStars] = useState<number | null>(null);
   const [currencyState, setCurrencyState] = useState<string | undefined>(currency);
 
+  const setSearchId = usePriceSearchStore(state => state.setSearchId);
+
+
+
   useEffect(() => {
     if (id) {
+      setSearchId(id);
       fetchResults();
     }
+    onFilteredResults(results);
   }, [id, selectedFacilities, selectedBoardOptions, selectedStars, priceState]);
 
   const handleBoardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +129,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
   }
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setPriceState(newValue as number[]);
+      setPriceState(newValue as number[]);
   }
 
   const handleStarsChange = (event: React.SyntheticEvent, newValue: number | null) => {
@@ -130,9 +137,18 @@ const FilterSidebar = (props: FilterSidebarProps) => {
     fetchResults();
   };
 
+  
+  
   const fetchResults = async () => {
     const filters = [];
 
+    if(!isCleared){
+      setPriceState([]);
+      setPriceRange([]);
+      setSelectedBoardOptions([]);
+      setSelectedFacilities([]);
+      handleFilter();
+    }
     if (selectedStars) {
       filters.push({
         type: 2,
@@ -177,7 +193,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
     };
     
     try { 
-      const response = await fetch('http://localhost:5083/Tourvisio/GetPagingData', {
+      const response = await fetch('https://localhost:7220/Tourvisio/GetPagingData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -186,6 +202,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
       });
       if (response.ok) {  
         const data:GetPagingDataResponseModel = await response.json();
+        console.log(data)
         setResults(data?.body?.hotels);
         onFilteredResults(data?.body?.hotels);
         var min = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.from
@@ -203,7 +220,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
             setPriceRange(numberArray);
           }
           setCurrencyState(currency);
-
+          handleFilter();
       } else {
         console.error('Error:', response.status);
       }
@@ -239,7 +256,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
       <Divider component="li" />
       <ListItem sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
         <Typography>Price Range</Typography>
-        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceState[0]} TL - ${priceState[1]} TL`}</Typography>
+        <Typography sx={{ mt: 2 }}>{`Selected range: ${priceState[0]} ${currency} - ${priceState[1]} ${currency}`}</Typography>
         <Slider
           getAriaLabel={() => 'Price range'}
           value={priceState}

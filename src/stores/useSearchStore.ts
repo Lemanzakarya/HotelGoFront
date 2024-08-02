@@ -1,4 +1,6 @@
-import {create} from 'zustand';
+'use client'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { Dayjs } from 'dayjs';
 
 interface SearchState {
@@ -20,34 +22,41 @@ interface SearchState {
     setNights: (nights: number) => void;
 }
 
-interface Location{
+interface Location {
     type: number;
     id: string;
     name: string;
 }
 
-const useSearchStore = create<SearchState>((set) => ({
-    location: {
-        type: 0,
-        id: '',
-        name: ''
-    },
-    checkInDate: null,
-    checkOutDate: null,
-    adults: 0,
-    children: 0,
-    childrenAges: [],
-    selectedNationality: 'TR',
-    nights: 0,
-    setLocation: (location) => set({ location }),
-    setCheckInDate: (date) => set({ checkInDate: date }),
-    setCheckOutDate: (date) => set({ checkOutDate: date }),
-    setAdults: (adults) => set({ adults }),
-    setChildren: (children) => set({ children }),
-    setChildrenAges: (ages) => set({ childrenAges: ages }),
-    setSelectedNationality: (selectedNationality) => set({ selectedNationality }),
-    setNights: (nights) => set({ nights }),
-}));
+const useSearchStore = create(
+    persist<SearchState>(
+        (set) => ({
+            location: {
+                type: 0,
+                id: '',
+                name: '',
+            },
+            checkInDate: null,
+            checkOutDate: null,
+            adults: 0,
+            children: 0,
+            childrenAges: [],
+            selectedNationality: 'Turkey',
+            nights: 0,
+            setLocation: (location) => set({ location }),
+            setCheckInDate: (date) => set({ checkInDate: date }),
+            setCheckOutDate: (date) => set({ checkOutDate: date }),
+            setAdults: (adults) => set({ adults }),
+            setChildren: (children) => set({ children }),
+            setChildrenAges: (ages) => set({ childrenAges: ages }),
+            setSelectedNationality: (selectedNationality) => set({ selectedNationality }),
+            setNights: (nights) => set({ nights }),
+        }),
+        {
+            name: 'search-store', 
+            getStorage: () => localStorage, 
+        }
+    )
+);
 
 export default useSearchStore;
-

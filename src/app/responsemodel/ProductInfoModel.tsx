@@ -47,9 +47,9 @@ const sendPostRequest = async(postData:any,url : string) => {
     body: JSON.stringify(postData)
   });
 
-  // if(!response.ok){
-  //   throw new  Error('Network response was not ok');
-  // }
+  if(!response.ok){    
+    throw new  Error('Network response was not ok');
+  }
 
   const data = await response.json();
   return data;

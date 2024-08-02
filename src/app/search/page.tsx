@@ -1,16 +1,15 @@
-"use client";
+'use client'
+
 import React, { useEffect, useState, Suspense } from "react";
 import HotelCard from "../../components/card/HotelCard";
 import Box from "@mui/material/Box";
-import SearchBar from "@/components/SearchBar";
 import { useMediaQuery } from "@mui/material";
 import FilterSidebar from "../../components/filtering/FilterSideBar";
 import LoadingCircle from "@/components/shared/LoadingCircle";
 import useCurrencyStore from "@/stores/useCurrencyStore";
-import { useRouter } from "next/navigation";
-import { useStore } from "zustand";
 import useSearchStore from "@/stores/useSearchStore";
 import dayjs from "dayjs";
+import dynamic from "next/dynamic";
 
 interface Hotel {
   name?: string;
@@ -40,17 +39,23 @@ interface HotelOffer {
   offerId?: string;
   price?: Price;
 }
-interface Price{
+
+interface Price {
   currency?: string;
   amount?: string;
 }
 
+const formatPrice = (price: string | undefined) => {
+  if (!price) return price;
+  const numericPrice = parseFloat(price);
+  return numericPrice.toFixed(2);
+};
 
 const SearchPageServer = () => {
   const { selectedCurrency } = useCurrencyStore();
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isCleared, setIsCleared] = useState(false);
   const [searchId, setData] = useState<string | null>(null);
   const [filteredResults, setFilteredResults] = useState<Hotel[] | undefined>(undefined);
 
@@ -58,19 +63,21 @@ const SearchPageServer = () => {
     setFilteredResults(results);
   };
 
-
+  const handleClearFilter = () => {
+    setIsCleared(true);
+  }
 
   useEffect(() => {
     fetchResults();
   }, [selectedCurrency]);
 
-
   const location = useSearchStore((state) => state.location);
   const adults = useSearchStore((state) => state.adults);
+  const children = useSearchStore((state) => state.children);
   const childrenAges = useSearchStore((state) => state.childrenAges);
   const checkInDate = useSearchStore((state) => state.checkInDate);
   const checkOutDate = useSearchStore((state) => state.checkOutDate);
-  const night = checkOutDate?.diff(checkInDate, 'days') || 0;
+  const night = dayjs(checkOutDate)?.diff(checkInDate, 'days') || 0;
 
   const fetchResults = async () => {
     var arrival = location.type === 1 ? [{ id: location.id, type: 2 }] : null;
@@ -95,7 +102,7 @@ const SearchPageServer = () => {
       night: night
     };
     try {
-      const response = await fetch('http://localhost:5083/Tourvisio/PriceSearch', {
+      const response = await fetch('https://localhost:7220/Tourvisio/PriceSearch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,17 +111,19 @@ const SearchPageServer = () => {
       });
       if (response.ok) {
         const data = await response.json();
+        setIsCleared(false);
         setData(data.body.searchId);
+        setFilteredResults(data.body.hotels);
       }
     } catch (error) {
       console.error('Error:', error);
-
     }
-
+    
   }
 
-
-  //todo currency değiştiğinde cardlardaki fiyat değişmiyor
+  const SearchBar = dynamic(() => import('@/components/SearchBar'), {
+    ssr: false,
+  });
 
   return (
     <div style={{ marginTop: "20px" }}>
@@ -125,13 +134,16 @@ const SearchPageServer = () => {
           zIndex: 10,
         }}
       >
+        <div>
         <SearchBar
           sx={{ marginTop: "20px", marginLeft: "5%", marginRight: "5%" }}
           backgroundColor={"#F5F5F5"}
           height={isSmallScreen ? "100%" : 80}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
-          />
+          fetchFunct={fetchResults}
+        />
+        </div>
       </Box>
       <Box
         display="flex"
@@ -156,9 +168,15 @@ const SearchPageServer = () => {
               <LoadingCircle />
             </Box>
           )}
-           <div className="filter">
-        <FilterSidebar id={searchId} onFilteredResults={handleFilteredResults} currency={selectedCurrency} />
-      </div>
+          <div className="filter">
+            <FilterSidebar 
+              id={searchId} 
+              onFilteredResults={handleFilteredResults}
+              currency={selectedCurrency} 
+              isCleared={isCleared} 
+              handleFilter={handleClearFilter}
+            />
+          </div>
         </Box>
         <Box
           flex="3"
@@ -168,19 +186,27 @@ const SearchPageServer = () => {
           marginLeft={isSmallScreen ? "5%" : "0%"}
         >
           {filteredResults?.map((hotel, index) => (
-            console.log(hotel),
             <Box key={index}>
               <HotelCard
-              title={hotel.name}
-              location={hotel?.city?.name + ', ' + hotel?.country?.name}
-              price={hotel.offers?.[0].price?.amount}
-              stars={hotel.stars}
-              isLoading={isLoading}
-              thumbnail={hotel.thumbnailFull}
-              nights={hotel.offers?.[0].night}
-              currency= {hotel.offers?.[0].price?.currency}
-              setIsLoading={setIsLoading}
-              />
+                title={hotel.name}
+                location={`${hotel.city?.name ? hotel.city.name : ''}${hotel.country?.name ? ', ' + hotel.country.name : ''}`}
+                price={formatPrice(hotel.offers?.[0].price?.amount)}
+                stars={hotel.stars}
+                isLoading={isLoading}
+                thumbnail={hotel.thumbnailFull}
+                nights={hotel.offers?.[0].night}
+                currency={hotel.offers?.[0].price?.currency}
+                adults={adults}
+                checkInDate={checkInDate}
+                setIsLoading={setIsLoading}
+                offerId={hotel.offers?.[0].offerId}
+                productId={hotel.id}
+                ownerProvider={hotel.provider}
+              >
+                {children}
+              
+
+              </HotelCard>
             </Box>
           ))}
         </Box>
@@ -188,12 +214,11 @@ const SearchPageServer = () => {
     </div>
   );
 };
-const SearchPage = () => {
 
-  console.log("çalıtşım")
+const SearchPage = () => {
   return (
     <Suspense>
-      <SearchPageServer/>
+      <SearchPageServer />
     </Suspense>
   );
 };

@@ -44,22 +44,17 @@ interface AutoCompleteInputBoxProps {
 export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxProps) {
     const [options, setOptions] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState('');
-    const {location,setLocation} = useSearchStore();
+
+    const location = useSearchStore(state => state.location);
+
 
     const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({
-        City: true,
+        Location: true,
         Hotel: true
     });
 
-    const apiUrl = "http://localhost:5083/Tourvisio/PostAutoComplete";
+    const apiUrl = "https://localhost:7220/Tourvisio/PostAutoComplete";
 
-    useEffect(()=>{
-        const storeState = useSearchStore.getState();
-
-        setLocation(storeState.location);
-        console.log("location",location)
-    },[location]
-)
 
 
     useEffect(() => {
@@ -158,7 +153,7 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
                     sx={{ width: '100%' , backgroundColor:'rgba(255,255,255,0.75)', borderRadius: '5px'}}
                     inputProps={{
                         ...params.inputProps,
-                        autoComplete: 'new-password'
+                        autoComplete: 'off'
                     }}
                 />
             )}

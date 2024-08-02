@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import SearchBar from '../components/SearchBar';
 import LoadingCircle from "@/components/shared/LoadingCircle";
+import dynamic from 'next/dynamic';
 
 
 
@@ -56,30 +57,36 @@ const Page: React.FC = () => {
         };
         fetchVideoUrl();
     }, []);
-  return (
 
-      <PageContainer>
-          {videoUrl && (
-              <VideoOverlay>
-                  <video src={videoUrl} autoPlay loop muted></video>
-              </VideoOverlay>
-          )}
-        <SearchBar
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
-            sx={{ backgroundColor:'rgba(255,255,255,0)'}}
-            containerSx={{backgroundColor:'rgba(255,255,255,0.64)'}}
-            checkInSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
-            checkOutSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
-            guestsSx={{backgroundColor: 'rgba(255,255,255,0.75)' , borderRadius: '5px'}}
-        />
-          {isLoading && (
+    const SearchBar = dynamic(() => import('../components/SearchBar'), {
+        ssr: false,
+      });
+    return (
+
+        <PageContainer>
+            {videoUrl && (
+                <VideoOverlay>
+                    <video src={videoUrl} autoPlay loop muted></video>
+                </VideoOverlay>
+            )}
+            <div>
+            <SearchBar
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                sx={{ backgroundColor: 'rgba(255,255,255,0)' }}
+                containerSx={{ backgroundColor: 'rgba(255,255,255,0.64)' }}
+                checkInSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+                checkOutSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+                guestsSx={{ backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: '5px' }}
+            />
+            </div>
+            {isLoading && (
                 <LoadingContainer>
-                    <LoadingCircle/>
+                    <LoadingCircle />
                 </LoadingContainer>
-          ) }
-      </PageContainer>
-  );
+            )}
+        </PageContainer>
+    );
 };
 
 export default Page;
