@@ -7,7 +7,7 @@ interface OfferState {
   thumbnailFull:string | undefined;
   hotelName:string | undefined;
   hotelLocation : string | undefined;
-  setHotelLocation : string | undefined;
+  setHotelLocation : (hotelname: string | undefined) => void;
   setHotelName : (hotelName: string | undefined) => void;
   setOfferIds: (offerIds: string[] | undefined) => void;
   setCurrency: (currency: string | undefined) => void;
