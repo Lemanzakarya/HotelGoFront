@@ -29,17 +29,19 @@ const ReservationPage: React.FC = () => {
   const router = useRouter();
   const [reservationNumber, setReservationNumber] = useState('');
   const [offerId, setOfferId] = useState("");
-  const [hotelName, setHotelName] = useState("Example Hotel Name");
+  const [hotelName, setHotelName] = useState("Hotel name could not be loaded");
   const [isFetched, setIsFetched] = useState(false);
   const formSubmitted = useFormStore(state => state.formSubmitted);
   const [hotelImg, setHotelImg] = useState("");
+  const [hotelLocation, setHotelLocation] = useState("Location could not be loaded");
+  const [hotelStars, setHotelStars] = useState(0);
   const handleNext = () => {
     setStep((prevStep) => prevStep + 1);
   }
   const fetchReservationData = async () => {
 
     const postData: BeginTransactionRequest = {
-      offerIds: ["offerId"],
+      offerIds: [offerId],// STATIC FIELD
       currency: "EUR",// STATIC FIELD
     }
     try {
@@ -116,19 +118,21 @@ const ReservationPage: React.FC = () => {
             )}
             <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between' }}>
               {step > 0 && (
-                <Button variant="outlined" onClick={handleBack}>
+                  <Box sx={{ mr: 'auto' , mt:1}}>
+                <Button variant="contained" onClick={handleBack} sx={{borderRadius:2 ,backgroundColor: '#f05523', '&:hover': { backgroundColor: '#ff7b55' }}}>
                   Back
                 </Button>
+                  </Box>
               )}
               {step < steps.length - 1 && !isConfirmed && (
-                <Box sx={{ ml: 'auto'}}> 
-                  <Button variant="contained" onClick={handleNext} disabled={!formSubmitted} >
+                <Box sx={{ ml: 'auto' , mt:1}}>
+                  <Button variant="contained" onClick={handleNext} disabled={!formSubmitted} sx={{borderRadius:2 ,backgroundColor: '#0347a8', '&:hover': { backgroundColor: '#2b73d0'}}} >
                     Next
                   </Button>
                 </Box>
               )}
               {step === steps.length - 1 && !isConfirmed && (
-                <Button variant="contained" onClick={fetchReservationData}>
+                <Button variant="contained" onClick={fetchReservationData} sx={{borderRadius:2 ,backgroundColor: '#279d21', '&:hover': { backgroundColor: '#46a432'}}}>
                   Confirm
                 </Button>
               )}
@@ -157,8 +161,8 @@ const ReservationPage: React.FC = () => {
             />
             <Typography variant="h6" sx={{ mb: 2 }}>Hotel Details</Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>Hotel Name: {hotelName}</Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>Location: 123 Example St, City</Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>Rating: 4.5 Stars</Typography>
+            <Typography variant="body2" sx={{ mb: 1 }}>Location: {hotelLocation}</Typography> {/*//LOCATION TO BE FETCHED*/}
+            <Typography variant="body2" sx={{ mb: 1 }}>Rating: {hotelStars}</Typography> {/*//STARS TO BE FETCHED*/}
           </Box>
         </Grid>
       </Grid>
