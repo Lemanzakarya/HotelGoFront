@@ -193,7 +193,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
     };
     
     try { 
-      const response = await fetch('https://localhost:7220/Tourvisio/GetPagingData', {
+      const response = await fetch('http://localhost:8080/Tourvisio/GetPagingData', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ const FilterSidebar = (props: FilterSidebarProps) => {
       });
       if (response.ok) {  
         const data:GetPagingDataResponseModel = await response.json();
-        console.log(data)
+
         setResults(data?.body?.hotels);
         onFilteredResults(data?.body?.hotels);
         var min = data?.body?.filters?.hotel?.find((filter: PagingFilters) => filter.type === 8)?.from

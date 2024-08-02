@@ -44,7 +44,8 @@ const HotelDetail: React.FC = () => {
 
   const { productType, ownerProvider, product, culture } = useProductInfoStore();
   const { searchId,offerId,productId,currency,getRoomInfo} = usePriceSearchStore();
-  const { hotelName, setHotelName, hotelLocation, setHotelLocation } = useOfferStore();
+  const { hotelName, setHotelName} = useOfferStore();
+  const {hotelLocation, setHotelLocation} = useOfferStore();
 
   const productInfoReq = {
     productType:productType,
@@ -53,40 +54,35 @@ const HotelDetail: React.FC = () => {
     culture:culture
   };
   useEffect(() => {
-    console.log(productType)
-    console.log(ownerProvider)
-    console.log(product)
-    console.log(culture)
-    const fetchHotelData = async () => { 
-      const productInfo = await sendPostRequest( productInfoReq ,'https://localhost:7220/Tourvisio/ProductInfo');
 
-      console.log(productInfo)
+    const fetchHotelData = async () => { 
+      const productInfo = await sendPostRequest( productInfoReq ,'http://localhost:8080/Tourvisio/ProductInfo');
+
+
       setHotelData(productInfo.body);
       setHotelName(productInfo.body.hotel.name);
       setHotelLocation(productInfo.body.hotel.address.addressLines.join(','));
-      console.log("hotel name : ",productInfo.body.hotel.name);
-      console.log("hotel location : ",productInfo.body.hotel.address.addressLines.join(','));
+
       try{
         const urls = productInfo.body.hotel.seasons[0]?.mediaFiles.map((file: {urlFull: any;}) => file.urlFull);
         setHotelRoomPhotos(urls);
       }catch (error) {
-        console.log(error);
+
       }try{
         const facilities = productInfo.body.hotel.seasons[0]?.facilityCategories[0].facilities;
         setFacilities(facilities);
       }catch (error) {
-        console.log(error);
+
       }try{
         const textCategory = productInfo.body.hotel.seasons[0]?.textCategories;
-        //console.log(textCategory)
          setTextCategory(textCategory);
       }catch(error) { 
-        console.log(error);
+
       }try{
         const star = productInfo.body?.hotel.stars;
         setHotelStar(star);
       }catch(error){
-        console.log(error);
+
       }
 
     };
@@ -107,7 +103,7 @@ const HotelDetail: React.FC = () => {
   useEffect(() => {
     const fetchOffersData = async () => {
 
-        const fetchOffers = await sendPostRequest(getOfferReq, 'https://localhost:7220/Tourvisio/GetOffers');
+        const fetchOffers = await sendPostRequest(getOfferReq, 'http://localhost:8080/Tourvisio/GetOffers');
         setOffers(fetchOffers.body);
 
     };

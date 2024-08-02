@@ -204,9 +204,9 @@ export type  BeginTransactionRequest = {
 }
 
 const sendBeginTransactionRequest = async (postData:BeginTransactionRequest) : Promise<BeginTransactionResponse> => {
-    console.log("Begin transaction started...");
+
     try {
-        const response = await fetch('https://localhost:7220/Tourvisio/BeginTransaction', {
+        const response = await fetch('http://localhost:8080/Tourvisio/BeginTransaction', {
             method: 'POST',
             headers: {
                 'Accept': 'text/plain',
@@ -221,7 +221,7 @@ const sendBeginTransactionRequest = async (postData:BeginTransactionRequest) : P
         }
         return responseBody;
     }catch (error){
-        console.log('ERROR AMK: ',error);
+
         throw error;
     }
 }

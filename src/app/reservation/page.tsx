@@ -27,7 +27,7 @@ const ReservationPage: React.FC = () => {
   const [step, setStep] = useState<number>(0);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const {thumbnailFull,offerIds,currency} = useOfferStore();
-  console.log(thumbnailFull,offerIds , currency)
+
   const [reservationNumber, setReservationNumber] = useState('');
   const { hotelName , hotelLocation } = useOfferStore();
   const [isFetched, setIsFetched] = useState(false);
@@ -43,7 +43,7 @@ const ReservationPage: React.FC = () => {
       if (isSetReservationDone){
           fetchCommitTransaction();
           if (isFetched) {
-              console.log('Everything is fetched , OK')
+
           }
       }
     setStep((prevStep) => prevStep + 1);
@@ -67,10 +67,10 @@ const ReservationPage: React.FC = () => {
     }
     try {
       const beginTransactionResponse = await sendBeginTransactionRequest(postData);
-      console.log('Begin Transaction -> successfully : ', beginTransactionResponse.body.transactionId);
+
       setTransactionId(beginTransactionResponse.body.transactionId);
     } catch (error) {
-      console.log('ERROR: ', error);
+
       throw error;
     }
   }
@@ -80,17 +80,17 @@ const ReservationPage: React.FC = () => {
           if (!setReservationInfoResponse) {
                 console.error('Server Error:', setReservationInfoResponse);
           }
-          console.log("setReservationInfo - done");
+
           setIsSetReservationDone(true);
       }catch (e){
-            console.log('ERROR setReservationInfo: ', e);
+
             throw e;
       }
   }
   const fetchCommitTransaction = async () => {
         const commitTransactionRequest: CommitTransactionRequest = { transactionId: transactionId }
         try {
-            const response = await fetch("https://localhost:7220/Tourvisio/CommitTransaction", {
+            const response = await fetch("http://localhost:8080/Tourvisio/CommitTransaction", {
                 method: 'POST',
                 headers: {
                     'Accept': 'text/plain',
@@ -98,14 +98,14 @@ const ReservationPage: React.FC = () => {
                 },
                 body: JSON.stringify(commitTransactionRequest)
             })
-            console.log("Commit Transaction Response status: ", response.status);
+ 
 
             const commitTransactionResponse: CommitTransactionResponse = await response.json();
-            console.log(commitTransactionResponse.body.reservationNumber)
+
             setReservationNumber(commitTransactionResponse.body.reservationNumber);
             setIsFetched(true);
         }catch (e){
-            console.log('ERROR commitTransactionRequest: ', e);
+
             throw e;
         }
   }

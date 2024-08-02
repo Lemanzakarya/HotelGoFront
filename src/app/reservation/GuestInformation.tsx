@@ -130,15 +130,7 @@ export default function Reservation() {
     return Object.keys(newErrors).length === 0;
   };
 
-  /*const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (validateForm()) {
-      setFormSubmitted(true);
-      console.log('Form submitted');
-    } else {
-      console.log('Form validation failed');
-    }
-  };*/
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (validateForm()) {
@@ -167,12 +159,12 @@ export default function Reservation() {
 
       useGuestStore.getState?.().setAdultDetails(extractedAdults);
       useGuestStore.getState?.().setChildDetails(extractedChildren);
-      console.log("guest information saved", extractedAdults, extractedChildren);
+
 
       setFormSubmitted(true);
-      console.log('Form submitted');
+
     } else {
-      console.log('Form validation failed');
+
     }
 
   };

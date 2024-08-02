@@ -102,7 +102,7 @@ const SearchPageServer = () => {
       night: night
     };
     try {
-      const response = await fetch('https://localhost:7220/Tourvisio/PriceSearch', {
+      const response = await fetch('http://localhost:8080/Tourvisio/PriceSearch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

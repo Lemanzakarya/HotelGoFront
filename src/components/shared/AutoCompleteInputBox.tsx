@@ -53,7 +53,7 @@ export default function AutoCompleteInputBox({ onChange }: AutoCompleteInputBoxP
         Hotel: true
     });
 
-    const apiUrl = "https://localhost:7220/Tourvisio/PostAutoComplete";
+    const apiUrl = "http://localhost:8080/Tourvisio/PostAutoComplete";
 
 
 
