@@ -256,7 +256,7 @@ interface PaymentPlanPrice {
 
 const setReservationInfo = async (transactionId: string): Promise<SetReservationInfoResponse> => {
     const { adultDetails, childDetails } = useGuestStore.getState?.();
-    console.log("data from zustand: ", adultDetails, childDetails);
+
     // Transform store data to match the request model
     const travellers = [
         ...adultDetails.map((adult, index) => ({
@@ -332,14 +332,14 @@ const setReservationInfo = async (transactionId: string): Promise<SetReservation
             gender: 1, // Assuming 1 for children (not strictly necessary)
         }))
     ];
-    console.log("TRAVELLERS: ", travellers);
+
     const setReservationInfoRequest: SetReservationInfoRequestModel = {
         transactionId: transactionId,
         travellers: travellers
     };
 
     try {
-        const response = await fetch("https://localhost:7220/Tourvisio/SetReservationInfo", {
+        const response = await fetch("http://localhost:8080/Tourvisio/SetReservationInfo", {
             method: 'POST',
             headers: {
                 'Accept': 'text/plain',
@@ -349,7 +349,7 @@ const setReservationInfo = async (transactionId: string): Promise<SetReservation
         });
 
         if (response.ok) {
-            console.log('Reservation info request done successfully');
+
         }
         return await response.json();
     } catch (error) {

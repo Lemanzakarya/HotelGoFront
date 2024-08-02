@@ -147,8 +147,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   };
 
   //TODO:for test will be deleted
-  console.log("recieved offers:", offers);
-  //console.log("Recieved details:",offerDetails);
+
 
   if (!offers || !offers.offers || !Array.isArray(offers.offers) || offers.offers.length === 0) {
     return (
