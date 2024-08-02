@@ -172,7 +172,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                 </FeaturesList>
               </CardContentStyled>
               <ViewDetailsLink sx={{ mr: 2 }} onClick={() => handleViewDetails({
-                id: parseInt(offer.offerId),
+                id: parseInt(offer.offerID),
                 title: offer.rooms.map((room) => room.roomName).join(", "),
                 description: `Description for offer ${offer.offerID}`,
                 price: `${offer.price.amount} ${offer.price.currency}`,

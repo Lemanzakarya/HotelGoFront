@@ -140,7 +140,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
           </CardContent>
           <CardContent>
             <Typography fontWeight="bold" textColor="success.plainColor" sx={{mr: 1, alignSelf: 'flex-end', fontSize: 26 }}>
-              {price || 'Price Missing'} {currency || '$'}
+              {initialPrice || 'Price Missing'} {currency || '$'}
             </Typography>
             <Button
               variant="solid"
