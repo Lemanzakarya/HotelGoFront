@@ -37,7 +37,7 @@ interface HotelCardProps {
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
-  title, 
+  title,
   location,
   price: initialPrice,
   stars = '0',
@@ -61,12 +61,12 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const defaultThumbnail = 'https://orinter.com.br/public/img/hotel-default.jpg';
 
   const setOfferId = usePriceSearchStore(state => state.setOfferId);
-  const setProduct = useProductInfoStore(state => state.setProduct); 
+  const setProduct = useProductInfoStore(state => state.setProduct);
   const setOwnerProvider = useProductInfoStore(state => state.setOwnerProvider);
   const setProductId = usePriceSearchStore(state => state.setProductId);
   const setCurrency = usePriceSearchStore(state => state.setCurrency);
   const setThumbnailFull = useOfferStore(state => state.setThumbnailFull);
-  
+
 
   const handleLookThrough = () => {
     setIsLoading(true);

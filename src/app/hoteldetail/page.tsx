@@ -44,7 +44,7 @@ const HotelDetail: React.FC = () => {
 
   const { productType, ownerProvider, product, culture } = useProductInfoStore();
   const { searchId,offerId,productId,currency,getRoomInfo} = usePriceSearchStore();
-
+  const { hotelName, setHotelName, hotelLocation, setHotelLocation } = useOfferStore();
 
   const productInfoReq = {
     productType:productType,
@@ -62,7 +62,10 @@ const HotelDetail: React.FC = () => {
 
       console.log(productInfo)
       setHotelData(productInfo.body);
-
+      setHotelName(productInfo.body.hotel.name);
+      setHotelLocation(productInfo.body.hotel.address.addressLines.join(','));
+      console.log("hotel name : ",productInfo.body.hotel.name);
+      console.log("hotel location : ",productInfo.body.hotel.address.addressLines.join(','));
       try{
         const urls = productInfo.body.hotel.seasons[0]?.mediaFiles.map((file: {urlFull: any;}) => file.urlFull);
         setHotelRoomPhotos(urls);

@@ -17,8 +17,10 @@ interface SearchState {
     setCheckOutDate: (date: Dayjs | null) => void;
     setAdults: (adults: number) => void;
     setChildren: (children: number) => void;
+    setChildrenNames: (names: string[]) => void;
     setChildrenAges: (ages: number[]) => void;
     setSelectedNationality: (selectedNationality: string | null) => void;
+    setIssueCountry: (issueCountry: string | null) => void;
     setNights: (nights: number) => void;
 }
 
@@ -41,6 +43,7 @@ const useSearchStore = create(
             adults: 0,
             children: 0,
             childrenAges: [],
+            childrenNames : [],
             selectedNationality: 'Turkey',
             nights: 0,
             setLocation: (location) => set({ location }),
@@ -49,14 +52,16 @@ const useSearchStore = create(
             setAdults: (adults) => set({ adults }),
             setChildren: (children) => set({ children }),
             setChildrenAges: (ages) => set({ childrenAges: ages }),
+            setChildrenNames: (names) => set({ childrenNames: names }),
             setSelectedNationality: (selectedNationality) => set({ selectedNationality }),
             setNights: (nights) => set({ nights }),
         }),
         {
-            name: 'search-store', 
-            getStorage: () => localStorage, 
+            name: 'search-store',
+            getStorage: () => localStorage,
         }
     )
 );
 
 export default useSearchStore;
+

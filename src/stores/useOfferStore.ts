@@ -5,7 +5,10 @@ interface OfferState {
   offerIds: string[] | undefined;
   currency: string | undefined;
   thumbnailFull:string | undefined;
-
+  hotelName:string | undefined;
+  hotelLocation : string | undefined;
+  setHotelLocation : string | undefined;
+  setHotelName : (hotelName: string | undefined) => void;
   setOfferIds: (offerIds: string[] | undefined) => void;
   setCurrency: (currency: string | undefined) => void;
   setThumbnailFull : (thumbnailFull: string | undefined) => void;
@@ -18,7 +21,10 @@ const useOfferStore = create(
       offerIds: [],
       currency: '',
       thumbnailFull: '',
-
+      hotelName: '',
+      hotelLocation:'',
+      setHotelLocation : (hotelLocation) => set({ hotelLocation }),
+      setHotelName : (hotelName) => set({ hotelName }),
       setOfferIds: (offerIds) => set({ offerIds }),
       setCurrency: (currency) => set({ currency }),
       setThumbnailFull:(thumbnailFull) => set({ thumbnailFull }),
