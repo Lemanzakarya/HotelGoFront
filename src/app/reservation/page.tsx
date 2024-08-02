@@ -56,14 +56,14 @@ const ReservationPage: React.FC = () => {
  }
 
   useEffect(() => {
-    setHotelImg(thumbnailFull);
+    setHotelImg(thumbnailFull || '');
     fetchBeginTransaction();
   }, [offerIds, thumbnailFull]);
 
   const fetchBeginTransaction = async () => {
     const postData: BeginTransactionRequest = {
-      offerIds: [offerIds[0]],// STATIC FIELD
-      currency: `${currency}`,// STATIC FIELD
+      offerIds: offerIds ? [offerIds[0]] : [], // STATIC FIELD
+      currency: `${currency}`, // STATIC FIELD
     }
     try {
       const beginTransactionResponse = await sendBeginTransactionRequest(postData);
@@ -77,7 +77,7 @@ const ReservationPage: React.FC = () => {
   const fetchSetReservationInfo = async () => {
       try {
           const setReservationInfoResponse = await setReservationInfo(transactionId);
-          if (!setReservationInfoResponse.ok) {
+          if (!setReservationInfoResponse) {
                 console.error('Server Error:', setReservationInfoResponse);
           }
           console.log("setReservationInfo - done");

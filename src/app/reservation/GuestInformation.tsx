@@ -30,8 +30,6 @@ export default function Reservation() {
     children,
     childrenAges,
     setChildrenAges,
-    issueCountry,
-    setIssueCountry
   } = useSearchStore();
 
   const [adultDetails, setAdultDetails] = React.useState(() => Array.from({ length: Math.max(adults, 1) }, () => ({
@@ -182,7 +180,6 @@ export default function Reservation() {
 
   const handleReset = () => {
     setErrors({});
-    setIssueCountry(' ');
     setChildrenAges([]);
 
     setAdultDetails(Array.from({ length: Math.max(adults, 1) }, () => ({

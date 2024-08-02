@@ -10,6 +10,7 @@ interface SearchState {
     adults: number;
     children: number;
     childrenAges: number[];
+    childrenNames: string[];
     selectedNationality: string | null;
     nights: number;
     setLocation: (location: Location) => void;
@@ -20,7 +21,6 @@ interface SearchState {
     setChildrenNames: (names: string[]) => void;
     setChildrenAges: (ages: number[]) => void;
     setSelectedNationality: (selectedNationality: string | null) => void;
-    setIssueCountry: (issueCountry: string | null) => void;
     setNights: (nights: number) => void;
 }
 
