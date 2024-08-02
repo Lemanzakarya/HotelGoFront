@@ -1,6 +1,6 @@
 export const getOffersRequestModelDefault = {
-  searchId: "dbf9d31f-b84d-412e-8e53-b2c2f050193d",
-  offerId: "2$2$TR~^005^~23472~^005^~304.3000~^005^~1473~^005^~334.73~^005^~cfa377f0-d371-40f2-b167-609805699b3e",
+  searchId: "f311ee9e-7ef0-4a84-bc7b-babb7431899b",
+  offerId: "2$2$TR~^005^~23472~^005^~213.0100~^005^~1473~^005^~7391.52~^005^~6ade5b25-6169-42c2-980e-12d3885ac82f",
   productType: 2,
   productId: "104040",
   currency: "EUR",

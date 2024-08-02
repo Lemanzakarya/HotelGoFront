@@ -10,37 +10,34 @@ const amenities = [
 ];
 
 type Facility = {
-  name?:string;
-  isPriced:boolean;
+  name?: string;
+  isPriced: boolean;
 };
 
-interface AmenitiesProps{
-  facilities?:Facility[];
+interface AmenitiesProps {
+  facilities?: Facility[];
 }
-const Amenities: React.FC<AmenitiesProps> = ({facilities}) => {
-  
-  if (!facilities || facilities.length === 0) {
-    return null; // Don't render the component if there are no facilities
-  }
 
-
+const Amenities: React.FC<AmenitiesProps> = ({ facilities }) => {
   return (
     <Paper elevation={3} style={{ padding: 16 }}>
       <Typography variant="h6" component="h2" gutterBottom>
         Popular Amenities
       </Typography>
-      <Typography>
-        
-      </Typography>
-      { <Grid container spacing={2}>
-        {facilities.map((facility, index) => (
-          <Grid item xs={6} sm={3} key={index}>
-            <Paper style={{ padding: 8, textAlign: 'center' }}>
-              <Typography variant="body1">{facility.name}</Typography>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>}
+      
+      {facilities && facilities.length > 0 ? ( // Conditionally render the grid
+        <Grid container spacing={2}>
+          {facilities.map((facility, index) => (
+            <Grid item xs={6} sm={3} key={index}>
+              <Paper style={{ padding: 8, textAlign: 'center' }}>
+                <Typography variant="body1">{facility.name}</Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Typography variant="body1">No amenities available</Typography> 
+      )}
     </Paper>
   );
 };

@@ -19,27 +19,39 @@ import useOfferStore from "@/stores/useOfferStore";
 import usePriceSearchStore from "@/stores/usePriceSearch";
 
 const RootCard = styled(Card)({
-  maxWidth: 345,
+  maxWidth: 350,
+  width: "auto",
   margin: "16px",
   cursor: "pointer",
   transition: "transform 0.2s",
-
-  // Explicitly set box-sizing to border-box
-  boxSizing: 'border-box', 
-
-  // Add border and padding
-  border: '2px solid #ccc', 
+  boxSizing: 'border-box',
+  border: '2px solid #ccc',
   borderRadius: '8px',
-  padding: '10px', // Add padding to maintain content spacing
-
-  // Keep the existing hover effect
+  padding: '10px',
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
   "&:hover": {
     transform: "scale(1.05)",
   },
 });
 
+const CardContentStyled = styled(CardContent)({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+});
+
+const RoomsContainer = styled(Container)({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+});
+
 const ViewDetailsLink = styled("a")({
   color: "#1976d2",
+  flexDirection:"column",
   textDecoration: "underline",
   "&:hover": {
     textDecoration: "none",
@@ -52,9 +64,9 @@ const ViewDetailsLink = styled("a")({
 
 const ReserveButton = styled(Button)({
   marginTop: "8px",
-  backgroundColor:'#ff8737',
-  '&:hover': { 
-    backgroundColor: '#d45500' 
+  backgroundColor: '#ff8737',
+  '&:hover': {
+    backgroundColor: '#d45500'
   }
 });
 
@@ -96,16 +108,31 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
 
   const setOfferIds = useOfferStore(state => state.setOfferIds);
   const setCurrency = useOfferStore(state => state.setCurrency); 
- const currency = usePriceSearchStore(state => state.currency);
+  const currency = usePriceSearchStore(state => state.currency);
 
-  const handleViewDetails = (room: Room) => {
-    setSelectedRoom(room);
+  const handleViewDetails = (offer: any) => {
+    const formattedCancellationPolicies = offer.cancellationPolicies.map((policy: any) => {
+      const dueDate = new Date(policy.dueDate).toLocaleDateString();
+      const price = formatPrice(policy.price.percent);
+      return `Due date: ${dueDate}\nPrice: ${price}%`; // Use template literal for cleaner formatting
+    }).join(",\n"); // Two newlines for proper separation
+  
+    setSelectedRoom({
+      id: parseInt(offer.offerID),
+      title: offer.rooms.map((room: { roomName: any; }) => room.roomName).join(", "),
+      description: `Cancellation Policies:\n${formattedCancellationPolicies}`,
+      price: `${formatPrice(offer.price.amount)} ${offer.price.currency}`,
+      features: offer.rooms.map((room: { roomName: any; boardGroups: any[]; }) => ({
+        icon: null,
+        text: `${room.roomName} - ${room.boardGroups.map((bg: { name: any; }) => bg.name).join(', ')}`
+      }))
+    });
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => setOpenDialog(false);
 
-  const handleReserve = (offerId:string) => {
+  const handleReserve = (offerId: string) => {
     setIsLoading(true);
     setOfferIds([offerId]);
     setTimeout(() => {
@@ -114,10 +141,14 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
     }, 2000);
   };
 
+  const formatPrice = (price: number) => {
+    return price.toFixed(2);
+  };
+
   //TODO:for test will be deleted
-  console.log("recieved offers:",offers);
+  console.log("recieved offers:", offers);
   //console.log("Recieved details:",offerDetails);
-  
+
   if (!offers || !offers.offers || !Array.isArray(offers.offers) || offers.offers.length === 0) {
     return (
       <Container>
@@ -127,12 +158,12 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
   }
 
   return (
-    <Container>
+    <RoomsContainer>
       <Grid container spacing={3}>
         {offers.offers.map((offer) => (
           <Grid item xs={12} sm={6} md={4} key={offer.offerID}>
             <RootCard>
-              <CardContent>
+              <CardContentStyled>
                 <Typography gutterBottom variant="h5" component="div">
                   <BedIcon /> {offer.rooms.map((room) => room.roomName).join(", ")}
                 </Typography>
@@ -144,7 +175,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                 </Typography>
                 {offer.price && (
                   <Typography variant="body1" color="textPrimary" sx={{ marginTop: "10px" }}>
-                    Price: {offer.price.amount} {offer.price.currency}
+                    Price: {formatPrice(offer.price.amount)} {offer.price.currency}
                   </Typography>
                 )}
                 <Typography variant="body2" color="textPrimary" mt={2}>
@@ -152,29 +183,17 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
                 </Typography>
                 <FeaturesList>
                   {offer.rooms.map((room, index) => (
-                    <FeatureItem key={index} sx={{mb:0}}>
+                    <FeatureItem key={index} sx={{ mb: 0 }}>
                       <Typography variant="body2" color="textPrimary">
                         {room.roomName} - {room.boardGroups.map(bg => bg.name).join(', ')}
                       </Typography>
                     </FeatureItem>
                   ))}
                 </FeaturesList>
-              </CardContent>
-              <ViewDetailsLink sx={{mr:2}} onClick={() => handleViewDetails({
-                id: parseInt(offer.offerID),
-                title: offer.rooms.map((room) => room.roomName).join(", "),
-                description: `Description for offer ${offer.offerID}`,
-                price: `${offer.price.amount} ${offer.price.currency}`,
-                features: offer.rooms.map((room) => ({
-                  icon: null,
-                  text: `${room.roomName} - ${room.boardGroups.map(bg => bg.name).join(', ')}`
-                }))
-              })}>
+              </CardContentStyled>
+              <ViewDetailsLink sx={{ mr: 2 }} onClick={() => handleViewDetails(offer)}>
                 View Detail
               </ViewDetailsLink>
-              
-              
-              
               <ReserveButton
                 variant="contained"
                 fullWidth
@@ -198,7 +217,7 @@ const Rooms: React.FC<RoomsProps> = ({ isLoading, setIsLoading, offers }) => {
           </DialogActions>
         </Dialog>
       </Grid>
-    </Container>
+    </RoomsContainer>
   );
 };
 

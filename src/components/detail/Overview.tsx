@@ -14,28 +14,30 @@ interface OverviewProps{
   textCategories: (TextCategory | null);
 }
 
-const Overview : React.FC<OverviewProps> = ({textCategories}) => {
-
-
-  if (!textCategories) {
-    return null; // Don't render anything if textCategories is null
-  }
-  const presentation = textCategories[0]?.presentations?.[0];
-  return (
+const Overview: React.FC<OverviewProps> = ({ textCategories }) => {
+  if (!textCategories || textCategories.length === 0) {
+    return ( 
       <Paper elevation={3} sx={{ padding: 2 }}>
-      {textCategories.map((textCategory, index) => ( // Map over textCategories
-        <div key={index}> 
+        <Typography variant="body1" paragraph>No overview available</Typography> 
+      </Paper>
+    ); 
+  }
+
+  return (
+    <Paper elevation={3} sx={{ padding: 2 }}>
+      {textCategories.map((textCategory, index) => (
+        <div key={index}>
           <Typography variant="h6" component="h2" gutterBottom>
             {textCategory.name}
           </Typography>
-          {textCategory.presentations?.[0] && ( // Conditional rendering
+          {textCategory.presentations?.[0] && (
             <Typography variant="body1" paragraph>
-              {textCategory.presentations?.[0].text}
+              {textCategory.presentations[0].text}
             </Typography>
           )}
         </div>
       ))}
-      </Paper>
+    </Paper>
   );
 };
 
