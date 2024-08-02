@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { BeginTransactionRequest } from "@/app/responsemodel/BeginTransactionModel";
 import { setReservationInfo } from "@/app/responsemodel/setReservationInfoModel";
 import Confirmation from '../reservation/Confirmation';
+import useOfferStore from '@/stores/useOfferStore';
 import useFormStore from '@/stores/useFormStore';
 
 type CommitTransactionResponse = {
@@ -26,6 +27,8 @@ const steps = ['Guest Information', 'Payment Methods', 'Reservation Confirmation
 const ReservationPage: React.FC = () => {
   const [step, setStep] = useState<number>(0);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const {thumbnailFull,offerIds,currency} = useOfferStore();
+  console.log(thumbnailFull,offerIds , currency)
   const router = useRouter();
   const [reservationNumber, setReservationNumber] = useState('');
   const [offerId, setOfferId] = useState("");
@@ -102,7 +105,7 @@ const ReservationPage: React.FC = () => {
             }}
           >
             {step === 0 && (
-              <GuestInformation />
+              <GuestInformation/>
             )}
             {step === 1 && <Payment />}
             {step === 2 && !isConfirmed && (

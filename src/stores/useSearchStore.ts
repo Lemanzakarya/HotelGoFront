@@ -1,18 +1,18 @@
-import {create} from 'zustand';
+'use client'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { Dayjs } from 'dayjs';
 
 interface SearchState {
-    location: string;
+    location: Location;
     checkInDate: Dayjs | null;
     checkOutDate: Dayjs | null;
     adults: number;
     children: number;
-    childrenNames: string[];
     childrenAges: number[];
     selectedNationality: string | null;
-    issueCountry: string | null;
     nights: number;
-    setLocation: (location: string) => void;
+    setLocation: (location: Location) => void;
     setCheckInDate: (date: Dayjs | null) => void;
     setCheckOutDate: (date: Dayjs | null) => void;
     setAdults: (adults: number) => void;
@@ -24,28 +24,44 @@ interface SearchState {
     setNights: (nights: number) => void;
 }
 
-const useSearchStore = create<SearchState>((set) => ({
-    location: '',
-    checkInDate: null,
-    checkOutDate: null,
-    adults: 0,
-    children: 0,
-    childrenAges: [],
-    childrenNames: [],
-    selectedNationality: 'Turkey',
-    issueCountry: '',
-    nights: 0,
-    setLocation: (location) => set({ location }),
-    setCheckInDate: (date) => set({ checkInDate: date }),
-    setCheckOutDate: (date) => set({ checkOutDate: date }),
-    setAdults: (adults) => set({ adults }),
-    setChildren: (children) => set({ children }),
-    setChildrenNames: (names) => set({ childrenNames: names }),
-    setChildrenAges: (ages) => set({ childrenAges: ages }),
-    setSelectedNationality: (selectedNationality) => set({ selectedNationality }),
-    setIssueCountry: (issueCountry) => set({   issueCountry }),
-    setNights: (nights) => set({ nights }),
-}));
+interface Location {
+    type: number;
+    id: string;
+    name: string;
+}
+
+const useSearchStore = create(
+    persist<SearchState>(
+        (set) => ({
+            location: {
+                type: 0,
+                id: '',
+                name: '',
+            },
+            checkInDate: null,
+            checkOutDate: null,
+            adults: 0,
+            children: 0,
+            childrenAges: [],
+            childrenNames : [],
+            selectedNationality: 'Turkey',
+            nights: 0,
+            setLocation: (location) => set({ location }),
+            setCheckInDate: (date) => set({ checkInDate: date }),
+            setCheckOutDate: (date) => set({ checkOutDate: date }),
+            setAdults: (adults) => set({ adults }),
+            setChildren: (children) => set({ children }),
+            setChildrenAges: (ages) => set({ childrenAges: ages }),
+            setChildrenNames: (names) => set({ childrenNames: names }),
+            setSelectedNationality: (selectedNationality) => set({ selectedNationality }),
+            setNights: (nights) => set({ nights }),
+        }),
+        {
+            name: 'search-store',
+            getStorage: () => localStorage,
+        }
+    )
+);
 
 export default useSearchStore;
 

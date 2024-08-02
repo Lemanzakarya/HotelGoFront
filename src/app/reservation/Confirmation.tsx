@@ -1,11 +1,10 @@
 "use client"
 import React from 'react';
-import useSearchStore from '../../stores/useSearchStore'; // Adjust the import path as necessary
+import useSearchStore from '../../stores/useSearchStore'; 
 import { Container, Typography, Box, Button } from '@mui/material';
 import dayjs from 'dayjs';
 
 const ReservationConfirmation: React.FC = () => {
-  // Access store data
   const { 
     location, 
     checkInDate, 
@@ -36,10 +35,10 @@ const ReservationConfirmation: React.FC = () => {
         <Typography variant="body1" paragraph>
           Please review your information and confirm your reservation.
         </Typography>
-        <Box mb={2}>
+        {/* <Box mb={2}>
           <Typography variant="h6">Location:</Typography>
           <Typography variant="body1">{location}</Typography>
-        </Box>
+        </Box> */}
         <Box mb={2}>
           <Typography variant="h6">Reservation Dates:</Typography>
           <Typography variant="body1">
