@@ -1,3 +1,5 @@
+HotelGo's frontend, built with React, Next.js, and Material-UI, offers a seamless and responsive user experience. Features include dynamic search, date selection, and a multi-step reservation process, with Zustand for state management.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
